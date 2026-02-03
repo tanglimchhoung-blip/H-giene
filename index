@@ -1,0 +1,704 @@
+<!-- index.html (Pure HTML/CSS/JS) - White UI, no overlays, retry-safe doPost text/plain -->
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Internal ERP</title>
+  <style>
+    :root{
+      --bg:#ffffff;
+      --text:#111827;
+      --muted:#6b7280;
+      --border:#e5e7eb;
+      --btn:#111827;
+      --btnText:#ffffff;
+      --danger:#b91c1c;
+      --ok:#065f46;
+      --card:#ffffff;
+    }
+    *{ box-sizing:border-box; }
+    body{
+      margin:0;
+      font-family: system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, "Apple Color Emoji","Segoe UI Emoji";
+      background:var(--bg);
+      color:var(--text);
+    }
+    .wrap{
+      max-width:1100px;
+      margin:0 auto;
+      padding:18px 16px 40px;
+    }
+    header{
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      gap:12px;
+      padding:10px 0 14px;
+      border-bottom:1px solid var(--border);
+    }
+    header h1{
+      font-size:18px;
+      margin:0;
+      font-weight:700;
+      letter-spacing:.2px;
+    }
+    header .right{
+      display:flex;
+      align-items:center;
+      gap:10px;
+      flex-wrap:wrap;
+      justify-content:flex-end;
+    }
+    .pill{
+      display:inline-flex;
+      align-items:center;
+      gap:8px;
+      border:1px solid var(--border);
+      padding:8px 10px;
+      border-radius:10px;
+      background:var(--card);
+      font-size:13px;
+      color:var(--muted);
+      white-space:nowrap;
+    }
+    .pill code{
+      color:var(--text);
+      font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+      font-size:12px;
+    }
+
+    nav{
+      display:flex;
+      gap:8px;
+      padding:14px 0;
+      flex-wrap:wrap;
+    }
+    .tab{
+      border:1px solid var(--border);
+      background:#fff;
+      padding:10px 12px;
+      border-radius:10px;
+      font-size:13px;
+      cursor:pointer;
+      user-select:none;
+    }
+    .tab.active{
+      background:#f9fafb;
+      border-color:#d1d5db;
+      font-weight:600;
+    }
+
+    .card{
+      border:1px solid var(--border);
+      border-radius:14px;
+      background:var(--card);
+      padding:14px;
+      margin-top:10px;
+    }
+
+    .grid{
+      display:grid;
+      grid-template-columns: repeat(12, 1fr);
+      gap:10px;
+    }
+    .field{
+      display:flex;
+      flex-direction:column;
+      gap:6px;
+      min-width:0;
+    }
+    .label{
+      font-size:12px;
+      color:var(--muted);
+    }
+    input, select, textarea{
+      width:100%;
+      border:1px solid var(--border);
+      border-radius:10px;
+      padding:10px 10px;
+      font-size:14px;
+      background:#fff;
+      color:var(--text);
+      outline:none;
+    }
+    textarea{ min-height:40px; resize:vertical; }
+
+    input[type="number"]{
+      font-variant-numeric: tabular-nums;
+    }
+
+    .row{
+      display:flex;
+      gap:10px;
+      align-items:center;
+      flex-wrap:wrap;
+      margin-top:12px;
+    }
+    button{
+      border:1px solid var(--border);
+      background:var(--btn);
+      color:var(--btnText);
+      padding:10px 14px;
+      border-radius:10px;
+      font-size:14px;
+      cursor:pointer;
+    }
+    button.secondary{
+      background:#fff;
+      color:var(--text);
+    }
+    button:disabled{
+      opacity:.6;
+      cursor:not-allowed;
+    }
+
+    .msg{
+      font-size:13px;
+      padding:10px 12px;
+      border-radius:10px;
+      border:1px solid var(--border);
+      background:#fff;
+      margin-top:10px;
+      display:none;
+    }
+    .msg.ok{ border-color:#a7f3d0; color:var(--ok); }
+    .msg.err{ border-color:#fecaca; color:var(--danger); }
+
+    .hint{
+      font-size:12px;
+      color:var(--muted);
+      margin-top:6px;
+      line-height:1.4;
+    }
+
+    @media (max-width: 860px){
+      header{ align-items:flex-start; flex-direction:column; }
+    }
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <header>
+      <h1>Internal ERP</h1>
+      <div class="right">
+        <div class="pill">Backend: <code id="backendUrl"></code></div>
+        <button class="secondary" id="btnPing">Ping</button>
+      </div>
+    </header>
+
+    <nav>
+      <div class="tab active" data-tab="inventoryin">Inventory IN</div>
+      <div class="tab" data-tab="sales">Sales</div>
+      <div class="tab" data-tab="expenses">Expenses</div>
+      <div class="tab" data-tab="dashboard">Dashboard</div>
+    </nav>
+
+    <div id="msg" class="msg"></div>
+
+    <!-- Inventory IN -->
+    <section id="tab-inventoryin" class="card">
+      <div class="grid">
+        <div class="field" style="grid-column: span 2;">
+          <div class="label">in_id</div>
+          <input id="in_id" placeholder="IN-001" />
+        </div>
+        <div class="field" style="grid-column: span 2;">
+          <div class="label">date</div>
+          <input id="in_date" type="date" />
+        </div>
+        <div class="field" style="grid-column: span 3;">
+          <div class="label">sku</div>
+          <input id="in_sku" placeholder="SKU" />
+        </div>
+        <div class="field" style="grid-column: span 5;">
+          <div class="label">product_name</div>
+          <input id="in_product" placeholder="Product name" />
+        </div>
+
+        <div class="field" style="grid-column: span 3;">
+          <div class="label">category</div>
+          <input id="in_category" placeholder="Category" />
+        </div>
+        <div class="field" style="grid-column: span 3;">
+          <div class="label">color (optional)</div>
+          <input id="in_color" placeholder="Color" />
+        </div>
+        <div class="field" style="grid-column: span 2;">
+          <div class="label">size (optional)</div>
+          <input id="in_size" placeholder="Size" />
+        </div>
+        <div class="field" style="grid-column: span 4;">
+          <div class="label">location</div>
+          <select id="in_location">
+            <option value="Home 79">Home 79</option>
+            <option value="Home 44">Home 44</option>
+            <option value="The Point">The Point</option>
+          </select>
+        </div>
+
+        <div class="field" style="grid-column: span 2;">
+          <div class="label">qty</div>
+          <input id="in_qty" type="number" step="1" min="0" inputmode="numeric" />
+        </div>
+        <div class="field" style="grid-column: span 3;">
+          <div class="label">unit_price_rmb</div>
+          <input id="in_price_rmb" type="number" step="0.01" min="0" inputmode="decimal" />
+        </div>
+        <div class="field" style="grid-column: span 3;">
+          <div class="label">fx_rmb_usd (2 decimals)</div>
+          <input id="in_fx" type="number" step="0.01" min="0" inputmode="decimal" />
+          <div class="hint">Enter like 7.25 (meaning 1 USD = 7.25 RMB)</div>
+        </div>
+        <div class="field" style="grid-column: span 4;">
+          <div class="label">note</div>
+          <input id="in_note" placeholder="Optional note" />
+        </div>
+      </div>
+
+      <div class="row">
+        <button id="btnSaveIN">Save Inventory IN</button>
+        <button class="secondary" id="btnClearIN">Clear</button>
+      </div>
+      <div class="hint">Saves to Google Sheets tab: <b>Inventory_IN</b>. FIFO to Inventory_Ledger will be added later.</div>
+    </section>
+
+    <!-- Sales -->
+    <section id="tab-sales" class="card" style="display:none;">
+      <div class="grid">
+        <div class="field" style="grid-column: span 2;">
+          <div class="label">sale_id</div>
+          <input id="s_id" placeholder="S-001" />
+        </div>
+        <div class="field" style="grid-column: span 2;">
+          <div class="label">date</div>
+          <input id="s_date" type="date" />
+        </div>
+        <div class="field" style="grid-column: span 4;">
+          <div class="label">customer_name</div>
+          <input id="s_customer" placeholder="Optional" />
+        </div>
+        <div class="field" style="grid-column: span 2;">
+          <div class="label">currency</div>
+          <select id="s_currency">
+            <option value="USD">USD</option>
+            <option value="KHR">KHR</option>
+          </select>
+        </div>
+        <div class="field" style="grid-column: span 2;">
+          <div class="label">fx_khr_to_usd (2 decimals)</div>
+          <input id="s_fx" type="number" step="0.01" min="0" inputmode="decimal" placeholder="e.g. 4100.00" />
+        </div>
+
+        <div class="field" style="grid-column: span 2;">
+          <div class="label">status</div>
+          <select id="s_status">
+            <option value="PREP">PREP</option>
+            <option value="DELIVERY">DELIVERY</option>
+            <option value="COMPLETED">COMPLETED</option>
+            <option value="VOID">VOID</option>
+          </select>
+        </div>
+        <div class="field" style="grid-column: span 10;">
+          <div class="label">note</div>
+          <input id="s_note" placeholder="Optional note" />
+        </div>
+
+        <div class="field" style="grid-column: span 3;">
+          <div class="label">sku</div>
+          <input id="s_sku" placeholder="SKU" />
+        </div>
+        <div class="field" style="grid-column: span 5;">
+          <div class="label">product_name</div>
+          <input id="s_product" placeholder="Product name" />
+        </div>
+        <div class="field" style="grid-column: span 2;">
+          <div class="label">qty</div>
+          <input id="s_qty" type="number" step="1" min="0" inputmode="numeric" />
+        </div>
+        <div class="field" style="grid-column: span 2;">
+          <div class="label">unit_price</div>
+          <input id="s_price" type="number" step="0.01" min="0" inputmode="decimal" />
+        </div>
+      </div>
+
+      <div class="row">
+        <button id="btnSaveSale">Save Sales Line</button>
+        <button class="secondary" id="btnClearSale">Clear</button>
+      </div>
+      <div class="hint">Saves 1 row to <b>Sales</b>. FIFO + COGS posting will be added later.</div>
+    </section>
+
+    <!-- Expenses -->
+    <section id="tab-expenses" class="card" style="display:none;">
+      <div class="grid">
+        <div class="field" style="grid-column: span 2;">
+          <div class="label">exp_id</div>
+          <input id="e_id" placeholder="EXP-001" />
+        </div>
+        <div class="field" style="grid-column: span 2;">
+          <div class="label">date</div>
+          <input id="e_date" type="date" />
+        </div>
+        <div class="field" style="grid-column: span 3;">
+          <div class="label">category</div>
+          <select id="e_cat">
+            <option value="Marketing">Marketing</option>
+            <option value="Salary">Salary</option>
+            <option value="Rent">Rent</option>
+            <option value="Logistics">Logistics</option>
+            <option value="Utilities">Utilities</option>
+            <option value="Other">Other</option>
+          </select>
+        </div>
+        <div class="field" style="grid-column: span 3;">
+          <div class="label">sub_category</div>
+          <input id="e_sub" placeholder="Optional" />
+        </div>
+        <div class="field" style="grid-column: span 2;">
+          <div class="label">amount_usd</div>
+          <input id="e_amt" type="number" step="0.01" min="0" inputmode="decimal" />
+        </div>
+        <div class="field" style="grid-column: span 12;">
+          <div class="label">note</div>
+          <input id="e_note" placeholder="Optional note" />
+        </div>
+      </div>
+
+      <div class="row">
+        <button id="btnSaveExp">Save Expense</button>
+        <button class="secondary" id="btnClearExp">Clear</button>
+      </div>
+      <div class="hint">Saves to <b>Operating_Expenses</b>.</div>
+    </section>
+
+    <!-- Dashboard -->
+    <section id="tab-dashboard" class="card" style="display:none;">
+      <div class="hint">Dashboard is calculated in Google Sheets (Dashboard tab). We can add a read-only view later.</div>
+    </section>
+  </div>
+
+  <script>
+    // ===== APP SCRIPT WEB APP URL (YOUR URL) =====
+    const WEB_APP_URL = "https://script.google.com/macros/s/AKfycbzgC6AqVVftlcvoetDa2aTVzdSbrK7FSJt7kpJCFDeHB7o7azG0Lh_yB4a4CBw1I-ML/exec";
+    document.getElementById("backendUrl").textContent = WEB_APP_URL;
+
+    // ===== UI HELPERS =====
+    const msgEl = document.getElementById("msg");
+    function showMsg(type, text){
+      msgEl.className = "msg " + (type === "ok" ? "ok" : "err");
+      msgEl.textContent = text;
+      msgEl.style.display = "block";
+      window.scrollTo({ top: 0, behavior: "smooth" });
+    }
+    function clearMsg(){ msgEl.style.display = "none"; }
+
+    function setBusy(btn, busy){
+      btn.disabled = busy;
+      btn.textContent = busy ? "Saving..." : btn.dataset.label;
+    }
+
+    // ===== NETWORK (retry-safe, timeout-safe) =====
+    async function postJsonWithRetry(payload, { retries = 2, timeoutMs = 12000 } = {}) {
+      const body = JSON.stringify(payload);
+      let lastErr = null;
+
+      for (let attempt = 0; attempt <= retries; attempt++) {
+        const controller = new AbortController();
+        const t = setTimeout(() => controller.abort(), timeoutMs);
+
+        try {
+          const res = await fetch(WEB_APP_URL, {
+            method: "POST",
+            mode: "cors",
+            redirect: "follow",
+            headers: { "Content-Type": "text/plain;charset=utf-8" },
+            body,
+            signal: controller.signal
+          });
+
+          clearTimeout(t);
+
+          const data = await res.json().catch(() => null);
+          if (!res.ok || !data) throw new Error("Server response not OK");
+          if (!data.ok) throw new Error(data.error || "Unknown server error");
+          return data;
+
+        } catch (err) {
+          clearTimeout(t);
+          lastErr = err;
+          await new Promise(r => setTimeout(r, 400 * (attempt + 1)));
+        }
+      }
+      throw lastErr || new Error("Failed to fetch");
+    }
+
+    // ===== TABS =====
+    const tabs = document.querySelectorAll(".tab");
+    const panels = {
+      inventoryin: document.getElementById("tab-inventoryin"),
+      sales: document.getElementById("tab-sales"),
+      expenses: document.getElementById("tab-expenses"),
+      dashboard: document.getElementById("tab-dashboard"),
+    };
+    tabs.forEach(t => t.addEventListener("click", () => {
+      tabs.forEach(x => x.classList.remove("active"));
+      t.classList.add("active");
+      const key = t.dataset.tab;
+      Object.keys(panels).forEach(k => panels[k].style.display = (k === key ? "block" : "none"));
+      clearMsg();
+    }));
+
+    // ===== PING =====
+    document.getElementById("btnPing").addEventListener("click", async () => {
+      clearMsg();
+      const btn = document.getElementById("btnPing");
+      btn.dataset.label = "Ping";
+      setBusy(btn, true);
+      try{
+        const data = await postJsonWithRetry({ action: "ping" }, { retries: 2, timeoutMs: 12000 });
+        showMsg("ok", "Connected ✅ " + data.server_time);
+      }catch(e){
+        showMsg("err", "Ping failed: " + (e?.message || e));
+      }finally{
+        setBusy(btn, false);
+      }
+    });
+
+    // ===== INVENTORY IN SAVE =====
+    const btnSaveIN = document.getElementById("btnSaveIN");
+    btnSaveIN.dataset.label = "Save Inventory IN";
+
+    function round2(n){
+      const x = Number(n);
+      if (!isFinite(x)) return "";
+      return (Math.round(x * 100) / 100).toFixed(2);
+    }
+
+    btnSaveIN.addEventListener("click", async () => {
+      clearMsg();
+
+      const in_id = document.getElementById("in_id").value.trim();
+      const date = document.getElementById("in_date").value;
+      const sku = document.getElementById("in_sku").value.trim();
+      const product = document.getElementById("in_product").value.trim();
+      const category = document.getElementById("in_category").value.trim();
+      const color = document.getElementById("in_color").value.trim();
+      const size = document.getElementById("in_size").value.trim();
+      const location = document.getElementById("in_location").value;
+      const qty = document.getElementById("in_qty").value;
+      const unit_price_rmb = document.getElementById("in_price_rmb").value;
+      const fx = document.getElementById("in_fx").value;
+      const note = document.getElementById("in_note").value.trim();
+
+      if (!in_id || !date || !sku || !product || !location) {
+        showMsg("err", "Please fill: in_id, date, sku, product_name, location.");
+        return;
+      }
+      if (!qty || Number(qty) <= 0) {
+        showMsg("err", "qty must be > 0");
+        return;
+      }
+      if (!unit_price_rmb || Number(unit_price_rmb) <= 0) {
+        showMsg("err", "unit_price_rmb must be > 0");
+        return;
+      }
+      if (!fx || Number(fx) <= 0) {
+        showMsg("err", "fx_rmb_usd must be > 0");
+        return;
+      }
+
+      const fx2 = round2(fx);
+
+      const row = [
+        in_id,                 // A in_id
+        date,                  // B date
+        sku,                   // C sku
+        product,               // D product_name
+        category,              // E category
+        color,                 // F color
+        size,                  // G size
+        location,              // H location
+        Number(qty),           // I qty
+        Number(unit_price_rmb),// J unit_price_rmb
+        Number(fx2),           // K fx_rmb_usd
+        "",                    // L unit_cost_usd (sheet formula)
+        "",                    // M total_cost_usd (sheet formula)
+        note                   // N note
+      ];
+
+      setBusy(btnSaveIN, true);
+      try{
+        const data = await postJsonWithRetry({
+          action: "append_row",
+          sheet: "Inventory_IN",
+          row
+        }, { retries: 3, timeoutMs: 15000 });
+
+        showMsg("ok", "Saved ✅ Inventory_IN row appended (Row " + data.last_row + ").");
+
+      }catch(e){
+        showMsg("err", "Save failed: " + (e?.message || e));
+      }finally{
+        setBusy(btnSaveIN, false);
+      }
+    });
+
+    document.getElementById("btnClearIN").addEventListener("click", () => {
+      ["in_id","in_date","in_sku","in_product","in_category","in_color","in_size","in_qty","in_price_rmb","in_fx","in_note"].forEach(id=>{
+        document.getElementById(id).value = "";
+      });
+      document.getElementById("in_location").value = "Home 79";
+      clearMsg();
+    });
+
+    // ===== SALES SAVE (1 line) =====
+    const btnSaveSale = document.getElementById("btnSaveSale");
+    btnSaveSale.dataset.label = "Save Sales Line";
+
+    btnSaveSale.addEventListener("click", async () => {
+      clearMsg();
+
+      const sale_id = document.getElementById("s_id").value.trim();
+      const date = document.getElementById("s_date").value;
+      const customer = document.getElementById("s_customer").value.trim();
+      const currency = document.getElementById("s_currency").value;
+      const fx = document.getElementById("s_fx").value;
+      const status = document.getElementById("s_status").value;
+      const note = document.getElementById("s_note").value.trim();
+
+      const sku = document.getElementById("s_sku").value.trim();
+      const product = document.getElementById("s_product").value.trim();
+      const qty = document.getElementById("s_qty").value;
+      const unit_price = document.getElementById("s_price").value;
+
+      if (!sale_id || !date || !currency || !status || !sku || !product) {
+        showMsg("err", "Please fill: sale_id, date, currency, status, sku, product_name.");
+        return;
+      }
+      if (!qty || Number(qty) <= 0) {
+        showMsg("err", "qty must be > 0");
+        return;
+      }
+      if (!unit_price || Number(unit_price) <= 0) {
+        showMsg("err", "unit_price must be > 0");
+        return;
+      }
+      if (currency === "KHR") {
+        if (!fx || Number(fx) <= 0) {
+          showMsg("err", "For KHR sales, fx_khr_to_usd must be > 0");
+          return;
+        }
+      }
+
+      const fx2 = fx ? round2(fx) : "";
+
+      const row = [
+        sale_id,                  // A
+        date,                     // B
+        customer,                 // C
+        currency,                 // D
+        fx2 ? Number(fx2) : "",   // E
+        status,                   // F
+        note,                     // G
+        sku,                      // H
+        product,                  // I
+        Number(qty),              // J
+        Number(unit_price),       // K
+        "",                       // L line_total (sheet formula)
+        ""                        // M line_total_usd (sheet formula)
+      ];
+
+      setBusy(btnSaveSale, true);
+      try{
+        const data = await postJsonWithRetry({
+          action: "append_row",
+          sheet: "Sales",
+          row
+        }, { retries: 3, timeoutMs: 15000 });
+
+        showMsg("ok", "Saved ✅ Sales row appended (Row " + data.last_row + ").");
+
+      }catch(e){
+        showMsg("err", "Save failed: " + (e?.message || e));
+      }finally{
+        setBusy(btnSaveSale, false);
+      }
+    });
+
+    document.getElementById("btnClearSale").addEventListener("click", () => {
+      ["s_id","s_date","s_customer","s_fx","s_note","s_sku","s_product","s_qty","s_price"].forEach(id=>{
+        document.getElementById(id).value = "";
+      });
+      document.getElementById("s_currency").value = "USD";
+      document.getElementById("s_status").value = "PREP";
+      clearMsg();
+    });
+
+    // ===== EXPENSE SAVE =====
+    const btnSaveExp = document.getElementById("btnSaveExp");
+    btnSaveExp.dataset.label = "Save Expense";
+
+    function showAsNumber(v){
+      if (v === null || v === undefined) return "";
+      const s = String(v).trim();
+      if (!s) return "";
+      const n = Number(s);
+      return isFinite(n) ? n : "";
+    }
+
+    btnSaveExp.addEventListener("click", async () => {
+      clearMsg();
+
+      const exp_id = document.getElementById("e_id").value.trim();
+      const date = document.getElementById("e_date").value;
+      const category = document.getElementById("e_cat").value;
+      const sub = document.getElementById("e_sub").value.trim();
+      const amt = showAsNumber(document.getElementById("e_amt").value);
+      const note = document.getElementById("e_note").value.trim();
+
+      if (!exp_id || !date || !category) {
+        showMsg("err", "Please fill: exp_id, date, category.");
+        return;
+      }
+      if (!amt || Number(amt) <= 0) {
+        showMsg("err", "amount_usd must be > 0");
+        return;
+      }
+
+      const row = [
+        exp_id,              // A
+        date,                // B
+        category,            // C
+        sub,                 // D
+        Number(round2(amt)), // E amount_usd
+        note                 // F
+      ];
+
+      setBusy(btnSaveExp, true);
+      try{
+        const data = await postJsonWithRetry({
+          action: "append_row",
+          sheet: "Operating_Expenses",
+          row
+        }, { retries: 3, timeoutMs: 15000 });
+
+        showMsg("ok", "Saved ✅ Expense appended (Row " + data.last_row + ").");
+
+      }catch(e){
+        showMsg("err", "Save failed: " + (e?.message || e));
+      }finally{
+        setBusy(btnSaveExp, false);
+      }
+    });
+
+    document.getElementById("btnClearExp").addEventListener("click", () => {
+      ["e_id","e_date","e_sub","e_amt","e_note"].forEach(id=>{
+        document.getElementById(id).value = "";
+      });
+      document.getElementById("e_cat").value = "Marketing";
+      clearMsg();
+    });
+  </script>
+</body>
+</html>

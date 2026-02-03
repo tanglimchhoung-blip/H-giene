@@ -1,4 +1,3 @@
-<!-- index.html (Pure HTML/CSS/JS) - White UI, no overlays, retry-safe doPost text/plain -->
 <!doctype html>
 <html lang="en">
 <head>
@@ -8,697 +7,782 @@
   <style>
     :root{
       --bg:#ffffff;
-      --text:#111827;
-      --muted:#6b7280;
-      --border:#e5e7eb;
-      --btn:#111827;
-      --btnText:#ffffff;
-      --danger:#b91c1c;
-      --ok:#065f46;
       --card:#ffffff;
+      --border:#e6e8ee;
+      --muted:#6b7280;
+      --text:#0f172a;
+      --primary:#2563eb;
+      --primary2:#1d4ed8;
+      --danger:#dc2626;
+      --ok:#16a34a;
+      --shadow: 0 8px 28px rgba(15, 23, 42, 0.08);
+      --radius:16px;
+      --gap:14px;
+      --font: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, "Apple Color Emoji","Segoe UI Emoji";
     }
-    *{ box-sizing:border-box; }
+    *{box-sizing:border-box;}
+    html,body{height:100%;}
     body{
       margin:0;
-      font-family: system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, "Apple Color Emoji","Segoe UI Emoji";
-      background:var(--bg);
+      font-family:var(--font);
       color:var(--text);
+      background:linear-gradient(180deg,#ffffff 0%, #fbfcff 70%, #ffffff 100%);
     }
-    .wrap{
-      max-width:1100px;
-      margin:0 auto;
-      padding:18px 16px 40px;
+    .app{max-width:1100px; margin:0 auto; padding:18px 14px 28px;}
+    .topbar{
+      display:flex; align-items:center; justify-content:space-between;
+      gap:12px; padding:14px 14px;
+      border:1px solid var(--border);
+      background:var(--card);
+      border-radius:var(--radius);
+      box-shadow:var(--shadow);
+      position:sticky; top:10px; z-index:10;
     }
-    header{
-      display:flex;
-      align-items:center;
-      justify-content:space-between;
-      gap:12px;
-      padding:10px 0 14px;
-      border-bottom:1px solid var(--border);
-    }
-    header h1{
-      font-size:18px;
-      margin:0;
-      font-weight:700;
-      letter-spacing:.2px;
-    }
-    header .right{
-      display:flex;
-      align-items:center;
-      gap:10px;
-      flex-wrap:wrap;
+    .brand{display:flex; flex-direction:column; gap:2px;}
+    .brand h1{margin:0; font-size:16px; letter-spacing:.2px;}
+    .brand .sub{font-size:12px; color:var(--muted);}
+    .nav{
+      display:flex; flex-wrap:wrap; gap:8px;
       justify-content:flex-end;
     }
-    .pill{
-      display:inline-flex;
-      align-items:center;
-      gap:8px;
-      border:1px solid var(--border);
-      padding:8px 10px;
-      border-radius:10px;
-      background:var(--card);
-      font-size:13px;
-      color:var(--muted);
-      white-space:nowrap;
-    }
-    .pill code{
-      color:var(--text);
-      font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
-      font-size:12px;
-    }
-
-    nav{
-      display:flex;
-      gap:8px;
-      padding:14px 0;
-      flex-wrap:wrap;
-    }
-    .tab{
+    .tabbtn{
       border:1px solid var(--border);
       background:#fff;
-      padding:10px 12px;
-      border-radius:10px;
+      color:var(--text);
+      padding:8px 10px;
+      border-radius:12px;
       font-size:13px;
       cursor:pointer;
       user-select:none;
+      transition:all .15s ease;
     }
-    .tab.active{
-      background:#f9fafb;
-      border-color:#d1d5db;
+    .tabbtn:hover{border-color:#cfd6e6;}
+    .tabbtn.active{
+      background:#eff6ff;
+      border-color:#c7ddff;
+      color:#1d4ed8;
       font-weight:600;
-    }
-
-    .card{
-      border:1px solid var(--border);
-      border-radius:14px;
-      background:var(--card);
-      padding:14px;
-      margin-top:10px;
     }
 
     .grid{
       display:grid;
+      grid-template-columns: 1fr;
+      gap:var(--gap);
+      margin-top:14px;
+    }
+    .card{
+      border:1px solid var(--border);
+      background:var(--card);
+      border-radius:var(--radius);
+      box-shadow:var(--shadow);
+      padding:14px;
+    }
+    .card h2{
+      margin:0 0 10px 0;
+      font-size:15px;
+    }
+    .row{
+      display:grid;
       grid-template-columns: repeat(12, 1fr);
       gap:10px;
+      align-items:end;
     }
-    .field{
-      display:flex;
-      flex-direction:column;
-      gap:6px;
-      min-width:0;
-    }
-    .label{
-      font-size:12px;
-      color:var(--muted);
-    }
+    .field{grid-column: span 3;}
+    .field.span-2{grid-column: span 2;}
+    .field.span-4{grid-column: span 4;}
+    .field.span-6{grid-column: span 6;}
+    .field.span-12{grid-column: span 12;}
+    label{display:block; font-size:12px; color:var(--muted); margin:0 0 6px;}
     input, select, textarea{
       width:100%;
       border:1px solid var(--border);
-      border-radius:10px;
+      border-radius:12px;
       padding:10px 10px;
       font-size:14px;
-      background:#fff;
-      color:var(--text);
       outline:none;
+      background:#fff;
     }
-    textarea{ min-height:40px; resize:vertical; }
+    textarea{min-height:90px; resize:vertical;}
+    input:focus, select:focus, textarea:focus{border-color:#b7c7ea; box-shadow:0 0 0 3px rgba(37,99,235,0.10);}
+    input[type="number"]{appearance:textfield;}
+    input::-webkit-outer-spin-button,input::-webkit-inner-spin-button{ -webkit-appearance: none; margin: 0; }
 
-    input[type="number"]{
-      font-variant-numeric: tabular-nums;
-    }
-
-    .row{
-      display:flex;
-      gap:10px;
-      align-items:center;
-      flex-wrap:wrap;
-      margin-top:12px;
-    }
-    button{
-      border:1px solid var(--border);
-      background:var(--btn);
-      color:var(--btnText);
-      padding:10px 14px;
-      border-radius:10px;
-      font-size:14px;
+    .btnbar{display:flex; gap:10px; flex-wrap:wrap; margin-top:12px;}
+    .btn{
+      border:none;
+      padding:10px 12px;
+      border-radius:12px;
       cursor:pointer;
+      font-weight:600;
+      font-size:13px;
+      background:var(--primary);
+      color:#fff;
+      transition:all .15s ease;
     }
-    button.secondary{
+    .btn:hover{background:var(--primary2);}
+    .btn.secondary{
       background:#fff;
       color:var(--text);
-    }
-    button:disabled{
-      opacity:.6;
-      cursor:not-allowed;
-    }
-
-    .msg{
-      font-size:13px;
-      padding:10px 12px;
-      border-radius:10px;
       border:1px solid var(--border);
+      font-weight:600;
+    }
+    .btn.secondary:hover{border-color:#cfd6e6;}
+    .btn.danger{background:var(--danger);}
+    .btn.ok{background:var(--ok);}
+    .hint{font-size:12px; color:var(--muted); margin-top:10px;}
+    .pill{
+      display:inline-flex; align-items:center; gap:8px;
+      padding:8px 10px; border-radius:999px;
+      border:1px solid var(--border); background:#fff;
+      font-size:12px; color:var(--muted);
+    }
+
+    .toast{
+      position:fixed; left:50%; transform:translateX(-50%);
+      bottom:16px; z-index:9999;
+      background:#0f172a; color:#fff;
+      padding:10px 12px; border-radius:14px;
+      font-size:13px; box-shadow:var(--shadow);
+      opacity:0; pointer-events:none;
+      transition:opacity .18s ease, transform .18s ease;
+    }
+    .toast.show{opacity:1; transform:translateX(-50%) translateY(-2px);}
+    .muted{color:var(--muted);}
+    .kpi{
+      display:grid;
+      grid-template-columns: repeat(2, minmax(0,1fr));
+      gap:10px;
+    }
+    .kpi .box{
+      border:1px solid var(--border);
+      border-radius:14px;
+      padding:12px;
       background:#fff;
-      margin-top:10px;
-      display:none;
     }
-    .msg.ok{ border-color:#a7f3d0; color:var(--ok); }
-    .msg.err{ border-color:#fecaca; color:var(--danger); }
-
-    .hint{
-      font-size:12px;
-      color:var(--muted);
-      margin-top:6px;
-      line-height:1.4;
-    }
-
-    @media (max-width: 860px){
-      header{ align-items:flex-start; flex-direction:column; }
+    .kpi .title{font-size:12px; color:var(--muted);}
+    .kpi .val{font-size:18px; font-weight:800; margin-top:6px;}
+    @media (max-width: 900px){
+      .field{grid-column: span 6;}
+      .field.span-2{grid-column: span 6;}
+      .field.span-4{grid-column: span 6;}
+      .field.span-6{grid-column: span 12;}
+      .kpi{grid-template-columns: 1fr;}
+      .topbar{position:static;}
     }
   </style>
 </head>
+
 <body>
-  <div class="wrap">
-    <header>
-      <h1>Internal ERP</h1>
-      <div class="right">
-        <div class="pill">Backend: <code id="backendUrl"></code></div>
-        <button class="secondary" id="btnPing">Ping</button>
+  <div class="app">
+    <div class="topbar">
+      <div class="brand">
+        <h1>Internal ERP</h1>
+        <div class="sub">Simple • Finance-first • FIFO-ready</div>
       </div>
-    </header>
+      <div class="nav" id="nav"></div>
+    </div>
 
-    <nav>
-      <div class="tab active" data-tab="inventoryin">Inventory IN</div>
-      <div class="tab" data-tab="sales">Sales</div>
-      <div class="tab" data-tab="expenses">Expenses</div>
-      <div class="tab" data-tab="dashboard">Dashboard</div>
-    </nav>
+    <div class="grid">
+      <!-- DASHBOARD -->
+      <section class="card view" id="view-dashboard">
+        <h2>Dashboard</h2>
 
-    <div id="msg" class="msg"></div>
-
-    <!-- Inventory IN -->
-    <section id="tab-inventoryin" class="card">
-      <div class="grid">
-        <div class="field" style="grid-column: span 2;">
-          <div class="label">in_id</div>
-          <input id="in_id" placeholder="IN-001" />
-        </div>
-        <div class="field" style="grid-column: span 2;">
-          <div class="label">date</div>
-          <input id="in_date" type="date" />
-        </div>
-        <div class="field" style="grid-column: span 3;">
-          <div class="label">sku</div>
-          <input id="in_sku" placeholder="SKU" />
-        </div>
-        <div class="field" style="grid-column: span 5;">
-          <div class="label">product_name</div>
-          <input id="in_product" placeholder="Product name" />
+        <div class="row">
+          <div class="field span-3">
+            <label>From Date</label>
+            <input id="dash_from" type="date" />
+          </div>
+          <div class="field span-3">
+            <label>To Date</label>
+            <input id="dash_to" type="date" />
+          </div>
+          <div class="field span-6">
+            <label>&nbsp;</label>
+            <div class="btnbar">
+              <button class="btn" id="btn_dash_refresh">Refresh</button>
+              <span class="pill" id="api_status">API: Not checked</span>
+            </div>
+          </div>
         </div>
 
-        <div class="field" style="grid-column: span 3;">
-          <div class="label">category</div>
-          <input id="in_category" placeholder="Category" />
-        </div>
-        <div class="field" style="grid-column: span 3;">
-          <div class="label">color (optional)</div>
-          <input id="in_color" placeholder="Color" />
-        </div>
-        <div class="field" style="grid-column: span 2;">
-          <div class="label">size (optional)</div>
-          <input id="in_size" placeholder="Size" />
-        </div>
-        <div class="field" style="grid-column: span 4;">
-          <div class="label">location</div>
-          <select id="in_location">
-            <option value="Home 79">Home 79</option>
-            <option value="Home 44">Home 44</option>
-            <option value="The Point">The Point</option>
-          </select>
-        </div>
-
-        <div class="field" style="grid-column: span 2;">
-          <div class="label">qty</div>
-          <input id="in_qty" type="number" step="1" min="0" inputmode="numeric" />
-        </div>
-        <div class="field" style="grid-column: span 3;">
-          <div class="label">unit_price_rmb</div>
-          <input id="in_price_rmb" type="number" step="0.01" min="0" inputmode="decimal" />
-        </div>
-        <div class="field" style="grid-column: span 3;">
-          <div class="label">fx_rmb_usd (2 decimals)</div>
-          <input id="in_fx" type="number" step="0.01" min="0" inputmode="decimal" />
-          <div class="hint">Enter like 7.25 (meaning 1 USD = 7.25 RMB)</div>
-        </div>
-        <div class="field" style="grid-column: span 4;">
-          <div class="label">note</div>
-          <input id="in_note" placeholder="Optional note" />
-        </div>
-      </div>
-
-      <div class="row">
-        <button id="btnSaveIN">Save Inventory IN</button>
-        <button class="secondary" id="btnClearIN">Clear</button>
-      </div>
-      <div class="hint">Saves to Google Sheets tab: <b>Inventory_IN</b>. FIFO to Inventory_Ledger will be added later.</div>
-    </section>
-
-    <!-- Sales -->
-    <section id="tab-sales" class="card" style="display:none;">
-      <div class="grid">
-        <div class="field" style="grid-column: span 2;">
-          <div class="label">sale_id</div>
-          <input id="s_id" placeholder="S-001" />
-        </div>
-        <div class="field" style="grid-column: span 2;">
-          <div class="label">date</div>
-          <input id="s_date" type="date" />
-        </div>
-        <div class="field" style="grid-column: span 4;">
-          <div class="label">customer_name</div>
-          <input id="s_customer" placeholder="Optional" />
-        </div>
-        <div class="field" style="grid-column: span 2;">
-          <div class="label">currency</div>
-          <select id="s_currency">
-            <option value="USD">USD</option>
-            <option value="KHR">KHR</option>
-          </select>
-        </div>
-        <div class="field" style="grid-column: span 2;">
-          <div class="label">fx_khr_to_usd (2 decimals)</div>
-          <input id="s_fx" type="number" step="0.01" min="0" inputmode="decimal" placeholder="e.g. 4100.00" />
+        <div class="kpi" style="margin-top:12px;">
+          <div class="box">
+            <div class="title">Total Sales (USD)</div>
+            <div class="val" id="kpi_sales_usd">0.00</div>
+          </div>
+          <div class="box">
+            <div class="title">Total Sales (KHR)</div>
+            <div class="val" id="kpi_sales_khr">0</div>
+          </div>
+          <div class="box">
+            <div class="title">Gross Profit (USD)</div>
+            <div class="val" id="kpi_gp">0.00</div>
+          </div>
+          <div class="box">
+            <div class="title">Net Profit (USD)</div>
+            <div class="val" id="kpi_np">0.00</div>
+          </div>
+          <div class="box">
+            <div class="title">Inventory Value (USD)</div>
+            <div class="val" id="kpi_inv">0.00</div>
+          </div>
+          <div class="box">
+            <div class="title">Marketing Expenses (USD)</div>
+            <div class="val" id="kpi_mkt">0.00</div>
+          </div>
         </div>
 
-        <div class="field" style="grid-column: span 2;">
-          <div class="label">status</div>
-          <select id="s_status">
-            <option value="PREP">PREP</option>
-            <option value="DELIVERY">DELIVERY</option>
-            <option value="COMPLETED">COMPLETED</option>
-            <option value="VOID">VOID</option>
-          </select>
+        <div class="hint">
+          Tip: If API shows “Not checked”, click Refresh once (it will ping Apps Script).
         </div>
-        <div class="field" style="grid-column: span 10;">
-          <div class="label">note</div>
-          <input id="s_note" placeholder="Optional note" />
+      </section>
+
+      <!-- INVENTORY IN -->
+      <section class="card view" id="view-inventoryin" hidden>
+        <h2>Inventory IN</h2>
+
+        <div class="row">
+          <div class="field span-3">
+            <label>Date received</label>
+            <input id="in_date" type="date" />
+          </div>
+
+          <div class="field span-3">
+            <label>FX RMB → USD (2 decimals)</label>
+            <input id="in_fx" type="number" step="0.01" inputmode="decimal" placeholder="e.g. 7.20" />
+          </div>
+
+          <div class="field span-6">
+            <label class="muted">FX will be reused for multiple entries</label>
+            <div class="btnbar">
+              <button class="btn" id="btn_in_save">Save Inventory IN</button>
+              <button class="btn secondary" id="btn_in_clear">Clear</button>
+            </div>
+          </div>
+
+          <div class="field span-3">
+            <label>SKU</label>
+            <input id="in_sku" placeholder="SKU" />
+          </div>
+          <div class="field span-3">
+            <label>Product name</label>
+            <input id="in_product" placeholder="Name" />
+          </div>
+          <div class="field span-3">
+            <label>Category</label>
+            <input id="in_category" placeholder="Type / Category" />
+          </div>
+          <div class="field span-3">
+            <label>Location</label>
+            <select id="in_location">
+              <option>Home 79</option>
+              <option>Home 44</option>
+              <option>The Point</option>
+            </select>
+          </div>
+
+          <div class="field span-3">
+            <label>Color (optional)</label>
+            <input id="in_color" placeholder="Color" />
+          </div>
+          <div class="field span-3">
+            <label>Size (optional)</label>
+            <input id="in_size" placeholder="Size" />
+          </div>
+
+          <div class="field span-2">
+            <label>Qty received</label>
+            <input id="in_qty" type="number" step="1" inputmode="numeric" placeholder="0" />
+          </div>
+          <div class="field span-2">
+            <label>Unit price (RMB)</label>
+            <input id="in_unit_rmb" type="number" step="0.01" inputmode="decimal" placeholder="0.00" />
+          </div>
+
+          <div class="field span-2">
+            <label>Unit cost (USD)</label>
+            <input id="in_unit_usd" type="text" readonly />
+          </div>
+          <div class="field span-3">
+            <label>Total cost (USD)</label>
+            <input id="in_total_usd" type="text" readonly />
+          </div>
+
+          <div class="field span-12">
+            <label>Note</label>
+            <input id="in_note" placeholder="Optional note" />
+          </div>
         </div>
 
-        <div class="field" style="grid-column: span 3;">
-          <div class="label">sku</div>
-          <input id="s_sku" placeholder="SKU" />
+        <div class="hint">
+          Unit cost USD = RMB unit price ÷ FX. (FX always fixed to 2 decimals)
         </div>
-        <div class="field" style="grid-column: span 5;">
-          <div class="label">product_name</div>
-          <input id="s_product" placeholder="Product name" />
-        </div>
-        <div class="field" style="grid-column: span 2;">
-          <div class="label">qty</div>
-          <input id="s_qty" type="number" step="1" min="0" inputmode="numeric" />
-        </div>
-        <div class="field" style="grid-column: span 2;">
-          <div class="label">unit_price</div>
-          <input id="s_price" type="number" step="0.01" min="0" inputmode="decimal" />
-        </div>
-      </div>
+      </section>
 
-      <div class="row">
-        <button id="btnSaveSale">Save Sales Line</button>
-        <button class="secondary" id="btnClearSale">Clear</button>
-      </div>
-      <div class="hint">Saves 1 row to <b>Sales</b>. FIFO + COGS posting will be added later.</div>
-    </section>
+      <!-- SALES -->
+      <section class="card view" id="view-sales" hidden>
+        <h2>Sales Order</h2>
 
-    <!-- Expenses -->
-    <section id="tab-expenses" class="card" style="display:none;">
-      <div class="grid">
-        <div class="field" style="grid-column: span 2;">
-          <div class="label">exp_id</div>
-          <input id="e_id" placeholder="EXP-001" />
-        </div>
-        <div class="field" style="grid-column: span 2;">
-          <div class="label">date</div>
-          <input id="e_date" type="date" />
-        </div>
-        <div class="field" style="grid-column: span 3;">
-          <div class="label">category</div>
-          <select id="e_cat">
-            <option value="Marketing">Marketing</option>
-            <option value="Salary">Salary</option>
-            <option value="Rent">Rent</option>
-            <option value="Logistics">Logistics</option>
-            <option value="Utilities">Utilities</option>
-            <option value="Other">Other</option>
-          </select>
-        </div>
-        <div class="field" style="grid-column: span 3;">
-          <div class="label">sub_category</div>
-          <input id="e_sub" placeholder="Optional" />
-        </div>
-        <div class="field" style="grid-column: span 2;">
-          <div class="label">amount_usd</div>
-          <input id="e_amt" type="number" step="0.01" min="0" inputmode="decimal" />
-        </div>
-        <div class="field" style="grid-column: span 12;">
-          <div class="label">note</div>
-          <input id="e_note" placeholder="Optional note" />
-        </div>
-      </div>
+        <div class="row">
+          <div class="field span-3">
+            <label>Sale date</label>
+            <input id="s_date" type="date" />
+          </div>
 
-      <div class="row">
-        <button id="btnSaveExp">Save Expense</button>
-        <button class="secondary" id="btnClearExp">Clear</button>
-      </div>
-      <div class="hint">Saves to <b>Operating_Expenses</b>.</div>
-    </section>
+          <div class="field span-3">
+            <label>Customer name</label>
+            <input id="s_customer" placeholder="Optional" />
+          </div>
 
-    <!-- Dashboard -->
-    <section id="tab-dashboard" class="card" style="display:none;">
-      <div class="hint">Dashboard is calculated in Google Sheets (Dashboard tab). We can add a read-only view later.</div>
-    </section>
+          <div class="field span-2">
+            <label>Currency</label>
+            <select id="s_currency">
+              <option value="USD">USD</option>
+              <option value="KHR">KHR</option>
+            </select>
+          </div>
+
+          <div class="field span-2">
+            <label>FX KHR → USD</label>
+            <input id="s_fx_khr" type="number" step="0.01" inputmode="decimal" placeholder="e.g. 4100" />
+          </div>
+
+          <div class="field span-2">
+            <label>Status</label>
+            <select id="s_status">
+              <option value="ORDER">Order</option>
+              <option value="PREPARATION">Preparation</option>
+              <option value="DELIVERY">Delivery</option>
+              <option value="COMPLETED">Completed</option>
+            </select>
+          </div>
+
+          <div class="field span-3">
+            <label>SKU</label>
+            <input id="s_sku" placeholder="SKU" />
+          </div>
+          <div class="field span-3">
+            <label>Product name</label>
+            <input id="s_product" placeholder="Name" />
+          </div>
+          <div class="field span-2">
+            <label>Qty</label>
+            <input id="s_qty" type="number" step="1" inputmode="numeric" placeholder="0" />
+          </div>
+          <div class="field span-2">
+            <label>Selling price (per unit)</label>
+            <input id="s_price" type="number" step="0.01" inputmode="decimal" placeholder="0.00" />
+          </div>
+          <div class="field span-2">
+            <label>Line total</label>
+            <input id="s_line_total" type="text" readonly />
+          </div>
+
+          <div class="field span-12">
+            <label>Note</label>
+            <input id="s_note" placeholder="Optional note" />
+          </div>
+        </div>
+
+        <div class="btnbar">
+          <button class="btn" id="btn_s_save">Save Sales</button>
+          <button class="btn secondary" id="btn_s_clear">Clear</button>
+        </div>
+
+        <div class="hint">
+          Inventory OUT + FIFO COGS will be calculated by Apps Script when status is COMPLETED (backend rule).
+        </div>
+      </section>
+
+      <!-- EXPENSES -->
+      <section class="card view" id="view-expenses" hidden>
+        <h2>Operating Expenses</h2>
+
+        <div class="row">
+          <div class="field span-3">
+            <label>Date</label>
+            <input id="e_date" type="date" />
+          </div>
+          <div class="field span-3">
+            <label>Category</label>
+            <input id="e_cat" placeholder="Marketing / Salary / Rent ..." />
+          </div>
+          <div class="field span-3">
+            <label>Sub-category</label>
+            <input id="e_sub" placeholder="Optional" />
+          </div>
+          <div class="field span-3">
+            <label>Amount (USD)</label>
+            <input id="e_amt" type="number" step="0.01" inputmode="decimal" placeholder="0.00" />
+          </div>
+
+          <div class="field span-12">
+            <label>Note</label>
+            <input id="e_note" placeholder="Optional note" />
+          </div>
+        </div>
+
+        <div class="btnbar">
+          <button class="btn" id="btn_e_save">Save Expense</button>
+          <button class="btn secondary" id="btn_e_clear">Clear</button>
+        </div>
+      </section>
+
+      <!-- REPORTS -->
+      <section class="card view" id="view-reports" hidden>
+        <h2>Reports</h2>
+        <div class="muted" style="font-size:13px;">
+          Reports are generated from Sheets (Reports_PnL, Reports_BS, Dashboard).  
+          In the next step we will add “Load Report” buttons if your Code.gs exposes report endpoints.
+        </div>
+      </section>
+    </div>
+
+    <div class="toast" id="toast"></div>
   </div>
 
   <script>
-    // ===== APP SCRIPT WEB APP URL (YOUR URL) =====
-    const WEB_APP_URL = "https://script.google.com/macros/s/AKfycbzgC6AqVVftlcvoetDa2aTVzdSbrK7FSJt7kpJCFDeHB7o7azG0Lh_yB4a4CBw1I-ML/exec";
-    document.getElementById("backendUrl").textContent = WEB_APP_URL;
+    // ====== CONFIG ======
+    const API_URL = "https://script.google.com/macros/s/AKfycbzgC6AqVVftlcvoetDa2aTVzdSbrK7FSJt7kpJCFDeHB7o7azG0Lh_yB4a4CBw1I-ML/exec";
 
-    // ===== UI HELPERS =====
-    const msgEl = document.getElementById("msg");
-    function showMsg(type, text){
-      msgEl.className = "msg " + (type === "ok" ? "ok" : "err");
-      msgEl.textContent = text;
-      msgEl.style.display = "block";
-      window.scrollTo({ top: 0, behavior: "smooth" });
+    const VIEWS = [
+      { id:"dashboard",   label:"Dashboard" },
+      { id:"inventoryin", label:"Inventory IN" },
+      { id:"sales",       label:"Sales" },
+      { id:"expenses",    label:"Expenses" },
+      { id:"reports",     label:"Reports" },
+    ];
+
+    // ====== UI HELPERS ======
+    const $ = (id) => document.getElementById(id);
+    const toastEl = $("toast");
+    function toast(msg){
+      toastEl.textContent = msg;
+      toastEl.classList.add("show");
+      setTimeout(()=>toastEl.classList.remove("show"), 1800);
     }
-    function clearMsg(){ msgEl.style.display = "none"; }
-
-    function setBusy(btn, busy){
-      btn.disabled = busy;
-      btn.textContent = busy ? "Saving..." : btn.dataset.label;
+    function setToday(el){
+      const d = new Date();
+      const iso = d.toISOString().slice(0,10);
+      if(!el.value) el.value = iso;
+    }
+    function fmt2(n){
+      const x = Number(n);
+      if(!isFinite(x)) return "0.00";
+      return x.toFixed(2);
+    }
+    function fmt0(n){
+      const x = Number(n);
+      if(!isFinite(x)) return "0";
+      return String(Math.round(x));
     }
 
-    // ===== NETWORK (retry-safe, timeout-safe) =====
-    async function postJsonWithRetry(payload, { retries = 2, timeoutMs = 12000 } = {}) {
+    // ====== FETCH (text/plain + retry + timeout) ======
+    async function sleep(ms){ return new Promise(r=>setTimeout(r, ms)); }
+
+    async function postToApi(payload){
       const body = JSON.stringify(payload);
+      const maxTry = 3;
       let lastErr = null;
 
-      for (let attempt = 0; attempt <= retries; attempt++) {
+      for(let i=1;i<=maxTry;i++){
         const controller = new AbortController();
-        const t = setTimeout(() => controller.abort(), timeoutMs);
+        const t = setTimeout(()=>controller.abort(), 15000);
 
-        try {
-          const res = await fetch(WEB_APP_URL, {
-            method: "POST",
-            mode: "cors",
-            redirect: "follow",
-            headers: { "Content-Type": "text/plain;charset=utf-8" },
+        try{
+          const res = await fetch(API_URL, {
+            method:"POST",
+            headers:{ "Content-Type":"text/plain;charset=utf-8" },
             body,
             signal: controller.signal
           });
-
           clearTimeout(t);
 
-          const data = await res.json().catch(() => null);
-          if (!res.ok || !data) throw new Error("Server response not OK");
-          if (!data.ok) throw new Error(data.error || "Unknown server error");
+          if(!res.ok) throw new Error("HTTP " + res.status);
+          const txt = await res.text();
+          let data = null;
+          try{ data = JSON.parse(txt); }catch(e){ data = { ok:true, raw:txt }; }
           return data;
 
-        } catch (err) {
+        }catch(err){
           clearTimeout(t);
           lastErr = err;
-          await new Promise(r => setTimeout(r, 400 * (attempt + 1)));
+          // retry with backoff
+          await sleep(350 * i);
         }
       }
-      throw lastErr || new Error("Failed to fetch");
+
+      throw lastErr || new Error("Network error");
     }
 
-    // ===== TABS =====
-    const tabs = document.querySelectorAll(".tab");
-    const panels = {
-      inventoryin: document.getElementById("tab-inventoryin"),
-      sales: document.getElementById("tab-sales"),
-      expenses: document.getElementById("tab-expenses"),
-      dashboard: document.getElementById("tab-dashboard"),
-    };
-    tabs.forEach(t => t.addEventListener("click", () => {
-      tabs.forEach(x => x.classList.remove("active"));
-      t.classList.add("active");
-      const key = t.dataset.tab;
-      Object.keys(panels).forEach(k => panels[k].style.display = (k === key ? "block" : "none"));
-      clearMsg();
-    }));
-
-    // ===== PING =====
-    document.getElementById("btnPing").addEventListener("click", async () => {
-      clearMsg();
-      const btn = document.getElementById("btnPing");
-      btn.dataset.label = "Ping";
-      setBusy(btn, true);
-      try{
-        const data = await postJsonWithRetry({ action: "ping" }, { retries: 2, timeoutMs: 12000 });
-        showMsg("ok", "Connected ✅ " + data.server_time);
-      }catch(e){
-        showMsg("err", "Ping failed: " + (e?.message || e));
-      }finally{
-        setBusy(btn, false);
+    // ====== NAV ======
+    function showView(name){
+      for(const v of VIEWS){
+        $("view-"+v.id).hidden = (v.id !== name);
+        const btn = document.querySelector(`[data-tab="${v.id}"]`);
+        if(btn) btn.classList.toggle("active", v.id===name);
       }
-    });
-
-    // ===== INVENTORY IN SAVE =====
-    const btnSaveIN = document.getElementById("btnSaveIN");
-    btnSaveIN.dataset.label = "Save Inventory IN";
-
-    function round2(n){
-      const x = Number(n);
-      if (!isFinite(x)) return "";
-      return (Math.round(x * 100) / 100).toFixed(2);
+      localStorage.setItem("erp_tab", name);
     }
 
-    btnSaveIN.addEventListener("click", async () => {
-      clearMsg();
-
-      const in_id = document.getElementById("in_id").value.trim();
-      const date = document.getElementById("in_date").value;
-      const sku = document.getElementById("in_sku").value.trim();
-      const product = document.getElementById("in_product").value.trim();
-      const category = document.getElementById("in_category").value.trim();
-      const color = document.getElementById("in_color").value.trim();
-      const size = document.getElementById("in_size").value.trim();
-      const location = document.getElementById("in_location").value;
-      const qty = document.getElementById("in_qty").value;
-      const unit_price_rmb = document.getElementById("in_price_rmb").value;
-      const fx = document.getElementById("in_fx").value;
-      const note = document.getElementById("in_note").value.trim();
-
-      if (!in_id || !date || !sku || !product || !location) {
-        showMsg("err", "Please fill: in_id, date, sku, product_name, location.");
-        return;
+    function buildNav(){
+      const nav = $("nav");
+      nav.innerHTML = "";
+      for(const v of VIEWS){
+        const b = document.createElement("button");
+        b.className = "tabbtn";
+        b.textContent = v.label;
+        b.dataset.tab = v.id;
+        b.onclick = ()=>showView(v.id);
+        nav.appendChild(b);
       }
-      if (!qty || Number(qty) <= 0) {
-        showMsg("err", "qty must be > 0");
-        return;
+    }
+
+    // ====== INVENTORY CALC ======
+    function recalcInventory(){
+      // enforce FX 2 decimals (but don’t auto-change while empty)
+      const fx = Number($("in_fx").value);
+      const qty = Number($("in_qty").value);
+      const rmb = Number($("in_unit_rmb").value);
+
+      if(isFinite(fx) && fx>0 && isFinite(rmb)){
+        const unitUsd = rmb / fx;
+        $("in_unit_usd").value = fmt2(unitUsd);
+        if(isFinite(qty)){
+          $("in_total_usd").value = fmt2(unitUsd * qty);
+        }else{
+          $("in_total_usd").value = "0.00";
+        }
+      }else{
+        $("in_unit_usd").value = "";
+        $("in_total_usd").value = "";
       }
-      if (!unit_price_rmb || Number(unit_price_rmb) <= 0) {
-        showMsg("err", "unit_price_rmb must be > 0");
-        return;
-      }
-      if (!fx || Number(fx) <= 0) {
-        showMsg("err", "fx_rmb_usd must be > 0");
-        return;
+    }
+
+    // ====== SALES CALC ======
+    function recalcSales(){
+      const qty = Number($("s_qty").value);
+      const price = Number($("s_price").value);
+      const cur = $("s_currency").value;
+      const fx = Number($("s_fx_khr").value);
+
+      const line = (isFinite(qty)&&isFinite(price)) ? (qty*price) : 0;
+      if(cur === "USD"){
+        $("s_line_total").value = fmt2(line);
+      }else{
+        // KHR number can be large, keep as integer-looking
+        $("s_line_total").value = fmt0(line);
       }
 
-      const fx2 = round2(fx);
+      // if KHR selected, FX required; we keep it for backend conversion
+      if(cur==="KHR"){
+        $("s_fx_khr").disabled = false;
+      }else{
+        $("s_fx_khr").disabled = true;
+        $("s_fx_khr").value = "";
+      }
+    }
 
-      const row = [
-        in_id,                 // A in_id
-        date,                  // B date
-        sku,                   // C sku
-        product,               // D product_name
-        category,              // E category
-        color,                 // F color
-        size,                  // G size
-        location,              // H location
-        Number(qty),           // I qty
-        Number(unit_price_rmb),// J unit_price_rmb
-        Number(fx2),           // K fx_rmb_usd
-        "",                    // L unit_cost_usd (sheet formula)
-        "",                    // M total_cost_usd (sheet formula)
-        note                   // N note
-      ];
-
-      setBusy(btnSaveIN, true);
+    // ====== API ACTIONS (match Code.gs routing later) ======
+    async function apiPing(){
+      const s = $("api_status");
+      s.textContent = "API: Checking...";
       try{
-        const data = await postJsonWithRetry({
-          action: "append_row",
-          sheet: "Inventory_IN",
-          row
-        }, { retries: 3, timeoutMs: 15000 });
-
-        showMsg("ok", "Saved ✅ Inventory_IN row appended (Row " + data.last_row + ").");
-
+        const data = await postToApi({ action:"ping" });
+        s.textContent = "API: OK";
+        s.style.borderColor = "#bbf7d0";
+        s.style.background = "#f0fdf4";
+        s.style.color = "#166534";
+        return data;
       }catch(e){
-        showMsg("err", "Save failed: " + (e?.message || e));
-      }finally{
-        setBusy(btnSaveIN, false);
+        s.textContent = "API: Failed";
+        s.style.borderColor = "#fecaca";
+        s.style.background = "#fef2f2";
+        s.style.color = "#991b1b";
+        throw e;
       }
-    });
+    }
 
-    document.getElementById("btnClearIN").addEventListener("click", () => {
-      ["in_id","in_date","in_sku","in_product","in_category","in_color","in_size","in_qty","in_price_rmb","in_fx","in_note"].forEach(id=>{
-        document.getElementById(id).value = "";
-      });
-      document.getElementById("in_location").value = "Home 79";
-      clearMsg();
-    });
-
-    // ===== SALES SAVE (1 line) =====
-    const btnSaveSale = document.getElementById("btnSaveSale");
-    btnSaveSale.dataset.label = "Save Sales Line";
-
-    btnSaveSale.addEventListener("click", async () => {
-      clearMsg();
-
-      const sale_id = document.getElementById("s_id").value.trim();
-      const date = document.getElementById("s_date").value;
-      const customer = document.getElementById("s_customer").value.trim();
-      const currency = document.getElementById("s_currency").value;
-      const fx = document.getElementById("s_fx").value;
-      const status = document.getElementById("s_status").value;
-      const note = document.getElementById("s_note").value.trim();
-
-      const sku = document.getElementById("s_sku").value.trim();
-      const product = document.getElementById("s_product").value.trim();
-      const qty = document.getElementById("s_qty").value;
-      const unit_price = document.getElementById("s_price").value;
-
-      if (!sale_id || !date || !currency || !status || !sku || !product) {
-        showMsg("err", "Please fill: sale_id, date, currency, status, sku, product_name.");
+    async function saveInventoryIn(){
+      // lock FX to 2 decimals at save time
+      const fx = Number($("in_fx").value);
+      if(!(isFinite(fx) && fx>0)){
+        toast("Enter FX (RMB→USD)");
         return;
       }
-      if (!qty || Number(qty) <= 0) {
-        showMsg("err", "qty must be > 0");
-        return;
+      $("in_fx").value = fx.toFixed(2);
+
+      const payload = {
+        action:"inventory_in_add",
+        date: $("in_date").value,
+        sku: $("in_sku").value.trim(),
+        product_name: $("in_product").value.trim(),
+        category: $("in_category").value.trim(),
+        color: $("in_color").value.trim(),
+        size: $("in_size").value.trim(),
+        location: $("in_location").value,
+        qty: Number($("in_qty").value),
+        unit_price_rmb: Number($("in_unit_rmb").value),
+        fx_rmb_usd: Number($("in_fx").value),
+        note: $("in_note").value.trim()
+      };
+
+      try{
+        await postToApi(payload);
+        toast("Saved Inventory IN");
+        // keep FX for session
+        $("in_sku").value = "";
+        $("in_product").value = "";
+        $("in_category").value = "";
+        $("in_color").value = "";
+        $("in_size").value = "";
+        $("in_qty").value = "";
+        $("in_unit_rmb").value = "";
+        $("in_unit_usd").value = "";
+        $("in_total_usd").value = "";
+        $("in_note").value = "";
+      }catch(e){
+        toast("Save failed. Try again.");
       }
-      if (!unit_price || Number(unit_price) <= 0) {
-        showMsg("err", "unit_price must be > 0");
-        return;
-      }
-      if (currency === "KHR") {
-        if (!fx || Number(fx) <= 0) {
-          showMsg("err", "For KHR sales, fx_khr_to_usd must be > 0");
+    }
+
+    async function saveSales(){
+      const cur = $("s_currency").value;
+      if(cur==="KHR"){
+        const fx = Number($("s_fx_khr").value);
+        if(!(isFinite(fx) && fx>0)){
+          toast("Enter FX KHR→USD");
           return;
         }
       }
+      const payload = {
+        action:"sales_add",
+        date: $("s_date").value,
+        customer_name: $("s_customer").value.trim(),
+        currency: cur,
+        fx_khr_to_usd: cur==="KHR" ? Number($("s_fx_khr").value) : "",
+        status: $("s_status").value,
+        sku: $("s_sku").value.trim(),
+        product_name: $("s_product").value.trim(),
+        qty: Number($("s_qty").value),
+        unit_price: Number($("s_price").value),
+        note: $("s_note").value.trim()
+      };
 
-      const fx2 = fx ? round2(fx) : "";
-
-      const row = [
-        sale_id,                  // A
-        date,                     // B
-        customer,                 // C
-        currency,                 // D
-        fx2 ? Number(fx2) : "",   // E
-        status,                   // F
-        note,                     // G
-        sku,                      // H
-        product,                  // I
-        Number(qty),              // J
-        Number(unit_price),       // K
-        "",                       // L line_total (sheet formula)
-        ""                        // M line_total_usd (sheet formula)
-      ];
-
-      setBusy(btnSaveSale, true);
       try{
-        const data = await postJsonWithRetry({
-          action: "append_row",
-          sheet: "Sales",
-          row
-        }, { retries: 3, timeoutMs: 15000 });
-
-        showMsg("ok", "Saved ✅ Sales row appended (Row " + data.last_row + ").");
-
+        await postToApi(payload);
+        toast("Saved Sales");
+        $("s_sku").value = "";
+        $("s_product").value = "";
+        $("s_qty").value = "";
+        $("s_price").value = "";
+        $("s_line_total").value = "";
+        $("s_note").value = "";
       }catch(e){
-        showMsg("err", "Save failed: " + (e?.message || e));
-      }finally{
-        setBusy(btnSaveSale, false);
+        toast("Save failed. Try again.");
       }
-    });
-
-    document.getElementById("btnClearSale").addEventListener("click", () => {
-      ["s_id","s_date","s_customer","s_fx","s_note","s_sku","s_product","s_qty","s_price"].forEach(id=>{
-        document.getElementById(id).value = "";
-      });
-      document.getElementById("s_currency").value = "USD";
-      document.getElementById("s_status").value = "PREP";
-      clearMsg();
-    });
-
-    // ===== EXPENSE SAVE =====
-    const btnSaveExp = document.getElementById("btnSaveExp");
-    btnSaveExp.dataset.label = "Save Expense";
-
-    function showAsNumber(v){
-      if (v === null || v === undefined) return "";
-      const s = String(v).trim();
-      if (!s) return "";
-      const n = Number(s);
-      return isFinite(n) ? n : "";
     }
 
-    btnSaveExp.addEventListener("click", async () => {
-      clearMsg();
-
-      const exp_id = document.getElementById("e_id").value.trim();
-      const date = document.getElementById("e_date").value;
-      const category = document.getElementById("e_cat").value;
-      const sub = document.getElementById("e_sub").value.trim();
-      const amt = showAsNumber(document.getElementById("e_amt").value);
-      const note = document.getElementById("e_note").value.trim();
-
-      if (!exp_id || !date || !category) {
-        showMsg("err", "Please fill: exp_id, date, category.");
-        return;
-      }
-      if (!amt || Number(amt) <= 0) {
-        showMsg("err", "amount_usd must be > 0");
-        return;
-      }
-
-      const row = [
-        exp_id,              // A
-        date,                // B
-        category,            // C
-        sub,                 // D
-        Number(round2(amt)), // E amount_usd
-        note                 // F
-      ];
-
-      setBusy(btnSaveExp, true);
+    async function saveExpense(){
+      const payload = {
+        action:"expense_add",
+        date: $("e_date").value,
+        category: $("e_cat").value.trim(),
+        sub_category: $("e_sub").value.trim(),
+        amount_usd: Number($("e_amt").value),
+        note: $("e_note").value.trim()
+      };
       try{
-        const data = await postJsonWithRetry({
-          action: "append_row",
-          sheet: "Operating_Expenses",
-          row
-        }, { retries: 3, timeoutMs: 15000 });
-
-        showMsg("ok", "Saved ✅ Expense appended (Row " + data.last_row + ").");
-
+        await postToApi(payload);
+        toast("Saved Expense");
+        $("e_cat").value = "";
+        $("e_sub").value = "";
+        $("e_amt").value = "";
+        $("e_note").value = "";
       }catch(e){
-        showMsg("err", "Save failed: " + (e?.message || e));
-      }finally{
-        setBusy(btnSaveExp, false);
+        toast("Save failed. Try again.");
       }
-    });
+    }
 
-    document.getElementById("btnClearExp").addEventListener("click", () => {
-      ["e_id","e_date","e_sub","e_amt","e_note"].forEach(id=>{
-        document.getElementById(id).value = "";
-      });
-      document.getElementById("e_cat").value = "Marketing";
-      clearMsg();
-    });
+    async function dashboardRefresh(){
+      try{
+        await apiPing();
+      }catch(e){
+        // still allow user to try again later
+        return;
+      }
+
+      const from = $("dash_from").value;
+      const to = $("dash_to").value;
+
+      try{
+        const data = await postToApi({ action:"dashboard_get", from, to });
+        // expected keys: sales_usd, sales_khr, gross_profit_usd, net_profit_usd, inventory_value_usd, marketing_expenses_usd
+        $("kpi_sales_usd").textContent = fmt2(data.sales_usd ?? 0);
+        $("kpi_sales_khr").textContent = fmt0(data.sales_khr ?? 0);
+        $("kpi_gp").textContent = fmt2(data.gross_profit_usd ?? 0);
+        $("kpi_np").textContent = fmt2(data.net_profit_usd ?? 0);
+        $("kpi_inv").textContent = fmt2(data.inventory_value_usd ?? 0);
+        $("kpi_mkt").textContent = fmt2(data.marketing_expenses_usd ?? 0);
+        toast("Dashboard updated");
+      }catch(e){
+        toast("Dashboard fetch failed");
+      }
+    }
+
+    // ====== INIT ======
+    function init(){
+      buildNav();
+      const last = localStorage.getItem("erp_tab") || "dashboard";
+      showView(last);
+
+      // default dates
+      setToday($("dash_from"));
+      setToday($("dash_to"));
+      setToday($("in_date"));
+      setToday($("s_date"));
+      setToday($("e_date"));
+
+      // listeners
+      $("in_fx").addEventListener("input", recalcInventory);
+      $("in_qty").addEventListener("input", recalcInventory);
+      $("in_unit_rmb").addEventListener("input", recalcInventory);
+
+      $("s_qty").addEventListener("input", recalcSales);
+      $("s_price").addEventListener("input", recalcSales);
+      $("s_currency").addEventListener("change", recalcSales);
+
+      $("btn_in_save").onclick = saveInventoryIn;
+      $("btn_in_clear").onclick = ()=>{
+        $("in_sku").value=""; $("in_product").value=""; $("in_category").value="";
+        $("in_color").value=""; $("in_size").value=""; $("in_qty").value="";
+        $("in_unit_rmb").value=""; $("in_unit_usd").value=""; $("in_total_usd").value="";
+        $("in_note").value="";
+        toast("Cleared");
+      };
+
+      $("btn_s_save").onclick = saveSales;
+      $("btn_s_clear").onclick = ()=>{
+        $("s_customer").value=""; $("s_sku").value=""; $("s_product").value="";
+        $("s_qty").value=""; $("s_price").value=""; $("s_line_total").value="";
+        $("s_note").value="";
+        toast("Cleared");
+      };
+
+      $("btn_e_save").onclick = saveExpense;
+      $("btn_e_clear").onclick = ()=>{
+        $("e_cat").value=""; $("e_sub").value=""; $("e_amt").value=""; $("e_note").value="";
+        toast("Cleared");
+      };
+
+      $("btn_dash_refresh").onclick = dashboardRefresh;
+
+      // initial calc
+      recalcSales();
+      recalcInventory();
+    }
+
+    init();
   </script>
 </body>
 </html>

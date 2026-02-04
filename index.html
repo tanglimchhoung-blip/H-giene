@@ -33,9 +33,9 @@
     .brand p{margin:4px 0 0;color:var(--muted);font-size:13px}
     .tabs{display:flex;gap:10px;flex-wrap:wrap;justify-content:flex-end}
     .tab{border:1px solid var(--line);background:#fff;padding:9px 12px;border-radius:999px;font-size:14px;cursor:pointer;user-select:none}
-    .tab.active{border-color:var(--text);font-weight:700}
+    .tab.active{border-color:var(--text);font-weight:800}
     .card{background:var(--card);border:1px solid var(--line);border-radius:var(--radius);box-shadow:var(--shadow);padding:18px}
-    .sectionTitle{margin:0 0 12px;font-size:18px;font-weight:800}
+    .sectionTitle{margin:0 0 12px;font-size:18px;font-weight:900}
     .hint{color:var(--muted);font-size:13px;margin:0 0 14px}
     .grid{display:grid;grid-template-columns:repeat(12,1fr);gap:12px}
     .col-12{grid-column:span 12}
@@ -56,7 +56,7 @@
     textarea{min-height:46px;resize:vertical}
     .row{display:flex;gap:10px;flex-wrap:wrap;align-items:center}
     .btn{
-      border:none;border-radius:14px;padding:11px 14px;font-weight:750;
+      border:none;border-radius:14px;padding:11px 14px;font-weight:850;
       cursor:pointer;user-select:none;font-size:14px;white-space:nowrap
     }
     .btn.primary{background:var(--blue);color:#fff}
@@ -65,9 +65,10 @@
     .btn.ok{background:var(--ok);color:#fff}
     .btn.warn{background:var(--warn);color:#111}
     .btn.bad{background:var(--bad);color:#fff}
-    .btn:disabled{opacity:.55;cursor:not-allowed}
+    .btn:disabled{opacity:.45;cursor:not-allowed}
 
-    .pill{display:inline-flex;align-items:center;gap:7px;border:1px solid var(--line);border-radius:999px;padding:7px 10px;font-size:13px;color:var(--muted);background:#fff}
+    .pill{display:inline-flex;align-items:center;gap:7px;border:1px solid var(--line);border-radius:999px;padding:7px 10px;font-size:13px;color:#374151;background:#fff}
+    .pill.muted{color:var(--muted)}
     .dot{width:9px;height:9px;border-radius:50%;background:#94a3b8}
     .dot.prep{background:#94a3b8}
     .dot.del{background:#60a5fa}
@@ -75,14 +76,28 @@
     .dot.can{background:#ef4444}
 
     .list{margin-top:14px;border:1px solid var(--line);border-radius:var(--radius);overflow:hidden;background:#fff}
-    .listHeader{padding:10px 12px;font-size:13px;color:#374151;background:#f9fafb;border-bottom:1px solid var(--line);font-weight:750}
+    .listHeader{padding:10px 12px;font-size:13px;color:#374151;background:#f9fafb;border-bottom:1px solid var(--line);font-weight:850}
     .item{padding:12px;border-bottom:1px solid var(--line)}
     .item:last-child{border-bottom:none}
     .meta{display:flex;gap:8px;flex-wrap:wrap;align-items:center;margin-bottom:8px;font-size:13px;color:#374151}
-    .meta b{font-weight:800}
+    .meta b{font-weight:900}
     .small{font-size:12px;color:var(--muted)}
     .actions{display:flex;gap:8px;flex-wrap:wrap;margin-top:10px}
     .inline{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:8px}
+
+    .badgeRow{display:flex;gap:8px;flex-wrap:wrap;margin-top:8px}
+    .badge{
+      display:inline-flex;align-items:center;gap:6px;
+      border:1px solid var(--line);border-radius:999px;
+      padding:6px 10px;font-size:12px;background:#fff;
+      color:#374151;
+    }
+    .badge.off{opacity:.45}
+    .badge .miniDot{width:8px;height:8px;border-radius:50%;background:#94a3b8}
+    .badge.on .miniDot{background:var(--ok)}
+    .badge.paid.on .miniDot{background:var(--ok)}
+    .badge.prep.on .miniDot{background:var(--warn)}
+    .badge.ord.on .miniDot{background:var(--blue)}
 
     .toast{
       position:fixed;left:50%;bottom:18px;transform:translateX(-50%);
@@ -107,22 +122,18 @@
     <header>
       <div class="brand">
         <h1>Internal ERP</h1>
-        <p>Simple • Finance-first • FIFO-ready</p>
+        <p>Sales workflow locked: A drops order → B prepares → Delivered/Completed → Paid</p>
       </div>
       <div class="tabs">
-        <div class="tab" data-tab="dashboard">Dashboard</div>
-        <div class="tab" data-tab="inventory">Inventory IN</div>
         <div class="tab active" data-tab="sales">Sales</div>
-        <div class="tab" data-tab="expenses">Expenses</div>
-        <div class="tab" data-tab="reports">Reports</div>
       </div>
     </header>
 
     <!-- SALES -->
-    <section id="tab-sales" class="card">
+    <section class="card">
       <h2 class="sectionTitle">Sales</h2>
       <p class="hint">
-        Workflow: <b>Mr/Ms A</b> drops order → <b>Mr/Ms B</b> prepares → update status → mark <b>Payment Received</b>.
+        <b>Mr/Ms A</b>: Drop Order. • <b>Mr/Ms B</b>: Prepare. • Payment can be marked only after Delivered/Completed.
       </p>
 
       <div class="grid">
@@ -133,17 +144,17 @@
 
         <div class="col-3">
           <label>Customer name</label>
-          <input id="sale_customer" placeholder="Customer name">
+          <input id="sale_customer_name" placeholder="Customer name">
         </div>
 
         <div class="col-3">
           <label>Telephone number</label>
-          <input id="sale_phone" placeholder="e.g. 012345678">
+          <input id="sale_customer_phone" placeholder="e.g. 012345678">
         </div>
 
         <div class="col-3">
-          <label>Location</label>
-          <select id="sale_location"></select>
+          <label>Customer address</label>
+          <input id="sale_customer_address" placeholder="Street / unit / landmark">
         </div>
 
         <div class="col-3">
@@ -156,22 +167,7 @@
 
         <div class="col-3">
           <label>FX KHR → USD (if KHR)</label>
-          <input id="sale_fx" inputmode="decimal" placeholder="0">
-        </div>
-
-        <div class="col-3">
-          <label>Status</label>
-          <select id="sale_status">
-            <option value="Preparation">Preparation</option>
-            <option value="Delivered">Delivered</option>
-            <option value="Completed">Completed</option>
-            <option value="Cancelled">Cancelled</option>
-          </select>
-        </div>
-
-        <div class="col-3">
-          <label>Order by (Mr/Ms A)</label>
-          <input id="sale_order_by" placeholder="Mr A / Ms A">
+          <input id="sale_fx_khr_usd" inputmode="decimal" placeholder="0">
         </div>
 
         <div class="col-3">
@@ -181,7 +177,7 @@
 
         <div class="col-3">
           <label>Product name</label>
-          <input id="sale_product" placeholder="Product">
+          <input id="sale_product_name" placeholder="Product">
         </div>
 
         <div class="col-2">
@@ -195,17 +191,32 @@
         </div>
 
         <div class="col-4">
-          <label>Note</label>
-          <input id="sale_note" placeholder="Optional note">
-        </div>
-
-        <div class="col-4">
           <label>Line total (auto)</label>
           <input id="sale_line_total" readonly>
         </div>
 
-        <div class="col-4">
-          <label>Payment received?</label>
+        <div class="col-3">
+          <label>Order by (Mr/Ms A)</label>
+          <input id="sale_order_by" placeholder="Mr A / Ms A">
+        </div>
+
+        <div class="col-3">
+          <label>Note</label>
+          <input id="sale_note" placeholder="Optional note">
+        </div>
+
+        <div class="col-3">
+          <label>Status</label>
+          <select id="sale_status">
+            <option value="Preparation">Preparation</option>
+            <option value="Delivered">Delivered</option>
+            <option value="Completed">Completed</option>
+            <option value="Cancelled">Cancelled</option>
+          </select>
+        </div>
+
+        <div class="col-3">
+          <label>Paid?</label>
           <select id="sale_paid">
             <option value="FALSE">Not received</option>
             <option value="TRUE">Received</option>
@@ -214,23 +225,22 @@
 
         <div class="col-12">
           <div class="row">
-            <button class="btn primary" id="btnSaveSale">Save Sale</button>
-            <button class="btn ghost" id="btnClearSale">Clear</button>
+            <button class="btn primary" id="btnDropOrder">✅ Drop Order (A)</button>
+            <button class="btn ghost" id="btnClear">Clear</button>
             <span class="pill" id="pillStatus">
               <span class="dot prep" id="statusDot"></span>
               <span id="statusText">Preparation</span>
             </span>
+            <span class="pill muted" id="pillRule">Paid disabled until Delivered/Completed</span>
           </div>
           <div class="small" style="margin-top:8px;">
-            Tip: Only when <b>Payment Received</b> = TRUE should it be counted into Cash In / Balance Sheet.
+            Drop Order will force: <b>ordered=TRUE</b>, <b>prepared=FALSE</b>, <b>paid=FALSE</b>, <b>status=Preparation</b>.
           </div>
         </div>
       </div>
 
       <div class="list">
-        <div class="listHeader">
-          Recent Sales (latest 20) — update status / prepared / payment received
-        </div>
+        <div class="listHeader">Recent Sales (latest 20) — update workflow buttons</div>
         <div id="salesList"></div>
       </div>
     </section>
@@ -279,165 +289,193 @@
     return await res.json();
   }
 
-  async function apiPost(action, payload){
+  async function apiPost(action, data){
     const res = await fetch(API_BASE, {
       method:"POST",
       headers:{ "Content-Type":"text/plain;charset=utf-8" },
-      body: JSON.stringify({ action, ...payload })
+      body: JSON.stringify({ action, data })
     });
     return await res.json();
   }
 
-  // ---------- Init ----------
-  async function init(){
-    $("sale_date").value = todayISO();
-    $("sale_fx").value = "0";
-    $("sale_qty").value = "1";
-    $("sale_unit_price").value = "0.00";
-    calcSaleTotal();
-
-    $("sale_status").addEventListener("change", renderSaleStatusPill);
-    $("sale_qty").addEventListener("input", calcSaleTotal);
-    $("sale_unit_price").addEventListener("input", calcSaleTotal);
-    $("sale_currency").addEventListener("change", ()=>{
-      const cur = $("sale_currency").value;
-      $("sale_fx").disabled = (cur !== "KHR");
-      if (cur !== "KHR") $("sale_fx").value = "0";
-      calcSaleTotal();
-    });
-    $("sale_fx").addEventListener("input", calcSaleTotal);
-
-    $("btnClearSale").addEventListener("click", clearSaleForm);
-    $("btnSaveSale").addEventListener("click", saveSale);
-
-    // Load dropdown lists
-    const lists = await apiGet({ action:"lists" });
-    if (!lists.ok) {
-      toast("Failed to load lists. Check Code.gs lists()");
-      console.log(lists);
-      return;
-    }
-    const locs = lists.data.locations || [];
-    fillSelect($("sale_location"), locs, "Select location");
-
-    // Load recent sales
-    await loadRecentSales();
-
-    renderSaleStatusPill();
+  function escapeHtml(s){
+    return String(s ?? "")
+      .replaceAll("&","&amp;")
+      .replaceAll("<","&lt;")
+      .replaceAll(">","&gt;")
+      .replaceAll('"',"&quot;")
+      .replaceAll("'","&#039;");
   }
 
-  function fillSelect(sel, arr, placeholder){
-    sel.innerHTML = "";
-    const opt0 = document.createElement("option");
-    opt0.value = "";
-    opt0.textContent = placeholder || "Select";
-    sel.appendChild(opt0);
-
-    arr.forEach(v=>{
-      const o = document.createElement("option");
-      o.value = v;
-      o.textContent = v;
-      sel.appendChild(o);
-    });
-  }
-
-  function renderSaleStatusPill(){
-    const s = $("sale_status").value;
-    $("statusText").textContent = s;
-    const dot = $("statusDot");
-    dot.className = "dot " + statusDotClass(s);
-  }
-
-  function calcSaleTotal(){
+  // ---------- Form Logic ----------
+  function calcLineTotal(){
     const qty = Number($("sale_qty").value || 0);
     const unit = Number($("sale_unit_price").value || 0);
-    let total = qty * unit;
-
-    // If currency is KHR, optional convert display (still store original currency amounts)
-    const cur = $("sale_currency").value;
-    const fx = Number($("sale_fx").value || 0);
-    if (cur === "KHR" && fx > 0) {
-      // keep total as entered (KHR). We can also show USD equivalent in note later if needed.
-      // For now: line total shows in entered currency.
-    }
-    $("sale_line_total").value = to2(total);
+    $("sale_line_total").value = to2(qty * unit);
   }
 
-  function clearSaleForm(){
+  function renderStatusPill(){
+    const s = $("sale_status").value;
+    $("statusText").textContent = s;
+    $("statusDot").className = "dot " + statusDotClass(s);
+
+    // Paid rule: disabled unless Delivered/Completed
+    const okPaid = (s === "Delivered" || s === "Completed");
+    $("sale_paid").disabled = !okPaid;
+    $("pillRule").textContent = okPaid ? "Paid allowed ✅" : "Paid disabled until Delivered/Completed";
+  }
+
+  function clearForm(){
     $("sale_date").value = todayISO();
-    $("sale_customer").value = "";
-    $("sale_phone").value = "";
-    $("sale_location").value = "";
+    $("sale_customer_name").value = "";
+    $("sale_customer_phone").value = "";
+    $("sale_customer_address").value = "";
     $("sale_currency").value = "USD";
-    $("sale_fx").value = "0";
-    $("sale_fx").disabled = true;
-    $("sale_status").value = "Preparation";
-    $("sale_order_by").value = "";
+    $("sale_fx_khr_usd").value = "0";
+    $("sale_fx_khr_usd").disabled = true;
     $("sale_sku").value = "";
-    $("sale_product").value = "";
+    $("sale_product_name").value = "";
     $("sale_qty").value = "1";
     $("sale_unit_price").value = "0.00";
     $("sale_note").value = "";
+    $("sale_status").value = "Preparation";
     $("sale_paid").value = "FALSE";
-    calcSaleTotal();
-    renderSaleStatusPill();
+    $("sale_order_by").value = "";
+    calcLineTotal();
+    renderStatusPill();
   }
 
-  // ---------- Sales API ----------
-  async function saveSale(){
-    // basic validations
+  function validateDropOrder(){
+    if (!$("sale_date").value) return "Please select date";
+    if (!$("sale_customer_name").value.trim()) return "Please enter customer name";
+    if (!$("sale_customer_phone").value.trim()) return "Please enter telephone number";
+    if (!$("sale_customer_address").value.trim()) return "Please enter customer address";
+    if (!$("sale_order_by").value.trim()) return "Please enter Order by (Mr/Ms A)";
+    if (!$("sale_sku").value.trim()) return "Please enter SKU";
+    if (!$("sale_product_name").value.trim()) return "Please enter product name";
+    const q = Number($("sale_qty").value || 0);
+    if (!(q > 0)) return "Qty must be > 0";
+    return "";
+  }
+
+  async function dropOrder(){
+    const err = validateDropOrder();
+    if (err) return toast(err);
+
+    // FORCE rule for A
     const payload = {
       date: $("sale_date").value,
-      customer: $("sale_customer").value.trim(),
-      phone: $("sale_phone").value.trim(),
-      location: $("sale_location").value,
+      customer_name: $("sale_customer_name").value.trim(),
+      customer_phone: $("sale_customer_phone").value.trim(),
+      customer_address: $("sale_customer_address").value.trim(),
       currency: $("sale_currency").value,
-      fx: to2($("sale_fx").value || 0),
-      status: $("sale_status").value,
-      orderBy: $("sale_order_by").value.trim(),
-      sku: $("sale_sku").value.trim(),
-      product: $("sale_product").value.trim(),
-      qty: Number($("sale_qty").value || 0),
-      unitPrice: to2($("sale_unit_price").value || 0),
-      lineTotal: to2($("sale_line_total").value || 0),
+      fx_khr_usd: to2($("sale_fx_khr_usd").value || 0),
+      status: "Preparation",
       note: $("sale_note").value.trim(),
-      paid: $("sale_paid").value
+
+      sku: $("sale_sku").value.trim(),
+      product_name: $("sale_product_name").value.trim(),
+      qty: $("sale_qty").value,
+      unit_price: to2($("sale_unit_price").value || 0),
+      line_total: to2($("sale_line_total").value || 0),
+
+      ordered: "TRUE",
+      order_by: $("sale_order_by").value.trim(),
+      prepared: "FALSE",
+      prepared_by: "",
+      paid: "FALSE",
+      paid_date: ""
     };
 
-    if (!payload.date) return toast("Please select date");
-    if (!payload.customer) return toast("Please enter customer name");
-    if (!payload.location) return toast("Please select location");
-    if (!payload.sku) return toast("Please enter SKU");
-    if (!payload.product) return toast("Please enter product name");
-    if (!payload.qty || payload.qty <= 0) return toast("Qty must be > 0");
-
-    $("btnSaveSale").disabled = true;
-    $("btnSaveSale").textContent = "Saving...";
+    $("btnDropOrder").disabled = true;
+    $("btnDropOrder").textContent = "Saving...";
     try{
       const res = await apiPost("saveSale", payload);
       if (!res.ok){
         console.log(res);
         toast("Save failed. Check Code.gs saveSale()");
       } else {
-        toast("Saved ✅");
-        clearSaleForm();
+        toast("Order dropped ✅");
+        clearForm();
         await loadRecentSales();
       }
     }catch(e){
       console.log(e);
       toast("Network error saving");
     }finally{
-      $("btnSaveSale").disabled = false;
-      $("btnSaveSale").textContent = "Save Sale";
+      $("btnDropOrder").disabled = false;
+      $("btnDropOrder").textContent = "✅ Drop Order (A)";
     }
+  }
+
+  // ---------- Recent Sales List ----------
+  function canMarkPaid(status){
+    return (status === "Delivered" || status === "Completed");
+  }
+
+  function renderSaleItem(r){
+    const id = r.id || "";
+    const status = String(r.status || "Preparation");
+    const ordered = String(r.ordered || "").toUpperCase() === "TRUE";
+    const prepared = String(r.prepared || "").toUpperCase() === "TRUE";
+    const paid = String(r.paid || "").toUpperCase() === "TRUE";
+
+    const paidAllowed = canMarkPaid(status);
+
+    return `
+      <div class="item" data-id="${escapeHtml(id)}">
+        <div class="meta">
+          <span class="dot ${statusDotClass(status)}"></span>
+          <b>${escapeHtml(status)}</b>
+          <span>•</span><span>${escapeHtml(r.date || "")}</span>
+          <span>•</span><span><b>${escapeHtml(r.customer_name || "")}</b></span>
+          <span>•</span><span>${escapeHtml(r.customer_phone || "")}</span>
+          <span>•</span><span>${escapeHtml(r.currency || "USD")} ${escapeHtml(String(r.line_total || "0.00"))}</span>
+        </div>
+
+        <div class="small">
+          Address: <b>${escapeHtml(r.customer_address || "")}</b><br/>
+          SKU: <b>${escapeHtml(r.sku || "")}</b> • Product: <b>${escapeHtml(r.product_name || "")}</b> • Qty: ${escapeHtml(String(r.qty || ""))} • Unit: ${escapeHtml(String(r.unit_price || ""))}
+        </div>
+
+        <div class="badgeRow">
+          <span class="badge ord ${ordered ? "on" : "off"}"><span class="miniDot"></span>Ordered</span>
+          <span class="badge prep ${prepared ? "on" : "off"}"><span class="miniDot"></span>Prepared</span>
+          <span class="badge paid ${paid ? "on" : "off"}"><span class="miniDot"></span>Paid</span>
+        </div>
+
+        <div class="inline">
+          <div>
+            <label>Prepared by (Mr/Ms B)</label>
+            <input class="preparedBy" placeholder="Mr B / Ms B" value="${escapeHtml(r.prepared_by || "")}">
+          </div>
+          <div>
+            <label>Status</label>
+            <select class="updStatus">
+              ${["Preparation","Delivered","Completed","Cancelled"].map(s=>`<option ${s===status?"selected":""} value="${s}">${s}</option>`).join("")}
+            </select>
+          </div>
+        </div>
+
+        <div class="actions">
+          <button class="btn warn btnMarkPrepared" ${ordered ? "" : "disabled"}>📦 Mark Prepared (B)</button>
+          <button class="btn ok btnMarkPaid" ${paidAllowed ? "" : "disabled"}>💰 Mark Paid</button>
+          <button class="btn primary btnSaveUpdate">Save update</button>
+        </div>
+
+        <div class="small" style="margin-top:8px;">
+          Rules: Prepared only after Ordered. Paid only after Delivered/Completed.
+        </div>
+      </div>
+    `;
   }
 
   async function loadRecentSales(){
     const box = $("salesList");
     box.innerHTML = `<div class="item"><span class="small">Loading…</span></div>`;
-    const res = await apiGet({ action:"recentSales", limit:20 });
+    const res = await apiGet({ action:"listSales", limit:20 });
     if (!res.ok){
-      box.innerHTML = `<div class="item"><span class="small">Recent load not available. Check Code.gs recentSales()</span></div>`;
+      box.innerHTML = `<div class="item"><span class="small">Load failed. Check ?action=listSales</span></div>`;
       console.log(res);
       return;
     }
@@ -447,83 +485,56 @@
       return;
     }
     box.innerHTML = rows.map(renderSaleItem).join("");
-    bindSaleItemButtons();
+    bindSaleButtons();
   }
 
-  function renderSaleItem(r){
-    const dot = statusDotClass(r.status);
-    const paidTxt = (String(r.paid).toUpperCase() === "TRUE") ? "Paid ✅" : "Not paid";
-    const id = r.id || "";
-    return `
-      <div class="item" data-id="${escapeHtml(id)}">
-        <div class="meta">
-          <span class="dot ${dot}"></span>
-          <b>${escapeHtml(r.status || "Preparation")}</b>
-          <span>•</span>
-          <span>${escapeHtml(r.date || "")}</span>
-          <span>•</span>
-          <span><b>${escapeHtml(r.customer || "")}</b></span>
-          <span>•</span>
-          <span>${escapeHtml(r.phone || "")}</span>
-          <span>•</span>
-          <span>${escapeHtml(r.location || "")}</span>
-          <span>•</span>
-          <span>${escapeHtml(r.currency || "USD")} ${escapeHtml(r.lineTotal || "0.00")}</span>
-          <span class="pill">${paidTxt}</span>
-        </div>
-        <div class="small">
-          SKU: <b>${escapeHtml(r.sku || "")}</b> • Product: <b>${escapeHtml(r.product || "")}</b> • Qty: ${escapeHtml(String(r.qty || ""))} • Unit: ${escapeHtml(String(r.unitPrice || ""))}
-        </div>
-
-        <div class="inline">
-          <div>
-            <label>Prepared by (Mr/Ms B)</label>
-            <input class="prepBy" placeholder="Mr B / Ms B" value="${escapeHtml(r.preparedBy || "")}">
-          </div>
-          <div>
-            <label>Update status</label>
-            <select class="updStatus">
-              ${["Preparation","Delivered","Completed","Cancelled"].map(s=>`<option ${s===r.status?"selected":""} value="${s}">${s}</option>`).join("")}
-            </select>
-          </div>
-        </div>
-
-        <div class="actions">
-          <button class="btn ghost btnOrderTick">✅ Order placed</button>
-          <button class="btn warn btnPreparedTick">📦 Prepared</button>
-          <button class="btn ok btnPaidTick">💰 Payment received</button>
-          <button class="btn primary btnSaveUpdate">Save update</button>
-        </div>
-      </div>
-    `;
-  }
-
-  function bindSaleItemButtons(){
+  function bindSaleButtons(){
     document.querySelectorAll("#salesList .item").forEach(item=>{
       const id = item.getAttribute("data-id");
 
-      item.querySelector(".btnOrderTick").addEventListener("click", ()=>{
-        // Order placed = just keep status as Preparation but can be used for training
-        toast("Order ticked (A) ✅");
+      const getStatus = ()=> item.querySelector(".updStatus").value;
+      const getPreparedBy = ()=> item.querySelector(".preparedBy").value.trim();
+
+      // Mark Prepared
+      item.querySelector(".btnMarkPrepared").addEventListener("click", ()=>{
+        const pb = getPreparedBy();
+        if (!pb) return toast("Enter Prepared by first");
+        item.dataset.preparedForce = "TRUE";
+        toast("Prepared marked 📦 (remember Save update)");
       });
 
-      item.querySelector(".btnPreparedTick").addEventListener("click", ()=>{
-        item.querySelector(".updStatus").value = "Preparation";
-        toast("Prepared ticked (B) 📦");
-      });
-
-      item.querySelector(".btnPaidTick").addEventListener("click", ()=>{
+      // Mark Paid (only enabled when Delivered/Completed)
+      item.querySelector(".btnMarkPaid").addEventListener("click", ()=>{
+        const st = getStatus();
+        if (!(st === "Delivered" || st === "Completed")) {
+          return toast("Paid allowed only after Delivered/Completed");
+        }
         item.dataset.paidForce = "TRUE";
-        toast("Payment received 💰");
+        toast("Paid marked 💰 (remember Save update)");
       });
 
+      // Save update
       item.querySelector(".btnSaveUpdate").addEventListener("click", async ()=>{
-        const preparedBy = item.querySelector(".prepBy").value.trim();
-        const status = item.querySelector(".updStatus").value;
-        const paidForce = item.dataset.paidForce || "";
+        const status = getStatus();
+        const preparedBy = getPreparedBy();
 
-        const payload = { id, status, preparedBy };
-        if (paidForce) payload.paid = "TRUE";
+        const payload = { id, status };
+
+        // If user marked prepared
+        if (item.dataset.preparedForce === "TRUE") {
+          if (!preparedBy) return toast("Enter Prepared by first");
+          payload.prepared = "TRUE";
+          payload.prepared_by = preparedBy;
+        } else {
+          // allow updating prepared_by text without forcing prepared=TRUE (optional)
+          if (preparedBy) payload.prepared_by = preparedBy;
+        }
+
+        // If user marked paid
+        if (item.dataset.paidForce === "TRUE") {
+          if (!(status === "Delivered" || status === "Completed")) return toast("Paid allowed only after Delivered/Completed");
+          payload.paid = "TRUE";
+        }
 
         const btn = item.querySelector(".btnSaveUpdate");
         btn.disabled = true;
@@ -548,21 +559,32 @@
     });
   }
 
-  function escapeHtml(s){
-    return String(s ?? "")
-      .replaceAll("&","&amp;")
-      .replaceAll("<","&lt;")
-      .replaceAll(">","&gt;")
-      .replaceAll('"',"&quot;")
-      .replaceAll("'","&#039;");
-  }
+  // ---------- Init ----------
+  function init(){
+    $("sale_date").value = todayISO();
+    $("sale_qty").value = "1";
+    $("sale_unit_price").value = "0.00";
+    $("sale_fx_khr_usd").value = "0";
+    $("sale_fx_khr_usd").disabled = true;
 
-  // Tabs (only Sales is active now)
-  document.querySelectorAll(".tab").forEach(t=>{
-    t.addEventListener("click", ()=>{
-      toast("This build focuses on Sales (Step 3). Next step we enable other tabs.");
+    $("sale_qty").addEventListener("input", calcLineTotal);
+    $("sale_unit_price").addEventListener("input", calcLineTotal);
+
+    $("sale_currency").addEventListener("change", ()=>{
+      const cur = $("sale_currency").value;
+      $("sale_fx_khr_usd").disabled = (cur !== "KHR");
+      if (cur !== "KHR") $("sale_fx_khr_usd").value = "0";
     });
-  });
+
+    $("sale_status").addEventListener("change", renderStatusPill);
+
+    $("btnClear").addEventListener("click", clearForm);
+    $("btnDropOrder").addEventListener("click", dropOrder);
+
+    calcLineTotal();
+    renderStatusPill();
+    loadRecentSales();
+  }
 
   init();
 </script>

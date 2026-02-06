@@ -6,742 +6,1419 @@
   <title>Internal ERP</title>
   <style>
     :root{
-      --bg:#ffffff;
+      --bg:#f6f7fb;
       --card:#ffffff;
-      --border:#e6e8ee;
-      --muted:#6b7280;
-      --text:#111827;
+      --text:#0f172a;
+      --muted:#64748b;
+      --line:#e5e7eb;
       --blue:#2563eb;
-      --blue-2:#1d4ed8;
-      --pill:#f3f4f6;
-      --shadow: 0 10px 30px rgba(17,24,39,.08);
-      --radius:16px;
+      --blue2:#1d4ed8;
+      --ok:#16a34a;
+      --warn:#f59e0b;
+      --bad:#ef4444;
+      --shadow: 0 10px 30px rgba(2, 6, 23, .08);
+      --radius:18px;
+      --radius2:14px;
+      --font: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, "Apple Color Emoji", "Segoe UI Emoji";
     }
     *{box-sizing:border-box}
     body{
       margin:0;
-      font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial;
+      font-family:var(--font);
       color:var(--text);
-      background:var(--bg);
+      background:linear-gradient(180deg, #ffffff 0%, var(--bg) 40%, var(--bg) 100%);
     }
     .wrap{
-      max-width: 1100px;
-      margin: 18px auto 42px;
-      padding: 0 14px;
+      max-width: 1180px;
+      margin: 20px auto 60px;
+      padding: 0 16px;
     }
     .topbar{
-      display:flex;
-      justify-content:space-between;
-      align-items:flex-start;
-      gap:12px;
-      padding: 18px 18px 14px;
-      border:1px solid var(--border);
+      background:var(--card);
+      border:1px solid var(--line);
       border-radius: var(--radius);
-      background: var(--card);
+      padding: 18px 18px;
       box-shadow: var(--shadow);
+    }
+    .brand{
+      display:flex;
+      align-items:flex-start;
+      justify-content:space-between;
+      gap:16px;
+      flex-wrap:wrap;
     }
     .brand h1{
       margin:0;
       font-size: 26px;
       line-height: 1.1;
-      letter-spacing: .2px;
+      letter-spacing:.2px;
     }
-    .brand .sub{
+    .sub{
       margin-top:6px;
       color:var(--muted);
       font-size: 13px;
     }
-    .tabs{
+    .nav{
       display:flex;
       gap:10px;
       flex-wrap:wrap;
+      align-items:center;
       justify-content:flex-end;
-      margin-top:2px;
     }
     .tab{
-      border:1px solid var(--border);
+      border:1px solid var(--line);
       background:#fff;
-      padding:10px 14px;
-      border-radius: 999px;
+      color: var(--text);
+      padding: 10px 14px;
+      border-radius:999px;
       cursor:pointer;
-      font-size:14px;
-      color:#111827;
-      user-select:none;
+      font-weight: 600;
+      font-size: 13px;
     }
     .tab.active{
-      border-color:#111827;
-      box-shadow: 0 0 0 3px rgba(17,24,39,.05);
-      font-weight:600;
+      border-color:#0f172a;
+      box-shadow: 0 1px 0 rgba(15,23,42,.08);
     }
 
-    .card{
+    .grid{
       margin-top:16px;
-      border:1px solid var(--border);
-      border-radius: var(--radius);
-      background:var(--card);
-      box-shadow: var(--shadow);
-      padding:18px;
+      display:grid;
+      grid-template-columns: 1fr;
+      gap:16px;
     }
-    .title{
-      font-size: 20px;
+    .card{
+      background:var(--card);
+      border:1px solid var(--line);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+      padding: 18px;
+    }
+    .card h2{
       margin:0 0 10px 0;
+      font-size: 18px;
     }
     .hint{
       color:var(--muted);
       font-size: 13px;
-      margin: 0 0 14px 0;
+      margin: 6px 0 14px;
     }
-
-    .grid{
+    .row{
       display:grid;
       grid-template-columns: repeat(12, 1fr);
-      gap:12px;
+      gap: 12px;
     }
-    .field{display:flex; flex-direction:column; gap:6px;}
-    label{font-size:12px; color:var(--muted);}
+    .field{
+      grid-column: span 12;
+      display:flex;
+      flex-direction:column;
+      gap:6px;
+    }
+    .label{
+      font-size: 12px;
+      color: var(--muted);
+      font-weight: 600;
+      letter-spacing: .2px;
+    }
     input, select, textarea{
       width:100%;
       padding: 12px 12px;
-      border-radius: 12px;
-      border:1px solid var(--border);
+      border:1px solid var(--line);
+      border-radius: 14px;
       outline:none;
-      font-size: 15px;
+      font-size: 14px;
       background:#fff;
+      color: var(--text);
     }
-    textarea{min-height: 90px; resize: vertical;}
     input:focus, select:focus, textarea:focus{
-      border-color: rgba(37,99,235,.55);
+      border-color:#93c5fd;
       box-shadow: 0 0 0 4px rgba(37,99,235,.12);
     }
-
+    textarea{ min-height: 90px; resize: vertical; }
     .btnrow{
       display:flex;
       gap:10px;
-      flex-wrap:wrap;
-      margin-top: 14px;
       align-items:center;
+      flex-wrap:wrap;
+      margin-top: 12px;
     }
     .btn{
-      border:1px solid var(--border);
-      background:#fff;
-      padding: 11px 14px;
-      border-radius: 12px;
+      border:none;
+      border-radius: 14px;
+      padding: 12px 14px;
+      font-weight:800;
       cursor:pointer;
-      font-weight:600;
       font-size: 14px;
     }
-    .btn.primary{
-      background: var(--blue);
-      border-color: var(--blue);
-      color:#fff;
-    }
-    .btn.primary:hover{ background: var(--blue-2); }
-    .badge{
+    .btn.primary{ background: var(--blue); color: #fff; }
+    .btn.primary:hover{ background: var(--blue2); }
+    .btn.ghost{ background:#fff; border:1px solid var(--line); }
+    .pill{
       display:inline-flex;
       align-items:center;
       gap:8px;
-      padding: 10px 12px;
-      border-radius: 999px;
-      border:1px solid var(--border);
-      background: #fff;
+      border:1px solid var(--line);
+      border-radius:999px;
+      padding: 8px 10px;
       color: var(--muted);
-      font-size: 13px;
+      font-size: 12px;
+      background:#fff;
     }
-    .dot{
-      width:8px;height:8px;border-radius:50%;
-      background: #9ca3af;
-      display:inline-block;
-    }
+    .dot{ width:9px; height:9px; border-radius:999px; background:#94a3b8; }
+    .dot.ok{ background: var(--ok); }
+    .dot.bad{ background: var(--bad); }
+    .dot.warn{ background: var(--warn); }
 
-    .listbox{
-      margin-top:14px;
-      border:1px solid var(--border);
-      border-radius: 14px;
+    .table{
+      width:100%;
+      border-collapse:separate;
+      border-spacing:0;
+      border:1px solid var(--line);
+      border-radius: 16px;
       overflow:hidden;
       background:#fff;
     }
-    .listbox .head{
-      padding:12px 14px;
-      background:#fafafa;
-      border-bottom:1px solid var(--border);
-      font-weight:700;
+    .table th, .table td{
+      padding: 10px 10px;
+      border-bottom:1px solid var(--line);
       font-size: 13px;
-      color:#374151;
+      vertical-align: top;
     }
-    .listbox .body{
-      padding:12px 14px;
-      color:var(--muted);
-      font-size: 13px;
+    .table th{
+      text-align:left;
+      color: var(--muted);
+      background: #f8fafc;
+      font-weight:800;
     }
+    .table tr:last-child td{ border-bottom:none; }
+    .mono{ font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace; }
+    .muted{ color: var(--muted); }
+    .right{ text-align:right; }
+    .badge{
+      display:inline-flex;
+      align-items:center;
+      padding: 6px 10px;
+      border-radius: 999px;
+      font-size: 12px;
+      font-weight:800;
+      border:1px solid var(--line);
+      background:#fff;
+    }
+    .badge.good{ border-color: rgba(22,163,74,.25); background: rgba(22,163,74,.08); color: #166534; }
+    .badge.warn{ border-color: rgba(245,158,11,.25); background: rgba(245,158,11,.10); color: #92400e; }
+    .badge.bad{ border-color: rgba(239,68,68,.25); background: rgba(239,68,68,.10); color: #991b1b; }
+    .split{
+      display:grid;
+      grid-template-columns: 1fr;
+      gap: 14px;
+    }
+    .kpi{
+      display:grid;
+      grid-template-columns: repeat(12, 1fr);
+      gap: 12px;
+    }
+    .kpi .box{
+      grid-column: span 12;
+      border:1px solid var(--line);
+      border-radius: 16px;
+      padding: 12px;
+      background:#fff;
+    }
+    .kpi .box .t{ color:var(--muted); font-size:12px; font-weight:800; }
+    .kpi .box .v{ font-size: 22px; font-weight: 900; margin-top:6px; }
+    .chartbox{
+      border:1px solid var(--line);
+      border-radius: 16px;
+      padding: 12px;
+      background:#fff;
+    }
+    .charttitle{ display:flex; justify-content:space-between; align-items:center; gap:10px; }
+    .small{ font-size:12px; color:var(--muted); font-weight:700; }
+    .svgwrap{ width:100%; overflow:auto; }
+    .footerNote{ margin-top:10px; color:var(--muted); font-size:12px; }
 
-    .toast{
-      position: fixed;
-      left: 50%;
-      transform: translateX(-50%);
-      bottom: 16px;
-      background: #111827;
-      color:#fff;
-      padding: 10px 12px;
-      border-radius: 12px;
-      font-size: 13px;
-      display:none;
-      max-width: calc(100vw - 20px);
+    /* responsive */
+    @media (min-width: 760px){
+      .field.sm6{ grid-column: span 6; }
+      .field.sm4{ grid-column: span 4; }
+      .field.sm3{ grid-column: span 3; }
+      .field.sm2{ grid-column: span 2; }
+      .split{ grid-template-columns: 1fr 1fr; }
+      .kpi .box{ grid-column: span 6; }
     }
-
-    /* Responsive */
-    @media (max-width: 820px){
-      .topbar{flex-direction:column; align-items:stretch;}
-      .tabs{justify-content:flex-start;}
-      .wrap{margin-top: 12px;}
-    }
-    @media (max-width: 640px){
-      .card{padding:14px;}
-      input, select, textarea{padding: 11px 11px; font-size: 15px;}
-      .tab{padding:9px 12px;}
+    @media (min-width: 1040px){
+      .kpi .box{ grid-column: span 3; }
     }
   </style>
 </head>
-
 <body>
   <div class="wrap">
     <div class="topbar">
       <div class="brand">
-        <h1>Internal ERP</h1>
-        <div class="sub">Simple • Finance-first • FIFO-ready</div>
+        <div>
+          <h1>Internal ERP</h1>
+          <div class="sub">Simple • Finance-first • Inventory + Sales + Expenses + Cash</div>
+        </div>
+        <div class="nav">
+          <button class="tab active" data-tab="dashboard">Dashboard</button>
+          <button class="tab" data-tab="inventory">Inventory IN</button>
+          <button class="tab" data-tab="sales">Sales</button>
+          <button class="tab" data-tab="expenses">Expenses</button>
+          <button class="tab" data-tab="reports">Reports</button>
+        </div>
       </div>
-      <div class="tabs" id="tabs">
-        <button class="tab" data-view="dash">Dashboard</button>
-        <button class="tab" data-view="inv">Inventory IN</button>
-        <button class="tab" data-view="sales">Sales</button>
-        <button class="tab" data-view="exp">Expenses</button>
-        <button class="tab" data-view="rep">Reports</button>
+
+      <div class="row" style="margin-top:14px">
+        <div class="field sm6">
+          <div class="label">Apps Script Web App URL (auto-saved)</div>
+          <input id="apiUrl" class="mono" />
+          <div class="footerNote">
+            If API fails (CORS), open <span class="mono">.../exec?action=ping</span> in browser and copy the redirected
+            <span class="mono">script.googleusercontent.com/macros/echo?... </span> URL into this box.
+          </div>
+        </div>
+        <div class="field sm3">
+          <div class="label">Connection</div>
+          <div class="pill"><span id="connDot" class="dot warn"></span><span id="connText">Not checked</span></div>
+        </div>
+        <div class="field sm3">
+          <div class="label">Quick actions</div>
+          <div class="btnrow" style="margin-top:0">
+            <button class="btn primary" id="btnCheck">Check API</button>
+            <button class="btn ghost" id="btnReloadLists">Reload Lists</button>
+          </div>
+        </div>
       </div>
     </div>
 
     <!-- DASHBOARD -->
-    <section class="card" id="view-dash" style="display:none;">
-      <h2 class="title">Dashboard</h2>
-      <p class="hint">Quick view by date range. (You can add charts later after data is stable.)</p>
+    <div class="grid" id="tab-dashboard">
+      <div class="card">
+        <h2>Dashboard</h2>
+        <div class="hint">Shows cash in/out, net cash, expenses, and sales status counts (client-side from your sheets).</div>
 
-      <div class="grid">
-        <div class="field" style="grid-column: span 6;">
-          <label>From date</label>
-          <input id="dash_from" type="date" />
+        <div class="kpi">
+          <div class="box">
+            <div class="t">Cash IN (USD)</div>
+            <div class="v" id="kpiCashIn">0.00</div>
+          </div>
+          <div class="box">
+            <div class="t">Cash OUT (USD)</div>
+            <div class="v" id="kpiCashOut">0.00</div>
+          </div>
+          <div class="box">
+            <div class="t">Net Cash (USD)</div>
+            <div class="v" id="kpiNetCash">0.00</div>
+          </div>
+          <div class="box">
+            <div class="t">Expenses (USD)</div>
+            <div class="v" id="kpiExpenses">0.00</div>
+          </div>
         </div>
-        <div class="field" style="grid-column: span 6;">
-          <label>To date</label>
-          <input id="dash_to" type="date" />
+
+        <div class="split" style="margin-top:14px">
+          <div class="chartbox">
+            <div class="charttitle">
+              <div>
+                <div style="font-weight:900">Net Cash Trend (last 14 days)</div>
+                <div class="small">based on Cash sheet (type IN/OUT)</div>
+              </div>
+              <button class="btn ghost" id="btnRefreshDash">Refresh</button>
+            </div>
+            <div class="svgwrap" style="margin-top:10px">
+              <svg id="cashChart" width="800" height="220" viewBox="0 0 800 220" xmlns="http://www.w3.org/2000/svg"></svg>
+            </div>
+          </div>
+
+          <div class="chartbox">
+            <div style="font-weight:900">Sales status</div>
+            <div class="small">from SalesOrders sheet</div>
+            <div style="margin-top:10px">
+              <table class="table">
+                <thead>
+                  <tr><th>Status</th><th class="right">Count</th></tr>
+                </thead>
+                <tbody id="salesStatusTable">
+                  <tr><td class="muted">Load dashboard</td><td class="right">-</td></tr>
+                </tbody>
+              </table>
+            </div>
+            <div class="footerNote">Cash IN is recorded only when you click “Mark Paid”.</div>
+          </div>
         </div>
-      </div>
 
-      <div class="btnrow">
-        <button class="btn primary" id="btn_dash">Refresh Dashboard</button>
-        <span class="badge"><span class="dot"></span><span id="dash_status">Ready</span></span>
       </div>
-
-      <div class="listbox" style="margin-top:16px;">
-        <div class="head">Summary</div>
-        <div class="body" id="dash_body">Load from sheet later.</div>
-      </div>
-    </section>
+    </div>
 
     <!-- INVENTORY IN -->
-    <section class="card" id="view-inv" style="display:none;">
-      <h2 class="title">Inventory IN</h2>
-      <p class="hint">FX fixed to 2 decimals. Unit cost USD = RMB unit price ÷ FX.</p>
+    <div class="grid" id="tab-inventory" style="display:none">
+      <div class="card">
+        <h2>Inventory IN</h2>
+        <div class="hint">FX fixed to 2 decimals. Unit cost USD = RMB unit price ÷ FX. Lists load from your “Lists” tab.</div>
 
-      <div class="grid">
-        <div class="field" style="grid-column: span 6;">
-          <label>Date received</label>
-          <input id="inv_date" type="date" />
-        </div>
-        <div class="field" style="grid-column: span 6;">
-          <label>FX RMB → USD (2 decimals)</label>
-          <input id="inv_fx" inputmode="decimal" placeholder="e.g. 7.20" />
+        <div class="row">
+          <div class="field sm3">
+            <div class="label">Date received</div>
+            <input id="inv_date" type="date" />
+          </div>
+          <div class="field sm3">
+            <div class="label">FX RMB → USD (2 decimals)</div>
+            <input id="inv_fx" type="number" step="0.01" placeholder="7.00" />
+          </div>
+          <div class="field sm3">
+            <div class="label">SKU</div>
+            <input id="inv_sku" placeholder="MM-001" />
+          </div>
+          <div class="field sm3">
+            <div class="label">Warehouse location (dropdown)</div>
+            <select id="inv_wh"></select>
+          </div>
+
+          <div class="field sm4">
+            <div class="label">Product category (dropdown / can type)</div>
+            <input id="inv_cat" list="dlProdCats" placeholder="Spray / Flush Gel / ..." />
+            <datalist id="dlProdCats"></datalist>
+          </div>
+          <div class="field sm4">
+            <div class="label">Size (optional)</div>
+            <input id="inv_size" list="dlProdSizes" placeholder="30ml / 300ml / ..." />
+            <datalist id="dlProdSizes"></datalist>
+          </div>
+          <div class="field sm4">
+            <div class="label">Color (optional)</div>
+            <input id="inv_color" list="dlProdColors" placeholder="Pink / Blue / ..." />
+            <datalist id="dlProdColors"></datalist>
+          </div>
+
+          <div class="field sm3">
+            <div class="label">Qty received</div>
+            <input id="inv_qty" type="number" step="1" placeholder="100" />
+          </div>
+          <div class="field sm3">
+            <div class="label">Unit price (RMB)</div>
+            <input id="inv_unit_rmb" type="number" step="0.01" placeholder="10.00" />
+          </div>
+          <div class="field sm3">
+            <div class="label">Unit cost (USD) (auto)</div>
+            <input id="inv_unit_usd" disabled />
+          </div>
+          <div class="field sm3">
+            <div class="label">Total cost (USD) (auto)</div>
+            <input id="inv_total_usd" disabled />
+          </div>
+
+          <div class="field">
+            <div class="label">Note</div>
+            <textarea id="inv_note" placeholder="Optional note"></textarea>
+          </div>
         </div>
 
-        <div class="field" style="grid-column: span 4;">
-          <label>SKU</label>
-          <input id="inv_sku" placeholder="SKU" />
-        </div>
-        <div class="field" style="grid-column: span 4;">
-          <label>Product category</label>
-          <select id="inv_cat"></select>
-        </div>
-        <div class="field" style="grid-column: span 4;">
-          <label>Warehouse location</label>
-          <select id="inv_loc"></select>
+        <div class="btnrow">
+          <button class="btn primary" id="btnSaveInv">Save Inventory IN</button>
+          <button class="btn ghost" id="btnClearInv">Clear</button>
+          <span class="pill"><span class="dot" id="invDot"></span><span id="invMsg">Ready</span></span>
         </div>
 
-        <div class="field" style="grid-column: span 4;">
-          <label>Size (optional)</label>
-          <select id="inv_size"></select>
-        </div>
-        <div class="field" style="grid-column: span 4;">
-          <label>Color (optional)</label>
-          <select id="inv_color"></select>
-        </div>
-        <div class="field" style="grid-column: span 4;">
-          <label>Qty received</label>
-          <input id="inv_qty" inputmode="numeric" placeholder="0" />
-        </div>
-
-        <div class="field" style="grid-column: span 4;">
-          <label>Unit price (RMB)</label>
-          <input id="inv_rmb" inputmode="decimal" placeholder="0.00" />
-        </div>
-        <div class="field" style="grid-column: span 4;">
-          <label>Unit cost (USD) (auto)</label>
-          <input id="inv_usd_unit" disabled />
-        </div>
-        <div class="field" style="grid-column: span 4;">
-          <label>Total cost (USD) (auto)</label>
-          <input id="inv_usd_total" disabled />
+        <div style="margin-top:14px">
+          <div class="label">Last Inventory IN (latest 20)</div>
+          <div style="margin-top:8px">
+            <table class="table">
+              <thead>
+                <tr>
+                  <th>Date</th><th>SKU</th><th>Category</th><th>Size</th><th>Color</th>
+                  <th>WH</th><th class="right">Qty</th><th class="right">Unit USD</th><th class="right">Total USD</th>
+                </tr>
+              </thead>
+              <tbody id="invTable">
+                <tr><td colspan="9" class="muted">Load list…</td></tr>
+              </tbody>
+            </table>
+          </div>
         </div>
 
-        <div class="field" style="grid-column: span 12;">
-          <label>Note</label>
-          <textarea id="inv_note" placeholder="Optional note"></textarea>
-        </div>
       </div>
-
-      <div class="btnrow">
-        <button class="btn primary" id="btn_inv_save">Save Inventory IN</button>
-        <button class="btn" id="btn_inv_clear">Clear</button>
-        <span class="badge"><span class="dot"></span><span id="inv_status">Ready</span></span>
-      </div>
-
-      <div class="listbox">
-        <div class="head">Last Inventory IN (latest 20)</div>
-        <div class="body" id="inv_recent">Load from sheet later.</div>
-      </div>
-    </section>
+    </div>
 
     <!-- SALES -->
-    <section class="card" id="view-sales" style="display:none;">
-      <h2 class="title">Sales</h2>
-      <p class="hint"><b>Mr/Ms A</b>: Drop order. • <b>Mr/Ms B</b>: Prepare. • Payment can be marked only after Delivered/Completed.</p>
-
-      <div class="grid">
-        <div class="field" style="grid-column: span 6;">
-          <label>Date</label>
-          <input id="s_date" type="date" />
-        </div>
-        <div class="field" style="grid-column: span 6;">
-          <label>Customer name</label>
-          <input id="s_customer" placeholder="Customer name" />
+    <div class="grid" id="tab-sales" style="display:none">
+      <div class="card">
+        <h2>Sales</h2>
+        <div class="hint">
+          Multi-items supported: create 1 Sales Order, then add up to 5–6 Sales Items.
+          Workflow: <b>Ordered → Prepared → Delivered → Paid</b>. Cash IN is recorded only when Paid.
         </div>
 
-        <div class="field" style="grid-column: span 6;">
-          <label>Telephone number</label>
-          <input id="s_phone" inputmode="tel" placeholder="e.g. 012345678" />
-        </div>
-        <div class="field" style="grid-column: span 6;">
-          <label>Customer address</label>
-          <input id="s_address" placeholder="Street / unit / landmark" />
+        <div class="row">
+          <div class="field sm3">
+            <div class="label">Order date</div>
+            <input id="so_date" type="date" />
+          </div>
+          <div class="field sm3">
+            <div class="label">Customer name</div>
+            <input id="so_customer" placeholder="Customer" />
+          </div>
+          <div class="field sm3">
+            <div class="label">Telephone</div>
+            <input id="so_phone" placeholder="e.g. 012345678" />
+          </div>
+          <div class="field sm3">
+            <div class="label">Customer address (type)</div>
+            <input id="so_address" placeholder="Street / unit / landmark" />
+          </div>
+
+          <div class="field sm3">
+            <div class="label">Currency</div>
+            <select id="so_currency">
+              <option value="USD">USD</option>
+              <option value="KHR">KHR</option>
+            </select>
+          </div>
+          <div class="field sm3">
+            <div class="label">FX KHR → USD (if KHR)</div>
+            <input id="so_fx" type="number" step="0.01" placeholder="4100" />
+          </div>
+          <div class="field sm3">
+            <div class="label">Order by (Mr/Ms A)</div>
+            <input id="so_ordered_by" placeholder="Mr A / Ms A" />
+          </div>
+          <div class="field sm3">
+            <div class="label">Note</div>
+            <input id="so_note" placeholder="Optional note" />
+          </div>
         </div>
 
-        <div class="field" style="grid-column: span 4;">
-          <label>Currency</label>
-          <select id="s_ccy">
-            <option value="USD">USD</option>
-            <option value="KHR">KHR</option>
-          </select>
-        </div>
-        <div class="field" style="grid-column: span 4;">
-          <label>FX KHR → USD (if KHR)</label>
-          <input id="s_fx" inputmode="decimal" placeholder="0" />
-        </div>
-        <div class="field" style="grid-column: span 4;">
-          <label>Order by (Mr/Ms A)</label>
-          <input id="s_byA" placeholder="Mr A / Ms A" />
+        <div class="btnrow">
+          <button class="btn primary" id="btnCreateOrder">Create Sales Order</button>
+          <button class="btn ghost" id="btnClearSO">Clear</button>
+          <span class="pill"><span class="dot" id="soDot"></span><span id="soMsg">No order selected</span></span>
         </div>
 
-        <div class="field" style="grid-column: span 4;">
-          <label>SKU</label>
-          <input id="s_sku" placeholder="SKU" />
-        </div>
-        <div class="field" style="grid-column: span 4;">
-          <label>Product</label>
-          <select id="s_cat"></select>
-        </div>
-        <div class="field" style="grid-column: span 4;">
-          <label>Qty</label>
-          <input id="s_qty" inputmode="numeric" value="1" />
+        <div class="card" style="margin-top:16px; box-shadow:none">
+          <h2 style="margin-bottom:6px">Add items to selected order</h2>
+          <div class="hint" style="margin-top:0">Select an order in the table below first, then add items.</div>
+
+          <div class="row">
+            <div class="field sm3">
+              <div class="label">SKU</div>
+              <input id="si_sku" placeholder="SKU" />
+            </div>
+            <div class="field sm3">
+              <div class="label">Product category</div>
+              <input id="si_cat" list="dlProdCats2" placeholder="Spray / ..." />
+              <datalist id="dlProdCats2"></datalist>
+            </div>
+            <div class="field sm2">
+              <div class="label">Size (opt)</div>
+              <input id="si_size" list="dlProdSizes2" placeholder="30ml" />
+              <datalist id="dlProdSizes2"></datalist>
+            </div>
+            <div class="field sm2">
+              <div class="label">Color (opt)</div>
+              <input id="si_color" list="dlProdColors2" placeholder="Pink" />
+              <datalist id="dlProdColors2"></datalist>
+            </div>
+            <div class="field sm1">
+              <div class="label">Qty</div>
+              <input id="si_qty" type="number" step="1" value="1" />
+            </div>
+            <div class="field sm1">
+              <div class="label">Unit</div>
+              <input id="si_unit" type="number" step="0.01" value="0.00" />
+            </div>
+          </div>
+
+          <div class="btnrow">
+            <button class="btn primary" id="btnAddItem">Add Item</button>
+            <span class="pill"><span class="dot" id="siDot"></span><span id="siMsg">Ready</span></span>
+          </div>
+
+          <div style="margin-top:10px">
+            <div class="label">Items of selected order</div>
+            <table class="table" style="margin-top:8px">
+              <thead>
+                <tr>
+                  <th>SKU</th><th>Category</th><th>Size</th><th>Color</th>
+                  <th class="right">Qty</th><th class="right">Unit</th><th class="right">Line</th>
+                </tr>
+              </thead>
+              <tbody id="itemsTable">
+                <tr><td colspan="7" class="muted">Select an order to load items…</td></tr>
+              </tbody>
+            </table>
+          </div>
         </div>
 
-        <div class="field" style="grid-column: span 4;">
-          <label>Unit price</label>
-          <input id="s_price" inputmode="decimal" value="0.00" />
-        </div>
-        <div class="field" style="grid-column: span 4;">
-          <label>Line total (auto)</label>
-          <input id="s_total" disabled />
-        </div>
-        <div class="field" style="grid-column: span 4;">
-          <label>Status</label>
-          <select id="s_status">
-            <option value="Preparation">Preparation</option>
-            <option value="Delivered">Delivered</option>
-            <option value="Completed">Completed</option>
-          </select>
+        <div style="margin-top:16px">
+          <div class="label">Recent Sales Orders (latest 20) — click a row to select</div>
+          <table class="table" style="margin-top:8px">
+            <thead>
+              <tr>
+                <th>Date</th><th>Customer</th><th>Phone</th><th>Status</th>
+                <th class="right">Actions</th>
+              </tr>
+            </thead>
+            <tbody id="ordersTable">
+              <tr><td colspan="5" class="muted">Load orders…</td></tr>
+            </tbody>
+          </table>
+          <div class="footerNote">
+            Buttons enforce order: ORDERED → PREPARED → DELIVERED → PAID.
+          </div>
         </div>
 
-        <div class="field" style="grid-column: span 6;">
-          <label>Note</label>
-          <input id="s_note" placeholder="Optional note" />
-        </div>
-        <div class="field" style="grid-column: span 6;">
-          <label>Paid?</label>
-          <select id="s_paid">
-            <option value="Not received">Not received</option>
-            <option value="Received">Received</option>
-          </select>
-        </div>
       </div>
-
-      <div class="btnrow">
-        <button class="btn primary" id="btn_dropA">Drop Order (A)</button>
-        <button class="btn" id="btn_sales_clear">Clear</button>
-        <span class="badge"><span class="dot"></span><span id="s_badge">Ready</span></span>
-        <span class="badge" id="paid_hint">Paid disabled until Delivered/Completed</span>
-      </div>
-
-      <div class="listbox">
-        <div class="head">Recent Sales (latest 20)</div>
-        <div class="body" id="s_recent">Loading…</div>
-      </div>
-    </section>
+    </div>
 
     <!-- EXPENSES -->
-    <section class="card" id="view-exp" style="display:none;">
-      <h2 class="title">Expenses</h2>
-      <p class="hint">You can add your own expense categories later in the List tab (EXP_CAT).</p>
+    <div class="grid" id="tab-expenses" style="display:none">
+      <div class="card">
+        <h2>Expenses</h2>
+        <div class="hint">You can add more categories anytime later in Lists tab (EXP_CAT). This page will pick them up after “Reload Lists”.</div>
 
-      <div class="grid">
-        <div class="field" style="grid-column: span 6;">
-          <label>Date</label>
-          <input id="e_date" type="date" />
-        </div>
-        <div class="field" style="grid-column: span 6;">
-          <label>Category</label>
-          <select id="e_cat"></select>
+        <div class="row">
+          <div class="field sm3">
+            <div class="label">Date</div>
+            <input id="ex_date" type="date" />
+          </div>
+          <div class="field sm4">
+            <div class="label">Expense category (dropdown / can type)</div>
+            <input id="ex_cat" list="dlExpCats" placeholder="Marketing / Rent / ..." />
+            <datalist id="dlExpCats"></datalist>
+          </div>
+          <div class="field sm2">
+            <div class="label">Currency</div>
+            <select id="ex_currency">
+              <option value="USD">USD</option>
+              <option value="KHR">KHR</option>
+            </select>
+          </div>
+          <div class="field sm3">
+            <div class="label">FX KHR → USD (if KHR)</div>
+            <input id="ex_fx" type="number" step="0.01" placeholder="4100" />
+          </div>
+          <div class="field sm3">
+            <div class="label">Amount</div>
+            <input id="ex_amount" type="number" step="0.01" placeholder="0.00" />
+          </div>
+          <div class="field sm9">
+            <div class="label">Note</div>
+            <input id="ex_note" placeholder="Optional note" />
+          </div>
         </div>
 
-        <div class="field" style="grid-column: span 6;">
-          <label>Amount (USD)</label>
-          <input id="e_amt" inputmode="decimal" placeholder="0.00" />
+        <div class="btnrow">
+          <button class="btn primary" id="btnSaveExp">Save Expense</button>
+          <button class="btn ghost" id="btnClearExp">Clear</button>
+          <span class="pill"><span class="dot" id="exDot"></span><span id="exMsg">Ready</span></span>
         </div>
-        <div class="field" style="grid-column: span 6;">
-          <label>Note</label>
-          <input id="e_note" placeholder="Optional note" />
+
+        <div style="margin-top:14px">
+          <div class="label">Recent Expenses (latest 20)</div>
+          <table class="table" style="margin-top:8px">
+            <thead>
+              <tr>
+                <th>Date</th><th>Category</th><th>Currency</th><th class="right">Amount</th><th class="right">USD</th><th>Note</th>
+              </tr>
+            </thead>
+            <tbody id="expTable">
+              <tr><td colspan="6" class="muted">Load expenses…</td></tr>
+            </tbody>
+          </table>
         </div>
+
       </div>
-
-      <div class="btnrow">
-        <button class="btn primary" id="btn_exp_save">Save Expense</button>
-        <button class="btn" id="btn_exp_clear">Clear</button>
-        <span class="badge"><span class="dot"></span><span id="e_status">Ready</span></span>
-      </div>
-
-      <div class="listbox">
-        <div class="head">Recent Expenses (latest 20)</div>
-        <div class="body" id="e_recent">Load from sheet later.</div>
-      </div>
-    </section>
+    </div>
 
     <!-- REPORTS -->
-    <section class="card" id="view-rep" style="display:none;">
-      <h2 class="title">Reports</h2>
-      <p class="hint">Select date range for reports (PnL / Balance Sheet later).</p>
+    <div class="grid" id="tab-reports" style="display:none">
+      <div class="card">
+        <h2>Reports</h2>
+        <div class="hint">Select a date range. This report is computed client-side from your Cash, Expenses, SalesOrders, SalesItems sheets.</div>
 
-      <div class="grid">
-        <div class="field" style="grid-column: span 6;">
-          <label>From date</label>
-          <input id="r_from" type="date" />
+        <div class="row">
+          <div class="field sm3">
+            <div class="label">From</div>
+            <input id="rp_from" type="date" />
+          </div>
+          <div class="field sm3">
+            <div class="label">To</div>
+            <input id="rp_to" type="date" />
+          </div>
+          <div class="field sm6" style="display:flex; justify-content:flex-end; align-items:flex-end">
+            <div class="btnrow" style="margin-top:0">
+              <button class="btn primary" id="btnRunReport">Load Report</button>
+              <button class="btn ghost" id="btnThisMonth">This month</button>
+            </div>
+          </div>
         </div>
-        <div class="field" style="grid-column: span 6;">
-          <label>To date</label>
-          <input id="r_to" type="date" />
-        </div>
-      </div>
 
-      <div class="btnrow">
-        <button class="btn primary" id="btn_rep">Load Reports</button>
-        <span class="badge"><span class="dot"></span><span id="r_status">Ready</span></span>
-      </div>
+        <div class="split" style="margin-top:14px">
+          <div class="chartbox">
+            <div style="font-weight:900">Cash summary (USD)</div>
+            <table class="table" style="margin-top:8px">
+              <thead><tr><th>Item</th><th class="right">USD</th></tr></thead>
+              <tbody id="rpCash">
+                <tr><td class="muted">Run report…</td><td class="right">-</td></tr>
+              </tbody>
+            </table>
+          </div>
+          <div class="chartbox">
+            <div style="font-weight:900">Sales summary</div>
+            <table class="table" style="margin-top:8px">
+              <thead><tr><th>Item</th><th class="right">Value</th></tr></thead>
+              <tbody id="rpSales">
+                <tr><td class="muted">Run report…</td><td class="right">-</td></tr>
+              </tbody>
+            </table>
+            <div class="footerNote">Paid amount comes from Cash sheet entries with ref_type = SALES.</div>
+          </div>
+        </div>
 
-      <div class="grid" style="margin-top:14px;">
-        <div class="listbox" style="grid-column: span 6;">
-          <div class="head">PnL (summary)</div>
-          <div class="body" id="rep_pnl">Load from sheet later.</div>
-        </div>
-        <div class="listbox" style="grid-column: span 6;">
-          <div class="head">Balance Sheet (summary)</div>
-          <div class="body" id="rep_bs">Load from sheet later.</div>
-        </div>
       </div>
-    </section>
+    </div>
+
   </div>
 
-  <div class="toast" id="toast"></div>
-
   <script>
-    // === SET YOUR APPS SCRIPT WEB APP URL HERE ===
-    const API = "https://script.google.com/macros/s/AKfycbzgC6AqVVftlcvoetDa2aTVzdSbrK7FSJt7kpJCFDeHB7o7azG0Lh_yB4a4CBw1I-ML/exec";
+    // ========= CONFIG =========
+    const DEFAULT_API_URL = "https://script.google.com/macros/s/AKfycbzgC6AqVVftlcvoetDa2aTVzdSbrK7FSJt7kpJCFDeHB7o7azG0Lh_yB4a4CBw1I-ML/exec";
+    const LS_KEY = "internal_erp_api_url_v1";
 
-    function toast(msg){
-      const t = document.getElementById('toast');
-      t.textContent = msg;
-      t.style.display = 'block';
-      clearTimeout(toast._t);
-      toast._t = setTimeout(()=> t.style.display='none', 2400);
+    // ========= STATE =========
+    let LISTS = {
+      locations: [], expCats: [], prodCats: [], prodSizes: [], prodColors: [], txnTypes: [], refTypes: []
+    };
+    let selectedOrderId = null;
+
+    // ========= HELPERS =========
+    const $ = (id) => document.getElementById(id);
+    const fmt2 = (n) => (Number(n || 0).toFixed(2));
+    const todayISO = () => new Date().toISOString().slice(0,10);
+
+    function setConn(ok, text){
+      const dot = $("connDot");
+      dot.classList.remove("ok","bad","warn");
+      dot.classList.add(ok ? "ok" : "bad");
+      $("connText").textContent = text;
+    }
+
+    function setMiniStatus(dotId, msgId, type, msg){
+      const dot = $(dotId);
+      dot.classList.remove("ok","bad","warn");
+      dot.classList.add(type || "warn");
+      $(msgId).textContent = msg;
+    }
+
+    function getApiUrl(){
+      return ($("apiUrl").value || "").trim();
+    }
+
+    function saveApiUrl(){
+      localStorage.setItem(LS_KEY, getApiUrl());
     }
 
     async function apiGet(params){
-      const url = API + "?" + new URLSearchParams(params).toString();
-      const res = await fetch(url, { method:"GET" });
-      const text = await res.text();
-      try { return JSON.parse(text); } catch(e){ return { ok:false, error:"Non-JSON: " + text.slice(0,120) }; }
+      const url = new URL(getApiUrl());
+      Object.keys(params||{}).forEach(k => url.searchParams.set(k, params[k]));
+      const res = await fetch(url.toString(), { method:"GET" });
+      return await res.json();
     }
 
     async function apiPost(payload){
-      const res = await fetch(API, {
+      const url = new URL(getApiUrl());
+      const res = await fetch(url.toString(), {
         method:"POST",
-        headers:{ "Content-Type":"text/plain;charset=utf-8" },
+        headers: { "Content-Type":"text/plain;charset=utf-8" },
         body: JSON.stringify(payload)
       });
-      const text = await res.text();
-      try { return JSON.parse(text); } catch(e){ return { ok:false, error:"Non-JSON: " + text.slice(0,120) }; }
+      return await res.json();
     }
 
-    // Tabs
-    const views = ["dash","inv","sales","exp","rep"];
-    function setView(v){
-      for (const x of views){
-        document.getElementById("view-"+x).style.display = (x===v) ? "block" : "none";
-      }
-      document.querySelectorAll(".tab").forEach(b=>{
-        b.classList.toggle("active", b.dataset.view===v);
+    function fillSelect(selectEl, arr, placeholder){
+      selectEl.innerHTML = "";
+      const opt0 = document.createElement("option");
+      opt0.value = "";
+      opt0.textContent = placeholder || "Select...";
+      selectEl.appendChild(opt0);
+      (arr||[]).forEach(v => {
+        const o = document.createElement("option");
+        o.value = v;
+        o.textContent = v;
+        selectEl.appendChild(o);
       });
-      localStorage.setItem("erp_view", v);
     }
-    document.getElementById("tabs").addEventListener("click", (e)=>{
-      const btn = e.target.closest(".tab");
-      if(!btn) return;
-      setView(btn.dataset.view);
-    });
 
-    // Helpers
-    function todayISO(){
-      const d = new Date();
-      const pad = n => String(n).padStart(2,"0");
-      return `${d.getFullYear()}-${pad(d.getMonth()+1)}-${pad(d.getDate())}`;
+    function fillDatalist(dlEl, arr){
+      dlEl.innerHTML = "";
+      (arr||[]).forEach(v => {
+        const o = document.createElement("option");
+        o.value = v;
+        dlEl.appendChild(o);
+      });
     }
-    function to2(n){ return (isFinite(n) ? Number(n).toFixed(2) : "0.00"); }
 
-    // Populate lists
-    async function loadLists(){
-      const j = await apiGet({ action:"lists" });
-      if(!j.ok){ toast("List load failed: " + (j.error||"")); return; }
-      const L = j.data || {};
+    function withinRange(dateStr, fromStr, toStr){
+      if(!dateStr) return false;
+      if(fromStr && dateStr < fromStr) return false;
+      if(toStr && dateStr > toStr) return false;
+      return true;
+    }
 
-      const setOptions = (sel, arr, allowBlank=true)=>{
-        sel.innerHTML = "";
-        if(allowBlank){
-          const o = document.createElement("option");
-          o.value = ""; o.textContent = "";
-          sel.appendChild(o);
+    // ========= NAV =========
+    function showTab(name){
+      const tabs = ["dashboard","inventory","sales","expenses","reports"];
+      tabs.forEach(t => {
+        $("tab-" + t)?.style && ($("tab-" + t).style.display = "none");
+        const btn = document.querySelector(`.tab[data-tab="${t}"]`);
+        if(btn) btn.classList.remove("active");
+      });
+      $("tab-" + name).style.display = "";
+      document.querySelector(`.tab[data-tab="${name}"]`).classList.add("active");
+
+      // quick refresh on tab
+      if(name === "inventory") loadInventoryIn();
+      if(name === "expenses") loadExpenses();
+      if(name === "sales") loadSalesOrders();
+      if(name === "dashboard") refreshDashboard();
+    }
+
+    // ========= LISTS =========
+    async function reloadLists(){
+      try{
+        const j = await apiGet({ action:"getLists" });
+        if(!j.ok) throw new Error(j.error || "getLists failed");
+        LISTS = j.data || LISTS;
+
+        // inventory
+        fillSelect($("inv_wh"), LISTS.locations || [], "Select warehouse...");
+        fillDatalist($("dlProdCats"), LISTS.prodCats || []);
+        fillDatalist($("dlProdSizes"), LISTS.prodSizes || []);
+        fillDatalist($("dlProdColors"), LISTS.prodColors || []);
+
+        // sales items
+        fillDatalist($("dlProdCats2"), LISTS.prodCats || []);
+        fillDatalist($("dlProdSizes2"), LISTS.prodSizes || []);
+        fillDatalist($("dlProdColors2"), LISTS.prodColors || []);
+
+        // expenses
+        fillDatalist($("dlExpCats"), LISTS.expCats || []);
+
+        return true;
+      }catch(err){
+        console.error(err);
+        return false;
+      }
+    }
+
+    // ========= API CHECK =========
+    async function checkApi(){
+      try{
+        saveApiUrl();
+        const j = await apiGet({ action:"ping" });
+        if(j && j.ok){
+          setConn(true, "Connected (ping ok)");
+          await reloadLists();
+          return true;
         }
-        (arr||[]).forEach(v=>{
-          const o = document.createElement("option");
-          o.value = v; o.textContent = v;
-          sel.appendChild(o);
-        });
-      };
-
-      setOptions(document.getElementById("inv_loc"), L.locations || [], false);
-      setOptions(document.getElementById("e_cat"),  L.expCats   || [], false);
-
-      setOptions(document.getElementById("inv_cat"),   L.prodCats   || [], false);
-      setOptions(document.getElementById("inv_size"),  L.prodSizes  || [], true);
-      setOptions(document.getElementById("inv_color"), L.prodColors || [], true);
-
-      setOptions(document.getElementById("s_cat"), L.prodCats || [], false);
-    }
-
-    // Inventory IN calc
-    function calcInv(){
-      const fx = Number(document.getElementById("inv_fx").value || 0);
-      const rmb = Number(document.getElementById("inv_rmb").value || 0);
-      const qty = Number(document.getElementById("inv_qty").value || 0);
-      if(fx>0){
-        const unit = rmb / fx;
-        document.getElementById("inv_usd_unit").value = to2(unit);
-        document.getElementById("inv_usd_total").value = to2(unit * qty);
-      } else {
-        document.getElementById("inv_usd_unit").value = "";
-        document.getElementById("inv_usd_total").value = "";
+        setConn(false, "Ping failed");
+        return false;
+      }catch(err){
+        console.error(err);
+        setConn(false, "Cannot reach API (paste echo URL if needed)");
+        return false;
       }
     }
 
-    // Sales calc + paid lock
-    function calcSales(){
-      const qty = Number(document.getElementById("s_qty").value || 0);
-      const price = Number(document.getElementById("s_price").value || 0);
-      document.getElementById("s_total").value = to2(qty * price);
-
-      const st = document.getElementById("s_status").value;
-      const paid = document.getElementById("s_paid");
-      const allowed = (st==="Delivered" || st==="Completed");
-      paid.disabled = !allowed;
-      document.getElementById("paid_hint").style.opacity = allowed ? 0.3 : 1;
-      if(!allowed) paid.value = "Not received";
+    // ========= INVENTORY CALC =========
+    function recalcInv(){
+      const fx = Number($("inv_fx").value || 0);
+      const rmb = Number($("inv_unit_rmb").value || 0);
+      const qty = Number($("inv_qty").value || 0);
+      const unitUsd = fx ? (rmb / fx) : 0;
+      const totalUsd = unitUsd * qty;
+      $("inv_unit_usd").value = fmt2(unitUsd);
+      $("inv_total_usd").value = fmt2(totalUsd);
     }
 
-    // Save handlers (these must match your Code.gs actions)
     async function saveInventoryIn(){
-      document.getElementById("inv_status").textContent = "Saving…";
-      const payload = {
-        action:"inventory_in_create",
-        date: document.getElementById("inv_date").value,
-        fx: Number(document.getElementById("inv_fx").value||0).toFixed(2),
-        sku: document.getElementById("inv_sku").value.trim(),
-        prodCat: document.getElementById("inv_cat").value,
-        prodSize: document.getElementById("inv_size").value,
-        prodColor: document.getElementById("inv_color").value,
-        location: document.getElementById("inv_loc").value,
-        qty: Number(document.getElementById("inv_qty").value||0),
-        unitRmb: Number(document.getElementById("inv_rmb").value||0),
-        note: document.getElementById("inv_note").value.trim()
-      };
-      const j = await apiPost(payload);
-      if(j.ok){
-        toast("Saved Inventory IN");
-        document.getElementById("inv_status").textContent = "Saved";
-      } else {
-        toast("Save failed: " + (j.error||""));
-        document.getElementById("inv_status").textContent = "Failed";
+      try{
+        setMiniStatus("invDot","invMsg","warn","Saving...");
+        const payload = {
+          action: "saveInventoryIn",
+          data: {
+            date: $("inv_date").value,
+            fx_rmb_usd: Number($("inv_fx").value || 0),
+            sku: $("inv_sku").value.trim(),
+            prod_cat: $("inv_cat").value.trim(),
+            prod_size: $("inv_size").value.trim(),
+            prod_color: $("inv_color").value.trim(),
+            warehouse: $("inv_wh").value.trim(),
+            qty: Number($("inv_qty").value || 0),
+            unit_rmb: Number($("inv_unit_rmb").value || 0),
+            note: $("inv_note").value.trim()
+          }
+        };
+        const j = await apiPost(payload);
+        if(!j.ok) throw new Error(j.error || "Save failed");
+        setMiniStatus("invDot","invMsg","ok","Saved ✓");
+        await loadInventoryIn();
+      }catch(err){
+        console.error(err);
+        setMiniStatus("invDot","invMsg","bad", String(err.message || err));
       }
     }
 
-    async function saveExpense(){
-      document.getElementById("e_status").textContent = "Saving…";
-      const payload = {
-        action:"expense_create",
-        date: document.getElementById("e_date").value,
-        category: document.getElementById("e_cat").value,
-        amountUsd: Number(document.getElementById("e_amt").value||0),
-        note: document.getElementById("e_note").value.trim()
-      };
-      const j = await apiPost(payload);
-      if(j.ok){
-        toast("Saved expense");
-        document.getElementById("e_status").textContent = "Saved";
-      } else {
-        toast("Save failed: " + (j.error||""));
-        document.getElementById("e_status").textContent = "Failed";
-      }
-    }
-
-    async function dropOrderA(){
-      document.getElementById("s_badge").textContent = "Saving…";
-      const payload = {
-        action:"sales_create",
-        date: document.getElementById("s_date").value,
-        customerName: document.getElementById("s_customer").value.trim(),
-        telephone: document.getElementById("s_phone").value.trim(),
-        customerAddress: document.getElementById("s_address").value.trim(),
-        currency: document.getElementById("s_ccy").value,
-        fxKhrUsd: Number(document.getElementById("s_fx").value||0),
-        orderedBy: document.getElementById("s_byA").value.trim(),
-        sku: document.getElementById("s_sku").value.trim(),
-        product: document.getElementById("s_cat").value,
-        qty: Number(document.getElementById("s_qty").value||0),
-        unitPrice: Number(document.getElementById("s_price").value||0),
-        note: document.getElementById("s_note").value.trim(),
-        status: document.getElementById("s_status").value,
-        paid: (document.getElementById("s_paid").value === "Received")
-      };
-      const j = await apiPost(payload);
-      if(j.ok){
-        toast("Order dropped (A)");
-        document.getElementById("s_badge").textContent = "Saved";
-      } else {
-        toast("Save failed: " + (j.error||""));
-        document.getElementById("s_badge").textContent = "Failed";
-      }
-    }
-
-    // Clear buttons
     function clearInventory(){
-      document.getElementById("inv_sku").value="";
-      document.getElementById("inv_cat").value="";
-      document.getElementById("inv_size").value="";
-      document.getElementById("inv_color").value="";
-      document.getElementById("inv_qty").value="";
-      document.getElementById("inv_rmb").value="";
-      document.getElementById("inv_note").value="";
-      calcInv();
-      document.getElementById("inv_status").textContent="Ready";
+      $("inv_sku").value = "";
+      $("inv_cat").value = "";
+      $("inv_size").value = "";
+      $("inv_color").value = "";
+      $("inv_wh").value = "";
+      $("inv_qty").value = "";
+      $("inv_unit_rmb").value = "";
+      $("inv_note").value = "";
+      recalcInv();
+      setMiniStatus("invDot","invMsg","warn","Ready");
     }
+
+    async function loadInventoryIn(){
+      try{
+        const j = await apiGet({ action:"listInventoryIn" });
+        if(!j.ok) throw new Error(j.error || "listInventoryIn failed");
+        const rows = (j.data || []).slice(0,20);
+
+        const tb = $("invTable");
+        tb.innerHTML = "";
+        if(rows.length === 0){
+          tb.innerHTML = `<tr><td colspan="9" class="muted">No inventory records yet.</td></tr>`;
+          return;
+        }
+        rows.forEach(r => {
+          tb.insertAdjacentHTML("beforeend", `
+            <tr>
+              <td>${r.date || ""}</td>
+              <td class="mono">${r.sku || ""}</td>
+              <td>${r.prod_cat || ""}</td>
+              <td>${r.prod_size || ""}</td>
+              <td>${r.prod_color || ""}</td>
+              <td>${r.warehouse || ""}</td>
+              <td class="right">${Number(r.qty || 0)}</td>
+              <td class="right">${fmt2(r.unit_usd)}</td>
+              <td class="right">${fmt2(r.total_usd)}</td>
+            </tr>
+          `);
+        });
+      }catch(err){
+        console.error(err);
+      }
+    }
+
+    // ========= EXPENSES =========
+    async function saveExpense(){
+      try{
+        setMiniStatus("exDot","exMsg","warn","Saving...");
+        const payload = {
+          action:"saveExpense",
+          data:{
+            date: $("ex_date").value,
+            exp_cat: $("ex_cat").value.trim(),
+            currency: $("ex_currency").value,
+            fx: Number($("ex_fx").value || 0),
+            amount: Number($("ex_amount").value || 0),
+            note: $("ex_note").value.trim()
+          }
+        };
+        const j = await apiPost(payload);
+        if(!j.ok) throw new Error(j.error || "Save expense failed");
+        setMiniStatus("exDot","exMsg","ok","Saved ✓");
+        await loadExpenses();
+      }catch(err){
+        console.error(err);
+        setMiniStatus("exDot","exMsg","bad", String(err.message || err));
+      }
+    }
+
     function clearExpense(){
-      document.getElementById("e_amt").value="";
-      document.getElementById("e_note").value="";
-      document.getElementById("e_status").textContent="Ready";
-    }
-    function clearSales(){
-      document.getElementById("s_sku").value="";
-      document.getElementById("s_cat").value="";
-      document.getElementById("s_qty").value="1";
-      document.getElementById("s_price").value="0.00";
-      document.getElementById("s_note").value="";
-      document.getElementById("s_status").value="Preparation";
-      document.getElementById("s_paid").value="Not received";
-      calcSales();
-      document.getElementById("s_badge").textContent="Ready";
+      $("ex_cat").value = "";
+      $("ex_currency").value = "USD";
+      $("ex_fx").value = "";
+      $("ex_amount").value = "";
+      $("ex_note").value = "";
+      setMiniStatus("exDot","exMsg","warn","Ready");
     }
 
-    // Init
-    (async function init(){
-      // default dates
-      const t = todayISO();
-      document.getElementById("inv_date").value = t;
-      document.getElementById("s_date").value = t;
-      document.getElementById("e_date").value = t;
-      document.getElementById("dash_from").value = t;
-      document.getElementById("dash_to").value = t;
-      document.getElementById("r_from").value = t;
-      document.getElementById("r_to").value = t;
+    async function loadExpenses(){
+      try{
+        const j = await apiGet({ action:"listExpenses" });
+        if(!j.ok) throw new Error(j.error || "listExpenses failed");
+        const rows = (j.data || []).slice(0,20);
 
-      // wire calc
-      ["inv_fx","inv_rmb","inv_qty"].forEach(id=> document.getElementById(id).addEventListener("input", calcInv));
-      ["s_qty","s_price","s_status"].forEach(id=> document.getElementById(id).addEventListener("input", calcSales));
-      document.getElementById("s_paid").addEventListener("change", calcSales);
+        const tb = $("expTable");
+        tb.innerHTML = "";
+        if(rows.length === 0){
+          tb.innerHTML = `<tr><td colspan="6" class="muted">No expense records yet.</td></tr>`;
+          return;
+        }
+        rows.forEach(r => {
+          tb.insertAdjacentHTML("beforeend", `
+            <tr>
+              <td>${r.date || ""}</td>
+              <td>${r.exp_cat || ""}</td>
+              <td>${r.currency || ""}</td>
+              <td class="right">${fmt2(r.amount)}</td>
+              <td class="right">${fmt2(r.amount_usd)}</td>
+              <td class="muted">${r.note || ""}</td>
+            </tr>
+          `);
+        });
+      }catch(err){
+        console.error(err);
+      }
+    }
 
-      // wire actions
-      document.getElementById("btn_inv_save").addEventListener("click", saveInventoryIn);
-      document.getElementById("btn_inv_clear").addEventListener("click", clearInventory);
+    // ========= SALES =========
+    function statusBadge(status){
+      const s = String(status || "DRAFT").toUpperCase();
+      if(s === "PAID") return `<span class="badge good">PAID</span>`;
+      if(s === "DELIVERED") return `<span class="badge good">DELIVERED</span>`;
+      if(s === "PREPARED") return `<span class="badge warn">PREPARED</span>`;
+      if(s === "ORDERED") return `<span class="badge warn">ORDERED</span>`;
+      return `<span class="badge">DRAFT</span>`;
+    }
 
-      document.getElementById("btn_exp_save").addEventListener("click", saveExpense);
-      document.getElementById("btn_exp_clear").addEventListener("click", clearExpense);
+    async function createSalesOrder(){
+      try{
+        setMiniStatus("soDot","soMsg","warn","Creating order...");
+        const payload = {
+          action:"createSalesOrder",
+          data:{
+            date: $("so_date").value,
+            customer_name: $("so_customer").value.trim(),
+            phone: $("so_phone").value.trim(),
+            address: $("so_address").value.trim(),
+            currency: $("so_currency").value,
+            fx_khr_usd: Number($("so_fx").value || 0),
+            ordered_by: $("so_ordered_by").value.trim(),
+            note: $("so_note").value.trim()
+          }
+        };
+        const j = await apiPost(payload);
+        if(!j.ok) throw new Error(j.error || "Create order failed");
+        selectedOrderId = j.data.id;
+        setMiniStatus("soDot","soMsg","ok","Selected order: " + selectedOrderId.slice(0,8));
+        await loadSalesOrders();
+        await loadSalesItems(selectedOrderId);
+      }catch(err){
+        console.error(err);
+        setMiniStatus("soDot","soMsg","bad", String(err.message || err));
+      }
+    }
 
-      document.getElementById("btn_dropA").addEventListener("click", dropOrderA);
-      document.getElementById("btn_sales_clear").addEventListener("click", clearSales);
+    function clearSO(){
+      $("so_customer").value = "";
+      $("so_phone").value = "";
+      $("so_address").value = "";
+      $("so_currency").value = "USD";
+      $("so_fx").value = "";
+      $("so_ordered_by").value = "";
+      $("so_note").value = "";
+      selectedOrderId = null;
+      setMiniStatus("soDot","soMsg","warn","No order selected");
+      $("itemsTable").innerHTML = `<tr><td colspan="7" class="muted">Select an order to load items…</td></tr>`;
+    }
 
-      // load lists
-      await loadLists();
-      calcInv();
-      calcSales();
+    async function addSalesItem(){
+      try{
+        if(!selectedOrderId) throw new Error("Select an order first (click a row).");
+        setMiniStatus("siDot","siMsg","warn","Adding item...");
+        const payload = {
+          action:"addSalesItem",
+          data:{
+            order_id: selectedOrderId,
+            sku: $("si_sku").value.trim(),
+            prod_cat: $("si_cat").value.trim(),
+            prod_size: $("si_size").value.trim(),
+            prod_color: $("si_color").value.trim(),
+            qty: Number($("si_qty").value || 0),
+            unit_price: Number($("si_unit").value || 0)
+          }
+        };
+        const j = await apiPost(payload);
+        if(!j.ok) throw new Error(j.error || "Add item failed");
+        setMiniStatus("siDot","siMsg","ok","Item added ✓");
+        $("si_sku").value = "";
+        $("si_cat").value = "";
+        $("si_size").value = "";
+        $("si_color").value = "";
+        $("si_qty").value = "1";
+        $("si_unit").value = "0.00";
+        await loadSalesItems(selectedOrderId);
+      }catch(err){
+        console.error(err);
+        setMiniStatus("siDot","siMsg","bad", String(err.message || err));
+      }
+    }
 
-      // default view
-      const v = localStorage.getItem("erp_view") || "sales";
-      setView(v);
+    async function loadSalesOrders(){
+      try{
+        const j = await apiGet({ action:"listSalesOrders" });
+        if(!j.ok) throw new Error(j.error || "listSalesOrders failed");
+        const rows = (j.data || []).slice(0,20);
 
-      // quick ping check
-      const ping = await apiGet({ action:"ping" });
-      if(!ping.ok) toast("API ping failed: " + (ping.error||""));
-    })();
+        const tb = $("ordersTable");
+        tb.innerHTML = "";
+        if(rows.length === 0){
+          tb.innerHTML = `<tr><td colspan="5" class="muted">No sales orders yet.</td></tr>`;
+          return;
+        }
+
+        rows.forEach(r => {
+          const isSel = selectedOrderId && r.id === selectedOrderId;
+          const trStyle = isSel ? `style="background:#eff6ff"` : "";
+          tb.insertAdjacentHTML("beforeend", `
+            <tr ${trStyle} data-orderid="${r.id}">
+              <td>${r.date || ""}</td>
+              <td>${r.customer_name || ""}<div class="small muted">${r.address || ""}</div></td>
+              <td class="mono">${r.phone || ""}</td>
+              <td>${statusBadge(r.status)}</td>
+              <td class="right">
+                <button class="btn ghost" style="padding:8px 10px; font-weight:900" data-act="ORDERED">Ordered</button>
+                <button class="btn ghost" style="padding:8px 10px; font-weight:900" data-act="PREPARED">Prepared</button>
+                <button class="btn ghost" style="padding:8px 10px; font-weight:900" data-act="DELIVERED">Delivered</button>
+                <button class="btn primary" style="padding:8px 10px; font-weight:900" data-act="PAID">Paid</button>
+              </td>
+            </tr>
+          `);
+        });
+
+        // row click to select
+        tb.querySelectorAll("tr").forEach(tr => {
+          tr.addEventListener("click", async (ev) => {
+            const id = tr.getAttribute("data-orderid");
+            if(!id) return;
+            selectedOrderId = id;
+            setMiniStatus("soDot","soMsg","ok","Selected order: " + selectedOrderId.slice(0,8));
+            await loadSalesOrders();
+            await loadSalesItems(selectedOrderId);
+          });
+        });
+
+        // buttons
+        tb.querySelectorAll("button[data-act]").forEach(btn => {
+          btn.addEventListener("click", async (ev) => {
+            ev.stopPropagation();
+            const tr = btn.closest("tr");
+            const orderId = tr.getAttribute("data-orderid");
+            const act = btn.getAttribute("data-act");
+            if(act === "PAID") return await payOrder(orderId);
+            return await workflow(orderId, act);
+          });
+        });
+
+      }catch(err){
+        console.error(err);
+      }
+    }
+
+    async function loadSalesItems(orderId){
+      try{
+        const j = await apiGet({ action:"listSalesItems", order_id: orderId });
+        if(!j.ok) throw new Error(j.error || "listSalesItems failed");
+        const rows = (j.data || []);
+
+        const tb = $("itemsTable");
+        tb.innerHTML = "";
+        if(rows.length === 0){
+          tb.innerHTML = `<tr><td colspan="7" class="muted">No items yet for this order.</td></tr>`;
+          return;
+        }
+        rows.forEach(r => {
+          tb.insertAdjacentHTML("beforeend", `
+            <tr>
+              <td class="mono">${r.sku || ""}</td>
+              <td>${r.prod_cat || ""}</td>
+              <td>${r.prod_size || ""}</td>
+              <td>${r.prod_color || ""}</td>
+              <td class="right">${Number(r.qty || 0)}</td>
+              <td class="right">${fmt2(r.unit_price)}</td>
+              <td class="right">${fmt2(r.line_total)}</td>
+            </tr>
+          `);
+        });
+      }catch(err){
+        console.error(err);
+        $("itemsTable").innerHTML = `<tr><td colspan="7" class="muted">Failed to load items.</td></tr>`;
+      }
+    }
+
+    async function workflow(orderId, step){
+      try{
+        const by = (step === "PREPARED") ? prompt("Prepared by (Mr/Ms B)?", "Mr B / Ms B") :
+                  (step === "DELIVERED") ? prompt("Delivered by?", "Staff") :
+                  "";
+        const j = await apiPost({ action:"updateSalesWorkflow", data:{ order_id: orderId, step, by } });
+        if(!j.ok) throw new Error(j.error || "Workflow failed");
+        await loadSalesOrders();
+        await refreshDashboard();
+      }catch(err){
+        alert(String(err.message || err));
+      }
+    }
+
+    async function payOrder(orderId){
+      try{
+        const amt = prompt("Paid amount (number)?", "0");
+        if(amt === null) return;
+
+        const currency = prompt("Paid currency? (USD or KHR)", "USD");
+        if(currency === null) return;
+
+        let fx = 0;
+        if(String(currency).toUpperCase() === "KHR"){
+          const fxIn = prompt("FX KHR → USD (e.g. 4100)", "4100");
+          if(fxIn === null) return;
+          fx = Number(fxIn || 0);
+        }
+
+        const j = await apiPost({
+          action:"markPaid",
+          data:{ order_id: orderId, paid_amount: Number(amt || 0), paid_currency: String(currency||"USD").toUpperCase(), fx }
+        });
+        if(!j.ok) throw new Error(j.error || "Mark paid failed");
+        await loadSalesOrders();
+        await refreshDashboard();
+      }catch(err){
+        alert(String(err.message || err));
+      }
+    }
+
+    // ========= DASHBOARD / REPORTS =========
+    async function refreshDashboard(){
+      try{
+        // cash
+        const cashJ = await apiGet({ action:"listCash" });
+        const cash = cashJ.ok ? (cashJ.data || []) : [];
+
+        let cashIn = 0, cashOut = 0;
+        cash.forEach(r => {
+          const usd = Number(r.amount_usd || 0);
+          if(String(r.type || "").toUpperCase() === "IN") cashIn += usd;
+          if(String(r.type || "").toUpperCase() === "OUT") cashOut += usd;
+        });
+
+        $("kpiCashIn").textContent = fmt2(cashIn);
+        $("kpiCashOut").textContent = fmt2(cashOut);
+        $("kpiNetCash").textContent = fmt2(cashIn - cashOut);
+
+        // expenses
+        const expJ = await apiGet({ action:"listExpenses" });
+        const exps = expJ.ok ? (expJ.data || []) : [];
+        let expUsd = 0;
+        exps.forEach(r => expUsd += Number(r.amount_usd || 0));
+        $("kpiExpenses").textContent = fmt2(expUsd);
+
+        // sales status counts
+        const soJ = await apiGet({ action:"listSalesOrders" });
+        const orders = soJ.ok ? (soJ.data || []) : [];
+        const counts = {};
+        orders.forEach(o => {
+          const s = String(o.status || "DRAFT").toUpperCase();
+          counts[s] = (counts[s] || 0) + 1;
+        });
+
+        const tbody = $("salesStatusTable");
+        const keys = ["DRAFT","ORDERED","PREPARED","DELIVERED","PAID"];
+        tbody.innerHTML = keys.map(k => `<tr><td>${k}</td><td class="right">${counts[k] || 0}</td></tr>`).join("");
+
+        // chart net cash last 14 days
+        drawCashChart(cash);
+
+      }catch(err){
+        console.error(err);
+      }
+    }
+
+    function drawCashChart(cashRows){
+      // build daily net for last 14 days
+      const now = new Date();
+      const days = [];
+      for(let i=13;i>=0;i--){
+        const d = new Date(now);
+        d.setDate(now.getDate() - i);
+        days.push(d.toISOString().slice(0,10));
+      }
+      const netBy = {};
+      days.forEach(d => netBy[d] = 0);
+
+      cashRows.forEach(r => {
+        const d = String(r.date || "");
+        if(!netBy.hasOwnProperty(d)) return;
+        const usd = Number(r.amount_usd || 0);
+        const t = String(r.type || "").toUpperCase();
+        if(t === "IN") netBy[d] += usd;
+        if(t === "OUT") netBy[d] -= usd;
+      });
+
+      const vals = days.map(d => netBy[d]);
+      const maxAbs = Math.max(1, ...vals.map(v => Math.abs(v)));
+
+      const svg = $("cashChart");
+      const W = 800, H = 220;
+      const pad = 22;
+      const baseY = H/2;
+      const barW = Math.floor((W - pad*2) / days.length) - 6;
+
+      // clear
+      svg.innerHTML = "";
+
+      // axis
+      svg.insertAdjacentHTML("beforeend", `
+        <line x1="${pad}" y1="${baseY}" x2="${W-pad}" y2="${baseY}" stroke="#e5e7eb" />
+      `);
+
+      days.forEach((d, i) => {
+        const v = netBy[d];
+        const h = Math.round((Math.abs(v) / maxAbs) * (H/2 - pad));
+        const x = pad + i*(barW+6);
+        const y = v >= 0 ? (baseY - h) : baseY;
+        const fill = v >= 0 ? "#2563eb" : "#ef4444"; // simple signal
+
+        svg.insertAdjacentHTML("beforeend", `
+          <rect x="${x}" y="${y}" width="${barW}" height="${h}" rx="6" fill="${fill}" opacity="0.85"></rect>
+        `);
+
+        // small date labels (every 2)
+        if(i % 2 === 0){
+          svg.insertAdjacentHTML("beforeend", `
+            <text x="${x}" y="${H-6}" font-size="10" fill="#64748b">${d.slice(5)}</text>
+          `);
+        }
+      });
+
+      // title lines
+      svg.insertAdjacentHTML("beforeend", `
+        <text x="${pad}" y="16" font-size="11" fill="#64748b">Net cash (IN - OUT) per day</text>
+      `);
+    }
+
+    async function runReport(){
+      const from = $("rp_from").value;
+      const to = $("rp_to").value;
+
+      const cashJ = await apiGet({ action:"listCash" });
+      const cash = cashJ.ok ? (cashJ.data || []) : [];
+
+      const expJ = await apiGet({ action:"listExpenses" });
+      const exps = expJ.ok ? (expJ.data || []) : [];
+
+      const soJ = await apiGet({ action:"listSalesOrders" });
+      const orders = soJ.ok ? (soJ.data || []) : [];
+
+      // cash in range
+      let cin=0, cout=0;
+      cash.forEach(r => {
+        if(!withinRange(String(r.date||""), from, to)) return;
+        const usd = Number(r.amount_usd || 0);
+        const t = String(r.type||"").toUpperCase();
+        if(t==="IN") cin += usd;
+        if(t==="OUT") cout += usd;
+      });
+
+      // expenses in range
+      let expUsd = 0;
+      exps.forEach(r => {
+        if(!withinRange(String(r.date||""), from, to)) return;
+        expUsd += Number(r.amount_usd || 0);
+      });
+
+      // sales in range (paid via cash entries, but also count orders)
+      let paidOrders = 0, deliveredOrders = 0, openOrders = 0;
+      orders.forEach(o => {
+        if(!withinRange(String(o.date||""), from, to)) return;
+        const s = String(o.status||"").toUpperCase();
+        if(s==="PAID") paidOrders++;
+        else if(s==="DELIVERED") deliveredOrders++;
+        else openOrders++;
+      });
+
+      $("rpCash").innerHTML = `
+        <tr><td>Cash IN</td><td class="right">${fmt2(cin)}</td></tr>
+        <tr><td>Cash OUT</td><td class="right">${fmt2(cout)}</td></tr>
+        <tr><td><b>Net Cash</b></td><td class="right"><b>${fmt2(cin-cout)}</b></td></tr>
+        <tr><td>Expenses (USD)</td><td class="right">${fmt2(expUsd)}</td></tr>
+      `;
+
+      $("rpSales").innerHTML = `
+        <tr><td>Paid orders</td><td class="right">${paidOrders}</td></tr>
+        <tr><td>Delivered (not paid)</td><td class="right">${deliveredOrders}</td></tr>
+        <tr><td>Open orders</td><td class="right">${openOrders}</td></tr>
+      `;
+    }
+
+    function setThisMonth(){
+      const d = new Date();
+      const y = d.getFullYear();
+      const m = String(d.getMonth()+1).padStart(2,"0");
+      const first = `${y}-${m}-01`;
+      const last = new Date(y, d.getMonth()+1, 0).toISOString().slice(0,10);
+      $("rp_from").value = first;
+      $("rp_to").value = last;
+    }
+
+    // ========= INIT =========
+    function init(){
+      // load url from storage
+      $("apiUrl").value = localStorage.getItem(LS_KEY) || DEFAULT_API_URL;
+
+      // set default dates
+      $("inv_date").value = todayISO();
+      $("ex_date").value = todayISO();
+      $("so_date").value = todayISO();
+      setThisMonth();
+
+      // events
+      document.querySelectorAll(".tab").forEach(btn => {
+        btn.addEventListener("click", () => showTab(btn.dataset.tab));
+      });
+
+      $("btnCheck").addEventListener("click", checkApi);
+      $("btnReloadLists").addEventListener("click", async () => {
+        const ok = await reloadLists();
+        alert(ok ? "Lists loaded ✓" : "Failed to load Lists (check API URL)");
+      });
+
+      $("btnRefreshDash").addEventListener("click", refreshDashboard);
+
+      // inventory
+      ["inv_fx","inv_unit_rmb","inv_qty"].forEach(id => $(id).addEventListener("input", recalcInv));
+      $("btnSaveInv").addEventListener("click", saveInventoryIn);
+      $("btnClearInv").addEventListener("click", clearInventory);
+
+      // expenses
+      $("btnSaveExp").addEventListener("click", saveExpense);
+      $("btnClearExp").addEventListener("click", clearExpense);
+
+      // sales
+      $("btnCreateOrder").addEventListener("click", createSalesOrder);
+      $("btnClearSO").addEventListener("click", clearSO);
+      $("btnAddItem").addEventListener("click", addSalesItem);
+
+      // reports
+      $("btnRunReport").addEventListener("click", runReport);
+      $("btnThisMonth").addEventListener("click", () => { setThisMonth(); runReport(); });
+
+      // initial
+      setMiniStatus("invDot","invMsg","warn","Ready");
+      setMiniStatus("exDot","exMsg","warn","Ready");
+      setMiniStatus("soDot","soMsg","warn","No order selected");
+      setMiniStatus("siDot","siMsg","warn","Ready");
+
+      recalcInv();
+
+      // auto-check
+      checkApi();
+    }
+
+    window.addEventListener("load", init);
   </script>
 </body>
 </html>

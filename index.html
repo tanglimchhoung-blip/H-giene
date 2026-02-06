@@ -1,211 +1,860 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
 <head>
-<meta charset="UTF-8" />
-<title>Internal ERP</title>
-<meta name="viewport" content="width=device-width, initial-scale=1" />
-<style>
-  body { font-family: system-ui, -apple-system, sans-serif; background:#f6f7fb; margin:0; }
-  .wrap { max-width:1200px; margin:auto; padding:20px; }
-  h1 { margin:0 0 6px }
-  .tabs button {
-    border:1px solid #ddd; background:#fff; padding:8px 14px;
-    border-radius:18px; margin-right:6px; cursor:pointer;
-  }
-  .tabs button.active { background:#2563eb; color:#fff; border-color:#2563eb }
-  .card {
-    background:#fff; border-radius:14px; padding:18px; margin-top:16px;
-    box-shadow:0 10px 30px rgba(0,0,0,.06);
-  }
-  .grid { display:grid; grid-template-columns:repeat(4,1fr); gap:12px }
-  .grid-2 { grid-template-columns:repeat(2,1fr) }
-  label { font-size:12px; color:#555 }
-  input, select, textarea {
-    width:100%; padding:10px; border-radius:10px;
-    border:1px solid #ddd; font-size:14px;
-  }
-  textarea { resize:none }
-  .btn {
-    padding:10px 14px; border-radius:12px;
-    border:0; cursor:pointer; font-weight:600;
-  }
-  .btn-primary { background:#2563eb; color:#fff }
-  .btn-gray { background:#eee }
-  table { width:100%; border-collapse:collapse; margin-top:10px }
-  th, td { padding:8px; border-bottom:1px solid #eee; text-align:left }
-  th { font-size:12px; color:#555 }
-  .right { text-align:right }
-</style>
+  <meta charset="utf-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <title>Internal ERP</title>
+  <style>
+    :root{
+      --bg:#f6f7fb; --card:#fff; --text:#0f172a; --muted:#64748b;
+      --line:#e5e7eb; --pri:#2563eb; --pri2:#1d4ed8; --ok:#16a34a; --err:#dc2626;
+      --shadow:0 10px 30px rgba(0,0,0,.06);
+      --r:14px;
+    }
+    *{box-sizing:border-box}
+    body{margin:0;font-family:system-ui,-apple-system,Segoe UI,Roboto,Arial,sans-serif;background:var(--bg);color:var(--text)}
+    .wrap{max-width:1200px;margin:0 auto;padding:16px}
+    header{display:flex;gap:12px;align-items:center;justify-content:space-between;flex-wrap:wrap}
+    h1{font-size:18px;margin:0}
+    .tabs{display:flex;gap:8px;flex-wrap:wrap}
+    .tabbtn{
+      border:1px solid var(--line); background:#fff; padding:8px 12px; border-radius:999px;
+      cursor:pointer; font-weight:600; color:#111827;
+    }
+    .tabbtn.active{background:var(--pri);border-color:var(--pri);color:#fff}
+    .card{background:var(--card);border-radius:var(--r);box-shadow:var(--shadow);padding:14px;margin-top:14px}
+    .title{display:flex;align-items:center;justify-content:space-between;gap:10px;flex-wrap:wrap}
+    .title h2{font-size:15px;margin:0}
+    .note{font-size:12px;color:var(--muted);margin-top:4px}
+    .grid{display:grid;grid-template-columns:repeat(12,1fr);gap:10px}
+    .field{grid-column:span 3}
+    .field.span4{grid-column:span 4}
+    .field.span6{grid-column:span 6}
+    .field.span12{grid-column:span 12}
+    label{display:block;font-size:12px;color:var(--muted);margin:0 0 6px}
+    input,select,textarea{
+      width:100%;padding:10px;border:1px solid var(--line);border-radius:12px;background:#fff;
+      font-size:14px; outline:none;
+    }
+    input:focus,select:focus,textarea:focus{border-color:#c7d2fe; box-shadow:0 0 0 3px rgba(37,99,235,.12)}
+    textarea{resize:none}
+    .row{display:flex;gap:8px;align-items:center}
+    .btn{
+      border:0;border-radius:12px;padding:10px 12px;font-weight:700;cursor:pointer;
+      background:#eef2ff;color:#1e3a8a;
+    }
+    .btn.primary{background:var(--pri);color:#fff}
+    .btn.primary:hover{background:var(--pri2)}
+    .btn.ghost{background:#fff;border:1px solid var(--line);color:#111827}
+    .btn.danger{background:#fee2e2;color:#991b1b}
+    .pill{padding:6px 10px;border-radius:999px;font-size:12px;font-weight:700;background:#eef2ff;color:#1e3a8a}
+    .statusbar{margin-top:10px;padding:10px 12px;border-radius:12px;border:1px solid var(--line);background:#fff;display:none}
+    .statusbar.ok{display:block;border-color:#bbf7d0;background:#f0fdf4;color:#166534}
+    .statusbar.err{display:block;border-color:#fecaca;background:#fef2f2;color:#991b1b}
+    table{width:100%;border-collapse:collapse;margin-top:10px}
+    th,td{border-bottom:1px solid var(--line);padding:8px;text-align:left;vertical-align:middle}
+    th{font-size:12px;color:var(--muted);font-weight:800}
+    td input, td select{padding:8px;border-radius:10px}
+    .right{text-align:right}
+    .small{font-size:12px;color:var(--muted)}
+    .kpi{display:grid;grid-template-columns:repeat(4,1fr);gap:10px}
+    .kpi .box{background:#fff;border:1px solid var(--line);border-radius:14px;padding:12px}
+    .kpi .val{font-size:18px;font-weight:900;margin-top:6px}
+    .chartWrap{margin-top:12px;border:1px solid var(--line);border-radius:14px;padding:12px;background:#fff}
+    canvas{width:100%;height:240px}
+    @media (max-width:900px){
+      .field{grid-column:span 6}
+      .kpi{grid-template-columns:repeat(2,1fr)}
+    }
+    @media (max-width:520px){
+      .field{grid-column:span 12}
+      canvas{height:200px}
+    }
+  </style>
 </head>
 
 <body>
 <div class="wrap">
-  <h1>Internal ERP</h1>
-  <div class="tabs">
-    <button class="active" onclick="showTab('inventory')">Inventory IN</button>
-    <button onclick="showTab('sales')">Sales</button>
-  </div>
+  <header>
+    <div>
+      <h1>Internal ERP</h1>
+      <div class="note">White UI • Mobile-first • Simple finance workflow</div>
+    </div>
+    <div class="tabs">
+      <button class="tabbtn active" data-tab="dash" onclick="showTab('dash')">Dashboard</button>
+      <button class="tabbtn" data-tab="inv" onclick="showTab('inv')">Inventory IN</button>
+      <button class="tabbtn" data-tab="sales" onclick="showTab('sales')">Sales</button>
+      <button class="tabbtn" data-tab="ret" onclick="showTab('ret')">Returns</button>
+      <button class="tabbtn" data-tab="exp" onclick="showTab('exp')">Expenses</button>
+      <button class="tabbtn" data-tab="lists" onclick="showTab('lists')">Lists</button>
+    </div>
+  </header>
+
+  <!-- DASHBOARD -->
+  <section id="tab-dash" class="card">
+    <div class="title">
+      <h2>Dashboard (Date Range)</h2>
+      <span class="pill">No inventory value here</span>
+    </div>
+
+    <div class="grid" style="margin-top:10px">
+      <div class="field span3">
+        <label>From</label>
+        <input type="date" id="dashFrom">
+      </div>
+      <div class="field span3">
+        <label>To</label>
+        <input type="date" id="dashTo">
+      </div>
+      <div class="field span6" style="display:flex;gap:8px;align-items:flex-end">
+        <button class="btn primary" onclick="loadDashboard()">Refresh</button>
+        <div class="small" id="dashHint"></div>
+      </div>
+    </div>
+
+    <div class="statusbar" id="dashStatus"></div>
+
+    <div class="kpi" style="margin-top:12px">
+      <div class="box"><div class="small">Total Sales (USD)</div><div class="val" id="kSalesUSD">0.00</div></div>
+      <div class="box"><div class="small">Total Sales (KHR)</div><div class="val" id="kSalesKHR">0</div></div>
+      <div class="box"><div class="small">Cash Received (USD equiv)</div><div class="val" id="kCashIn">0.00</div></div>
+      <div class="box"><div class="small">Cash Refunded (USD equiv)</div><div class="val" id="kCashOut">0.00</div></div>
+      <div class="box"><div class="small">Operating Expenses (USD)</div><div class="val" id="kExp">0.00</div></div>
+      <div class="box"><div class="small">Net Profit (USD)</div><div class="val" id="kNet">0.00</div></div>
+    </div>
+
+    <div class="chartWrap">
+      <div class="small">Illustration (simple bar chart): Cash In vs Cash Out vs Expenses</div>
+      <canvas id="barCanvas" width="900" height="240"></canvas>
+    </div>
+  </section>
 
   <!-- INVENTORY IN -->
-  <div id="inventory" class="card">
-    <h3>Inventory IN</h3>
-    <div class="grid">
-      <div>
-        <label>Date</label>
-        <input type="date" id="inv_date" />
+  <section id="tab-inv" class="card" style="display:none">
+    <div class="title">
+      <h2>Inventory IN (Batch + FOB)</h2>
+      <span class="pill">Multi items</span>
+    </div>
+
+    <div class="grid" style="margin-top:10px">
+      <div class="field span3">
+        <label>Receive Date</label>
+        <input type="date" id="invDate">
       </div>
-      <div>
-        <label>FX RMB → USD</label>
-        <input type="number" id="inv_fx" value="7.00" step="0.01" />
-      </div>
-      <div>
-        <label>SKU</label>
-        <input id="inv_sku" />
-      </div>
-      <div>
+      <div class="field span3">
         <label>Warehouse</label>
-        <select id="inv_wh"></select>
+        <select id="invWh"></select>
+        <div class="small">From Lists (LOCATION)</div>
       </div>
-
-      <div>
-        <label>Product category</label>
-        <input list="prodCats" id="inv_cat" />
+      <div class="field span3">
+        <label>Total FOB Cost (USD)</label>
+        <input type="number" step="0.01" id="invFob" placeholder="e.g. 50.00">
       </div>
-      <div>
-        <label>Size</label>
-        <input list="prodSizes" id="inv_size" />
-      </div>
-      <div>
-        <label>Color</label>
-        <input list="prodColors" id="inv_color" />
-      </div>
-      <div>
-        <label>Qty</label>
-        <input type="number" id="inv_qty" />
-      </div>
-
-      <div>
-        <label>Unit RMB</label>
-        <input type="number" id="inv_rmb" step="0.01" />
-      </div>
-      <div>
-        <label>Unit USD</label>
-        <input id="inv_usd" disabled />
-      </div>
-      <div>
-        <label>Total USD</label>
-        <input id="inv_total" disabled />
-      </div>
-      <div>
-        <label>Note</label>
-        <input id="inv_note" />
+      <div class="field span3">
+        <label>FOB allocation rule</label>
+        <input disabled value="FOB ÷ Total Qty (same per unit)">
       </div>
     </div>
 
-    <br/>
-    <button class="btn btn-primary" onclick="saveInventory()">Save Inventory IN</button>
-  </div>
-
-  <!-- SALES -->
-  <div id="sales" class="card" style="display:none">
-    <h3>Sales Order</h3>
-
-    <div class="grid">
-      <div><label>Date</label><input type="date" id="so_date"></div>
-      <div><label>Customer</label><input id="so_customer"></div>
-      <div><label>Phone</label><input id="so_phone"></div>
-      <div><label>Address</label><input id="so_address"></div>
-      <div>
-        <label>Delivery company</label>
-        <select id="so_delivery"></select>
-      </div>
+    <div class="row" style="margin-top:10px;justify-content:space-between">
+      <div class="small">Items (product_unit_cost_usd is the product cost only; FOB is added automatically)</div>
+      <button class="btn ghost" onclick="addInvRow()">+ Add item</button>
     </div>
 
-    <h4>Items</h4>
-    <table id="items">
+    <table id="invTable">
       <thead>
         <tr>
-          <th>SKU</th><th>Category</th><th>Qty</th>
-          <th>Price</th><th>Currency</th><th>Total</th><th></th>
+          <th>SKU</th>
+          <th>Category</th>
+          <th>Size</th>
+          <th>Color</th>
+          <th class="right">Qty</th>
+          <th class="right">Product unit cost (USD)</th>
+          <th></th>
         </tr>
       </thead>
       <tbody></tbody>
     </table>
-    <button class="btn btn-gray" onclick="addItem()">+ Add item</button>
 
-    <h4>Payment (anytime)</h4>
-    <div class="grid grid-2">
-      <div>
-        <label>Amount received</label>
-        <input type="number" id="pay_amount">
+    <div class="statusbar" id="invStatus"></div>
+
+    <div class="row" style="margin-top:12px;gap:10px;flex-wrap:wrap">
+      <button class="btn primary" onclick="saveInventoryBatch()">Save Batch</button>
+      <span class="small" id="invCalc"></span>
+    </div>
+  </section>
+
+  <!-- SALES -->
+  <section id="tab-sales" class="card" style="display:none">
+    <div class="title">
+      <h2>Sales (Multi items + Payment anytime)</h2>
+      <span class="pill">Cash only when received</span>
+    </div>
+
+    <div class="grid" style="margin-top:10px">
+      <div class="field span3"><label>Order Date</label><input type="date" id="soDate"></div>
+      <div class="field span3"><label>Customer Name</label><input id="soCustomer"></div>
+      <div class="field span3"><label>Phone</label><input id="soPhone"></div>
+      <div class="field span3"><label>Customer Address</label><input id="soAddress"></div>
+
+      <div class="field span3">
+        <label>Delivery Company</label>
+        <div class="row">
+          <select id="soDelivery" style="flex:1"></select>
+          <button class="btn" onclick="quickAddList('DELIVERY')">+ Add</button>
+        </div>
       </div>
-      <div>
-        <label>Currency</label>
-        <select id="pay_currency">
+
+      <div class="field span9">
+        <label>Note</label>
+        <input id="soNote" placeholder="optional">
+      </div>
+    </div>
+
+    <div class="row" style="margin-top:10px;justify-content:space-between">
+      <div class="small">Sales Items (you can mix USD & KHR line items)</div>
+      <button class="btn ghost" onclick="addSalesRow()">+ Add item</button>
+    </div>
+
+    <table id="salesTable">
+      <thead>
+        <tr>
+          <th>SKU</th>
+          <th>Category</th>
+          <th>Size</th>
+          <th>Color</th>
+          <th class="right">Qty</th>
+          <th class="right">Price</th>
+          <th>Currency</th>
+          <th class="right">Line total</th>
+          <th></th>
+        </tr>
+      </thead>
+      <tbody></tbody>
+    </table>
+
+    <div class="statusbar" id="salesStatus"></div>
+
+    <div class="row" style="margin-top:12px;gap:10px;flex-wrap:wrap">
+      <button class="btn primary" onclick="saveSalesOrderAndItems()">Save Sales Order</button>
+      <span class="small" id="salesTotals"></span>
+    </div>
+
+    <hr style="border:0;border-top:1px solid var(--line);margin:14px 0">
+
+    <div class="title">
+      <h2>Record Payment (anytime)</h2>
+      <span class="pill">Cash IN</span>
+    </div>
+
+    <div class="grid" style="margin-top:10px">
+      <div class="field span3">
+        <label>Order ID</label>
+        <input id="payOrderId" placeholder="SO-... (paste after saving order)">
+      </div>
+      <div class="field span3">
+        <label>Cash Date</label>
+        <input type="date" id="payDate">
+      </div>
+      <div class="field span3">
+        <label>Currency received</label>
+        <select id="payCur">
           <option>USD</option>
           <option>KHR</option>
         </select>
       </div>
-      <div>
-        <label>FX (if KHR)</label>
-        <input type="number" id="pay_fx" step="0.01">
+      <div class="field span3">
+        <label>Amount received</label>
+        <input type="number" step="0.01" id="payAmt">
       </div>
-      <div>
-        <label>Received by</label>
-        <input id="pay_by">
+      <div class="field span3">
+        <label>FX KHR→USD (only if KHR)</label>
+        <input type="number" step="0.01" id="payFx" placeholder="e.g. 4100">
+      </div>
+      <div class="field span9">
+        <label>Note</label>
+        <input id="payNote" placeholder="optional">
       </div>
     </div>
 
-    <br/>
-    <button class="btn btn-primary" onclick="saveSales()">Save Sales Order</button>
-  </div>
+    <div class="row" style="margin-top:12px;gap:10px;flex-wrap:wrap">
+      <button class="btn primary" onclick="recordPayment()">Record Payment</button>
+    </div>
+  </section>
+
+  <!-- RETURNS -->
+  <section id="tab-ret" class="card" style="display:none">
+    <div class="title">
+      <h2>Returns (Inventory back + Refund cash OUT)</h2>
+      <span class="pill">One action</span>
+    </div>
+
+    <div class="grid" style="margin-top:10px">
+      <div class="field span3"><label>Return Date</label><input type="date" id="retDate"></div>
+      <div class="field span3"><label>Order ID</label><input id="retOrderId" placeholder="SO-..."></div>
+      <div class="field span3"><label>SKU</label><input id="retSku"></div>
+      <div class="field span3">
+        <label>Warehouse</label>
+        <select id="retWh"></select>
+      </div>
+
+      <div class="field span3">
+        <label>Category</label>
+        <div class="row">
+          <input list="dlProdCat" id="retCat" style="flex:1">
+          <button class="btn" onclick="quickAddList('PROD_CAT')">+ Add</button>
+        </div>
+      </div>
+      <div class="field span3">
+        <label>Size</label>
+        <div class="row">
+          <input list="dlProdSize" id="retSize" style="flex:1">
+          <button class="btn" onclick="quickAddList('PROD_SIZE')">+ Add</button>
+        </div>
+      </div>
+      <div class="field span3">
+        <label>Color</label>
+        <div class="row">
+          <input list="dlProdColor" id="retColor" style="flex:1">
+          <button class="btn" onclick="quickAddList('PROD_COLOR')">+ Add</button>
+        </div>
+      </div>
+      <div class="field span3"><label>Qty returned</label><input type="number" id="retQty"></div>
+
+      <div class="field span3"><label>Unit cost (USD)</label><input type="number" step="0.01" id="retUnitCost"></div>
+
+      <div class="field span3">
+        <label>Refund currency</label>
+        <select id="retRefundCur">
+          <option>USD</option>
+          <option>KHR</option>
+        </select>
+      </div>
+      <div class="field span3"><label>Refund amount</label><input type="number" step="0.01" id="retRefundAmt"></div>
+      <div class="field span3"><label>FX KHR→USD (if KHR)</label><input type="number" step="0.01" id="retFx"></div>
+
+      <div class="field span12"><label>Reason</label><input id="retReason" placeholder="e.g. damaged / wrong item / unhappy"></div>
+    </div>
+
+    <div class="statusbar" id="retStatus"></div>
+
+    <div class="row" style="margin-top:12px;gap:10px;flex-wrap:wrap">
+      <button class="btn primary" onclick="recordReturn()">Record Return + Refund</button>
+    </div>
+  </section>
+
+  <!-- EXPENSES -->
+  <section id="tab-exp" class="card" style="display:none">
+    <div class="title">
+      <h2>Expenses</h2>
+      <span class="pill">USD only</span>
+    </div>
+
+    <div class="grid" style="margin-top:10px">
+      <div class="field span3"><label>Date</label><input type="date" id="expDate"></div>
+      <div class="field span6">
+        <label>Category</label>
+        <div class="row">
+          <select id="expCat" style="flex:1"></select>
+          <button class="btn" onclick="quickAddList('EXP_CAT')">+ Add</button>
+        </div>
+      </div>
+      <div class="field span3"><label>Amount (USD)</label><input type="number" step="0.01" id="expAmt"></div>
+      <div class="field span12"><label>Note</label><input id="expNote"></div>
+    </div>
+
+    <div class="statusbar" id="expStatus"></div>
+
+    <div class="row" style="margin-top:12px">
+      <button class="btn primary" onclick="saveExpense()">Save Expense</button>
+    </div>
+  </section>
+
+  <!-- LISTS -->
+  <section id="tab-lists" class="card" style="display:none">
+    <div class="title">
+      <h2>Lists Manager</h2>
+      <span class="pill">Add dropdown values</span>
+    </div>
+
+    <div class="grid" style="margin-top:10px">
+      <div class="field span3">
+        <label>List Name</label>
+        <select id="lmName">
+          <option>LOCATION</option>
+          <option>PROD_CAT</option>
+          <option>PROD_SIZE</option>
+          <option>PROD_COLOR</option>
+          <option>DELIVERY</option>
+          <option>EXP_CAT</option>
+        </select>
+      </div>
+      <div class="field span6">
+        <label>Value</label>
+        <input id="lmValue" placeholder="type new value">
+      </div>
+      <div class="field span3" style="display:flex;align-items:flex-end">
+        <button class="btn primary" onclick="addListValueFromManager()">Add</button>
+      </div>
+    </div>
+
+    <div class="statusbar" id="listStatus"></div>
+
+    <div class="small" style="margin-top:10px">
+      After adding, go back to Inventory/Sales and the dropdowns will include the new value.
+    </div>
+  </section>
+
+  <!-- shared datalists -->
+  <datalist id="dlProdCat"></datalist>
+  <datalist id="dlProdSize"></datalist>
+  <datalist id="dlProdColor"></datalist>
+
 </div>
 
-<!-- LISTS -->
-<datalist id="prodCats"></datalist>
-<datalist id="prodSizes"></datalist>
-<datalist id="prodColors"></datalist>
-
 <script>
-const API = "https://script.google.com/macros/s/AKfycbzgC6AqVVftlcvoetDa2aTVzdSbrK7FSJt7kpJCFDeHB7o7azG0Lh_yB4a4CBw1I-ML/exec";
+  // ✅ Your exact Apps Script Web App URL
+  const API = "https://script.google.com/macros/s/AKfycbw4zZFCyhKAC0v0oLnwiXRG_RRhWK8702qxEqLjA9V-D0B8aThyYRYLFBm53pSzWUoo/exec";
 
-function showTab(t){
-  inventory.style.display = t==="inventory"?"block":"none";
-  sales.style.display = t==="sales"?"block":"none";
-  document.querySelectorAll('.tabs button').forEach(b=>b.classList.remove('active'));
-  event.target.classList.add('active');
-}
+  // --------- UI helpers ----------
+  function showTab(key){
+    document.querySelectorAll("section[id^='tab-']").forEach(s=>s.style.display="none");
+    document.getElementById("tab-"+key).style.display="block";
+    document.querySelectorAll(".tabbtn").forEach(b=>b.classList.remove("active"));
+    document.querySelector(`.tabbtn[data-tab='${key}']`).classList.add("active");
+  }
 
-async function loadLists(){
-  const r = await fetch(API+"?action=lists");
-  const j = await r.json();
-  const d = j.data;
+  function setStatus(el, ok, msg){
+    el.className = "statusbar " + (ok ? "ok" : "err");
+    el.textContent = msg;
+  }
 
-  inv_wh.innerHTML = d.locations.map(x=>`<option>${x}</option>`).join("");
-  so_delivery.innerHTML = ["","Grab","J&T","Virak Buntham","In-house"]
-    .map(x=>`<option>${x}</option>`).join("");
+  function todayISO(){
+    const d = new Date();
+    const z = new Date(d.getTime() - d.getTimezoneOffset()*60000);
+    return z.toISOString().slice(0,10);
+  }
 
-  prodCats.innerHTML = d.prodCats.map(x=>`<option value="${x}">`).join("");
-  prodSizes.innerHTML = d.prodSizes.map(x=>`<option value="${x}">`).join("");
-  prodColors.innerHTML = d.prodColors.map(x=>`<option value="${x}">`).join("");
-}
-loadLists();
+  function fmt2(n){
+    const x = Number(n||0);
+    return (Math.round(x*100)/100).toFixed(2);
+  }
 
-function addItem(){
-  const tr = document.createElement("tr");
-  tr.innerHTML = `
-    <td><input></td>
-    <td><input list="prodCats"></td>
-    <td><input type="number" value="1"></td>
-    <td><input type="number" step="0.01"></td>
-    <td>
-      <select><option>USD</option><option>KHR</option></select>
-    </td>
-    <td class="right">0.00</td>
-    <td><button onclick="this.closest('tr').remove()">✕</button></td>`;
-  items.querySelector("tbody").appendChild(tr);
-}
-addItem();
+  function postJSON(action, data){
+    return fetch(API, {
+      method:"POST",
+      headers:{"Content-Type":"text/plain;charset=utf-8"},
+      body: JSON.stringify({ action, data })
+    }).then(r=>r.json());
+  }
+
+  // --------- Load Lists ----------
+  let LISTS = null;
+
+  async function loadLists(){
+    const r = await fetch(API + "?action=lists");
+    const j = await r.json();
+    LISTS = j.data || {};
+
+    // Locations -> Inventory & Returns
+    const locs = (LISTS.locations || []);
+    invWh.innerHTML = locs.map(x=>`<option>${x}</option>`).join("");
+    retWh.innerHTML = locs.map(x=>`<option>${x}</option>`).join("");
+
+    // Delivery
+    const del = (LISTS.delivery || []);
+    soDelivery.innerHTML = ["", ...del].map(x=>`<option>${x}</option>`).join("");
+
+    // Expenses categories
+    const expCats = (LISTS.expCats || []);
+    expCat.innerHTML = ["", ...expCats].map(x=>`<option>${x}</option>`).join("");
+
+    // Datalists
+    dlProdCat.innerHTML = (LISTS.prodCats||[]).map(x=>`<option value="${x}">`).join("");
+    dlProdSize.innerHTML = (LISTS.prodSizes||[]).map(x=>`<option value="${x}">`).join("");
+    dlProdColor.innerHTML = (LISTS.prodColors||[]).map(x=>`<option value="${x}">`).join("");
+
+    // Defaults
+    invDate.value = invDate.value || todayISO();
+    soDate.value = soDate.value || todayISO();
+    payDate.value = payDate.value || todayISO();
+    retDate.value = retDate.value || todayISO();
+    expDate.value = expDate.value || todayISO();
+
+    // Dashboard defaults
+    const t = todayISO();
+    dashTo.value = dashTo.value || t;
+    dashFrom.value = dashFrom.value || t;
+    dashHint.textContent = "Select From/To and Refresh";
+  }
+
+  // --------- Quick add list value (button) ----------
+  async function quickAddList(listName){
+    const value = prompt(`Add new ${listName} value:`);
+    if (!value) return;
+
+    const res = await postJSON("add_list_value", { list_name:listName, value:value.trim() });
+    if (res.ok) {
+      alert("Added. Reloading dropdowns…");
+      await loadLists();
+    } else {
+      alert("Error: " + (res.error || "unknown"));
+    }
+  }
+
+  async function addListValueFromManager(){
+    const name = lmName.value;
+    const val = (lmValue.value||"").trim();
+    if(!val){ setStatus(listStatus,false,"Value is required"); return; }
+    const res = await postJSON("add_list_value", { list_name:name, value:val });
+    if(res.ok){
+      setStatus(listStatus,true,"Added. Reloading lists...");
+      lmValue.value="";
+      await loadLists();
+      setStatus(listStatus,true,"Added successfully.");
+    }else{
+      setStatus(listStatus,false,res.error||"Failed");
+    }
+  }
+
+  // --------- Inventory IN rows ----------
+  function addInvRow(){
+    const tr = document.createElement("tr");
+    tr.innerHTML = `
+      <td><input placeholder="SKU"></td>
+      <td>
+        <div class="row">
+          <input list="dlProdCat" placeholder="Category" style="flex:1">
+          <button class="btn" type="button" onclick="quickAddList('PROD_CAT')">+</button>
+        </div>
+      </td>
+      <td>
+        <div class="row">
+          <input list="dlProdSize" placeholder="(optional)" style="flex:1">
+          <button class="btn" type="button" onclick="quickAddList('PROD_SIZE')">+</button>
+        </div>
+      </td>
+      <td>
+        <div class="row">
+          <input list="dlProdColor" placeholder="(optional)" style="flex:1">
+          <button class="btn" type="button" onclick="quickAddList('PROD_COLOR')">+</button>
+        </div>
+      </td>
+      <td class="right"><input type="number" min="1" value="1"></td>
+      <td class="right"><input type="number" step="0.01" value="0.00"></td>
+      <td class="right"><button class="btn danger" type="button" onclick="this.closest('tr').remove(); calcInvPreview()">Remove</button></td>
+    `;
+    invTable.querySelector("tbody").appendChild(tr);
+    calcInvPreview();
+    tr.querySelectorAll("input").forEach(i=>i.addEventListener("input", calcInvPreview));
+  }
+
+  function calcInvPreview(){
+    const rows = [...invTable.querySelector("tbody").children];
+    let totalQty = 0;
+    rows.forEach(r=>{
+      const qty = Number(r.children[4].querySelector("input").value||0);
+      totalQty += qty;
+    });
+    const fob = Number(invFob.value||0);
+    const fobUnit = totalQty>0 ? (fob/totalQty) : 0;
+    invCalc.textContent = `Total Qty: ${totalQty} | FOB/unit: ${fmt2(fobUnit)} USD`;
+  }
+
+  invFob.addEventListener("input", calcInvPreview);
+
+  async function saveInventoryBatch(){
+    const rows = [...invTable.querySelector("tbody").children];
+    const receive_date = invDate.value;
+    const warehouse = invWh.value;
+    const total_fob_usd = Number(invFob.value||0);
+
+    if(!receive_date){ setStatus(invStatus,false,"Receive date required"); return; }
+    if(!warehouse){ setStatus(invStatus,false,"Warehouse required"); return; }
+    if(rows.length===0){ setStatus(invStatus,false,"Add at least 1 item"); return; }
+
+    const items = rows.map(r=>({
+      sku: r.children[0].querySelector("input").value.trim(),
+      product_category: r.children[1].querySelector("input").value.trim(),
+      size: r.children[2].querySelector("input").value.trim(),
+      color: r.children[3].querySelector("input").value.trim(),
+      qty: Number(r.children[4].querySelector("input").value||0),
+      product_unit_cost_usd: Number(r.children[5].querySelector("input").value||0)
+    }));
+
+    // minimal validation
+    for(const it of items){
+      if(!it.sku){ setStatus(invStatus,false,"SKU required in all rows"); return; }
+      if(!it.product_category){ setStatus(invStatus,false,"Category required in all rows"); return; }
+      if(it.qty<=0){ setStatus(invStatus,false,"Qty must be > 0"); return; }
+      if(it.product_unit_cost_usd<0){ setStatus(invStatus,false,"Unit cost must be >= 0"); return; }
+    }
+
+    setStatus(invStatus,true,"Saving batch...");
+    const res = await postJSON("create_inventory_batch", { receive_date, warehouse, total_fob_usd, items });
+    if(res.ok){
+      setStatus(invStatus,true,`Saved. Batch ID: ${res.batch_id} | FOB/unit: ${fmt2(res.fob_unit_cost_usd)}`);
+      invTable.querySelector("tbody").innerHTML="";
+      addInvRow();
+      invFob.value="";
+      calcInvPreview();
+    }else{
+      setStatus(invStatus,false,res.error || "Failed");
+    }
+  }
+
+  // --------- Sales rows ----------
+  function addSalesRow(){
+    const tr = document.createElement("tr");
+    tr.innerHTML = `
+      <td><input placeholder="SKU"></td>
+      <td>
+        <div class="row">
+          <input list="dlProdCat" placeholder="Category" style="flex:1">
+          <button class="btn" type="button" onclick="quickAddList('PROD_CAT')">+</button>
+        </div>
+      </td>
+      <td>
+        <div class="row">
+          <input list="dlProdSize" placeholder="(optional)" style="flex:1">
+          <button class="btn" type="button" onclick="quickAddList('PROD_SIZE')">+</button>
+        </div>
+      </td>
+      <td>
+        <div class="row">
+          <input list="dlProdColor" placeholder="(optional)" style="flex:1">
+          <button class="btn" type="button" onclick="quickAddList('PROD_COLOR')">+</button>
+        </div>
+      </td>
+      <td class="right"><input type="number" min="1" value="1"></td>
+      <td class="right"><input type="number" step="0.01" value="0.00"></td>
+      <td>
+        <select>
+          <option>USD</option>
+          <option>KHR</option>
+        </select>
+      </td>
+      <td class="right"><span class="small">0.00</span></td>
+      <td class="right"><button class="btn danger" type="button" onclick="this.closest('tr').remove(); calcSalesTotals()">Remove</button></td>
+    `;
+    salesTable.querySelector("tbody").appendChild(tr);
+
+    const recalc = ()=>calcSalesTotals();
+    tr.querySelectorAll("input,select").forEach(el=>el.addEventListener("input", recalc));
+    calcSalesTotals();
+  }
+
+  function calcSalesTotals(){
+    const rows = [...salesTable.querySelector("tbody").children];
+    let usd=0, khr=0;
+
+    rows.forEach(r=>{
+      const qty = Number(r.children[4].querySelector("input").value||0);
+      const price = Number(r.children[5].querySelector("input").value||0);
+      const cur = r.children[6].querySelector("select").value;
+      const total = qty*price;
+
+      r.children[7].querySelector("span").textContent = fmt2(total);
+
+      if(cur==="USD") usd += total;
+      else khr += total;
+    });
+
+    salesTotals.textContent = `Total: ${fmt2(usd)} USD | ${fmt2(khr)} KHR`;
+  }
+
+  async function saveSalesOrderAndItems(){
+    const order_date = soDate.value;
+    const customer_name = soCustomer.value.trim();
+    const phone = soPhone.value.trim();
+    const address = soAddress.value.trim();
+    const delivery_company = soDelivery.value;
+    const note = soNote.value.trim();
+
+    if(!order_date){ setStatus(salesStatus,false,"Order date required"); return; }
+    if(!customer_name){ setStatus(salesStatus,false,"Customer name required"); return; }
+    if(!phone){ setStatus(salesStatus,false,"Phone required"); return; }
+    if(!address){ setStatus(salesStatus,false,"Address required"); return; }
+
+    const rows = [...salesTable.querySelector("tbody").children];
+    if(rows.length===0){ setStatus(salesStatus,false,"Add at least 1 sales item"); return; }
+
+    const items = rows.map(r=>({
+      sku: r.children[0].querySelector("input").value.trim(),
+      product_category: r.children[1].querySelector("input").value.trim(),
+      size: r.children[2].querySelector("input").value.trim(),
+      color: r.children[3].querySelector("input").value.trim(),
+      qty: Number(r.children[4].querySelector("input").value||0),
+      selling_price: Number(r.children[5].querySelector("input").value||0),
+      selling_currency: r.children[6].querySelector("select").value
+    }));
+
+    for(const it of items){
+      if(!it.sku){ setStatus(salesStatus,false,"SKU required in all item rows"); return; }
+      if(!it.product_category){ setStatus(salesStatus,false,"Category required in all item rows"); return; }
+      if(it.qty<=0){ setStatus(salesStatus,false,"Qty must be > 0"); return; }
+      if(it.selling_price<0){ setStatus(salesStatus,false,"Price must be >= 0"); return; }
+    }
+
+    setStatus(salesStatus,true,"Saving sales order...");
+    const so = await postJSON("create_sales_order", { order_date, customer_name, phone, address, delivery_company, note });
+    if(!so.ok){ setStatus(salesStatus,false,so.error||"Failed to create order"); return; }
+
+    const order_id = so.order_id;
+    setStatus(salesStatus,true,`Order created: ${order_id}. Saving items...`);
+
+    for(const it of items){
+      const res = await postJSON("add_sales_item", { order_id, ...it });
+      if(!res.ok){ setStatus(salesStatus,false,res.error||"Failed to save item"); return; }
+    }
+
+    setStatus(salesStatus,true,`Saved Sales Order + Items. Order ID: ${order_id} (copy to Payment if needed)`);
+    payOrderId.value = order_id;
+
+    // reset items
+    salesTable.querySelector("tbody").innerHTML="";
+    addSalesRow();
+    calcSalesTotals();
+  }
+
+  async function recordPayment(){
+    const order_id = payOrderId.value.trim();
+    const cash_date = payDate.value;
+    const currency = payCur.value;
+    const amount = Number(payAmt.value||0);
+    const fx_khr_usd = Number(payFx.value||0);
+    const note = payNote.value.trim();
+
+    if(!order_id){ alert("Order ID required"); return; }
+    if(!cash_date){ alert("Cash date required"); return; }
+    if(amount<=0){ alert("Amount must be > 0"); return; }
+    if(currency==="KHR" && fx_khr_usd<=0){ alert("FX required for KHR"); return; }
+
+    const res = await postJSON("record_payment", { order_id, cash_date, currency, amount, fx_khr_usd, note });
+    if(res.ok){
+      alert(`Payment recorded. USD equiv: ${fmt2(res.usd_equivalent)}`);
+      payAmt.value=""; payFx.value=""; payNote.value="";
+    }else{
+      alert("Error: " + (res.error||"Failed"));
+    }
+  }
+
+  // --------- Returns ----------
+  async function recordReturn(){
+    const return_date = retDate.value;
+    const order_id = retOrderId.value.trim();
+    const sku = retSku.value.trim();
+    const product_category = retCat.value.trim();
+    const size = retSize.value.trim();
+    const color = retColor.value.trim();
+    const qty_returned = Number(retQty.value||0);
+    const unit_cost_usd = Number(retUnitCost.value||0);
+    const warehouse = retWh.value;
+    const refund_currency = retRefundCur.value;
+    const refund_amount = Number(retRefundAmt.value||0);
+    const fx_khr_usd = Number(retFx.value||0);
+    const reason = retReason.value.trim();
+
+    if(!return_date){ setStatus(retStatus,false,"Return date required"); return; }
+    if(!order_id){ setStatus(retStatus,false,"Order ID required"); return; }
+    if(!sku){ setStatus(retStatus,false,"SKU required"); return; }
+    if(!product_category){ setStatus(retStatus,false,"Category required"); return; }
+    if(qty_returned<=0){ setStatus(retStatus,false,"Qty must be > 0"); return; }
+    if(unit_cost_usd<0){ setStatus(retStatus,false,"Unit cost must be >= 0"); return; }
+    if(!warehouse){ setStatus(retStatus,false,"Warehouse required"); return; }
+    if(refund_amount<=0){ setStatus(retStatus,false,"Refund amount must be > 0"); return; }
+    if(refund_currency==="KHR" && fx_khr_usd<=0){ setStatus(retStatus,false,"FX required for KHR refund"); return; }
+
+    setStatus(retStatus,true,"Recording return + refund...");
+    const res = await postJSON("record_return", {
+      return_date, order_id, sku, product_category, size, color,
+      qty_returned, unit_cost_usd, warehouse,
+      refund_currency, refund_amount, fx_khr_usd,
+      reason
+    });
+
+    if(res.ok){
+      setStatus(retStatus,true,`Done. Return ID: ${res.return_id} | Cash OUT USD equiv: ${fmt2(res.cash_out_usd_equivalent)}`);
+      // clear some fields
+      retSku.value=""; retQty.value=""; retUnitCost.value=""; retRefundAmt.value=""; retFx.value=""; retReason.value="";
+    }else{
+      setStatus(retStatus,false,res.error||"Failed");
+    }
+  }
+
+  // --------- Expenses ----------
+  async function saveExpense(){
+    // Expenses saving is not part of frozen POST list. You asked to keep to locked endpoints.
+    // So we will not write expenses from UI yet. (You can input directly into sheet for now.)
+    setStatus(expStatus,false,"Expenses UI save is not enabled in frozen API. Add expenses directly in the Expenses sheet for now.");
+  }
+
+  // --------- Dashboard ----------
+  function drawBar(values){
+    const c = barCanvas;
+    const ctx = c.getContext("2d");
+    const W = c.width, H = c.height;
+    ctx.clearRect(0,0,W,H);
+
+    // simple layout
+    const labels = ["Cash In", "Cash Out", "Expenses"];
+    const maxV = Math.max(...values, 1);
+    const pad = 40;
+    const bw = 140;
+    const gap = 60;
+    const base = H - pad;
+
+    ctx.fillStyle = "#0f172a";
+    ctx.font = "12px system-ui";
+    ctx.fillText("USD equivalent", 10, 16);
+
+    values.forEach((v,i)=>{
+      const x = pad + i*(bw+gap);
+      const h = (v/maxV) * (H - pad*2);
+      const y = base - h;
+
+      ctx.fillStyle = "#2563eb";
+      ctx.fillRect(x,y,bw,h);
+
+      ctx.fillStyle = "#0f172a";
+      ctx.fillText(labels[i], x, base + 18);
+      ctx.fillText(fmt2(v), x, y - 8);
+    });
+  }
+
+  async function loadDashboard(){
+    const from = dashFrom.value;
+    const to = dashTo.value;
+    if(!from || !to){ setStatus(dashStatus,false,"From and To are required"); return; }
+
+    setStatus(dashStatus,true,"Loading...");
+    const r = await fetch(`${API}?action=dashboard&from=${from}&to=${to}`);
+    const j = await r.json();
+
+    if(!j.ok){ setStatus(dashStatus,false,j.error||"Failed"); return; }
+
+    const d = j.data;
+    kSalesUSD.textContent = fmt2(d.total_sales_usd);
+    kSalesKHR.textContent = fmt2(d.total_sales_khr);
+    kCashIn.textContent = fmt2(d.cash_received_usd_equiv);
+    kCashOut.textContent = fmt2(d.cash_refunded_usd_equiv);
+    kExp.textContent = fmt2(d.operating_expenses_usd);
+    kNet.textContent = fmt2(d.net_profit_usd);
+
+    drawBar([d.cash_received_usd_equiv, d.cash_refunded_usd_equiv, d.operating_expenses_usd]);
+    setStatus(dashStatus,true,"Updated.");
+  }
+
+  // --------- Init ----------
+  function init(){
+    // create 1 default row for inv & sales
+    addInvRow();
+    addSalesRow();
+    calcInvPreview();
+    calcSalesTotals();
+    loadLists().then(()=>loadDashboard()).catch(()=>{});
+  }
+  init();
 </script>
 </body>
 </html>

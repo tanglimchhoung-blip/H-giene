@@ -29,9 +29,15 @@
     .ok { color:#065f46; font-weight:700; }
     .bad { color:#991b1b; font-weight:700; }
     .mono { font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", monospace; font-size:12px; }
-    .kpi { display:flex; gap:10px; flex-wrap:wrap; }
-    .kpi .box { background:#fff; border:1px solid var(--b); border-radius:12px; padding:10px 12px; min-width:180px; }
-    .kpi .v { font-size:18px; font-weight:800; }
+    table { width:100%; border-collapse:collapse; background:#fff; border:1px solid var(--b); border-radius:12px; overflow:hidden; }
+    th, td { padding:10px; border-bottom:1px solid var(--b); font-size:13px; text-align:left; vertical-align:top; }
+    th { background:#f3f4f6; }
+    tr:last-child td { border-bottom:none; }
+    .pill { display:inline-block; padding:4px 8px; border:1px solid var(--b); border-radius:999px; font-size:12px; background:#fff; }
+    .itemsWrap { border:1px solid var(--b); border-radius:12px; background:#fff; padding:10px; }
+    .itemsHead { display:flex; justify-content:space-between; align-items:center; gap:10px; flex-wrap:wrap; margin-bottom:8px; }
+    .itemsRow { display:grid; grid-template-columns: 1.2fr 1.6fr 1fr 1fr .7fr .9fr .9fr .6fr; gap:8px; margin-bottom:8px; }
+    @media (max-width: 900px){ .itemsRow{ grid-template-columns: 1fr 1fr; } }
   </style>
 </head>
 <body>
@@ -60,6 +66,7 @@
     <input id="apiUrl" value="https://script.google.com/macros/s/AKfycbxyc8ebqei-l767WdTJ5qgz1bqj9ZCVsQaegVobmzuUVzXepdqeUcmUPvbuW3OhazYh/exec" disabled />
   </div>
 
+  <!-- Inventory IN -->
   <section id="tab-inv">
     <div class="card">
       <div style="font-weight:900; margin-bottom:10px;">Inventory IN</div>
@@ -68,57 +75,126 @@
         <div><label>Warehouse / Location</label><select id="inv_location"></select></div>
         <div><label>Product Category</label><select id="inv_prodcat"></select></div>
         <div><label>Product Name</label><input id="inv_product" placeholder="Name"></div>
+
         <div><label>Color</label><select id="inv_color"></select></div>
         <div><label>Size</label><select id="inv_size"></select></div>
         <div><label>Qty</label><input id="inv_qty" inputmode="decimal" placeholder="0"></div>
         <div><label>Unit Price (RMB)</label><input id="inv_unit_rmb" inputmode="decimal" placeholder="0.00"></div>
+
         <div><label>FX (RMB / USD)</label><input id="inv_fx" inputmode="decimal" placeholder="7.20"></div>
         <div><label>Unit Price (USD) auto</label><input id="inv_unit_usd" disabled></div>
         <div><label>Amount (USD) auto</label><input id="inv_amt_usd" disabled></div>
         <div><label>Note</label><input id="inv_note" placeholder=""></div>
       </div>
+
       <div class="row" style="margin-top:12px; justify-content:space-between;">
         <div class="muted">USD calc uses 2 decimals: unit_usd = unit_rmb / fx</div>
         <button class="btn primary" id="btnInvSave">Save Inventory IN</button>
       </div>
+
       <div class="muted mono" id="inv_result" style="margin-top:10px;"></div>
     </div>
   </section>
 
+  <!-- Sales -->
   <section id="tab-sales" style="display:none;">
     <div class="card">
       <div style="font-weight:900; margin-bottom:10px;">Sales</div>
+
       <div class="grid">
         <div><label>Order Date (yyyy-mm-dd)</label><input id="so_date" placeholder="2026-02-07"></div>
         <div><label>Warehouse / Location</label><select id="so_location"></select></div>
         <div><label>Customer</label><input id="so_customer" placeholder=""></div>
         <div><label>Delivery Company</label><select id="so_delivery"></select></div>
-        <div><label>Currency</label><select id="so_currency"><option value="USD">USD</option><option value="KHR">KHR</option></select></div>
-        <div><label>Cash Timing</label><select id="so_cash_timing"><option value="AFTER">AFTER delivery</option><option value="BEFORE">BEFORE delivery</option></select></div>
+
+        <div><label>Currency</label>
+          <select id="so_currency">
+            <option value="USD">USD</option>
+            <option value="KHR">KHR</option>
+          </select>
+        </div>
+        <div><label>Cash Timing</label>
+          <select id="so_cash_timing">
+            <option value="AFTER">AFTER delivery</option>
+            <option value="BEFORE">BEFORE delivery</option>
+          </select>
+        </div>
         <div><label>Paid Amount</label><input id="so_paid" inputmode="decimal" placeholder="0.00"></div>
-        <div><label>Note</label><input id="so_note" placeholder=""></div>
+        <div><label>Order Status</label>
+          <select id="so_status">
+            <option value="NEW">NEW</option>
+            <option value="PREPARED">PREPARED</option>
+            <option value="DELIVERING">DELIVERING</option>
+            <option value="COMPLETED">COMPLETED</option>
+          </select>
+        </div>
+
+        <div style="grid-column: span 4;"><label>Note</label><input id="so_note" placeholder=""></div>
       </div>
 
-      <div style="margin-top:12px; font-weight:800;">Item (single item for stability)</div>
-      <div class="grid" style="margin-top:8px;">
-        <div><label>Product Category</label><select id="si_prodcat"></select></div>
-        <div><label>Product</label><input id="si_product" placeholder=""></div>
-        <div><label>Color</label><select id="si_color"></select></div>
-        <div><label>Size</label><select id="si_size"></select></div>
-        <div><label>Qty</label><input id="si_qty" inputmode="decimal" placeholder="0"></div>
-        <div><label>Unit Price</label><input id="si_unit" inputmode="decimal" placeholder="0.00"></div>
-        <div><label>Line Total auto</label><input id="si_total" disabled></div>
-        <div></div>
+      <div class="itemsWrap" style="margin-top:12px;">
+        <div class="itemsHead">
+          <div style="font-weight:800;">Items</div>
+          <div class="row">
+            <label style="display:flex;align-items:center;gap:8px;margin:0;">
+              <input type="checkbox" id="so_quick" style="width:auto;"> Quick order (only item count + total)
+            </label>
+            <button class="btn" id="btnAddItem">Add Item</button>
+          </div>
+        </div>
+
+        <div class="grid" id="quickBox" style="display:none;">
+          <div><label>Item Count</label><input id="so_item_count" inputmode="numeric" placeholder="0"></div>
+          <div><label>Total Amount (manual)</label><input id="so_total_manual" inputmode="decimal" placeholder="0.00"></div>
+          <div></div><div></div>
+          <div class="muted" style="grid-column: span 4;">Print will show: “MIXED items x N”</div>
+        </div>
+
+        <div id="itemsBox"></div>
+
+        <div class="row" style="justify-content:flex-end; margin-top:8px;">
+          <div class="pill">Total: <span id="so_total_show">0.00</span></div>
+        </div>
       </div>
 
       <div class="row" style="margin-top:12px; justify-content:space-between;">
-        <div class="muted">Total = qty × unit price. Payment status auto from paid vs total.</div>
-        <button class="btn primary" id="btnSalesSave">Save Sale</button>
+        <div class="muted">Payment status auto from paid vs total.</div>
+        <div class="row">
+          <button class="btn" id="btnSalesPrintLast" disabled>Print Last Saved</button>
+          <button class="btn primary" id="btnSalesSave">Save Sale</button>
+        </div>
       </div>
+
       <div class="muted mono" id="sales_result" style="margin-top:10px;"></div>
+    </div>
+
+    <div class="card">
+      <div class="row" style="justify-content:space-between;">
+        <div style="font-weight:900;">Recent Orders</div>
+        <button class="btn" id="btnRefreshOrders">Refresh Orders</button>
+      </div>
+      <div class="muted" style="margin:6px 0 10px;">Change status and print packing slip/label.</div>
+      <div style="overflow:auto;">
+        <table>
+          <thead>
+            <tr>
+              <th>Order ID</th>
+              <th>Date</th>
+              <th>Customer</th>
+              <th>Total</th>
+              <th>Paid</th>
+              <th>Payment</th>
+              <th>Status</th>
+              <th>Print</th>
+            </tr>
+          </thead>
+          <tbody id="orders_tbody"></tbody>
+        </table>
+      </div>
     </div>
   </section>
 
+  <!-- Expenses -->
   <section id="tab-exp" style="display:none;">
     <div class="card">
       <div style="font-weight:900; margin-bottom:10px;">Expenses</div>
@@ -126,17 +202,25 @@
         <div><label>Date (yyyy-mm-dd)</label><input id="ex_date" placeholder="2026-02-07"></div>
         <div><label>Warehouse / Location</label><select id="ex_location"></select></div>
         <div><label>Expense Category</label><select id="ex_cat"></select></div>
-        <div><label>Currency</label><select id="ex_currency"><option value="USD">USD</option><option value="KHR">KHR</option></select></div>
+        <div><label>Currency</label>
+          <select id="ex_currency">
+            <option value="USD">USD</option>
+            <option value="KHR">KHR</option>
+          </select>
+        </div>
         <div><label>Amount</label><input id="ex_amount" inputmode="decimal" placeholder="0.00"></div>
         <div><label>Note</label><input id="ex_note" placeholder=""></div>
       </div>
+
       <div class="row" style="margin-top:12px; justify-content:flex-end;">
         <button class="btn primary" id="btnExpSave">Save Expense</button>
       </div>
+
       <div class="muted mono" id="exp_result" style="margin-top:10px;"></div>
     </div>
   </section>
 
+  <!-- Dashboard -->
   <section id="tab-dash" style="display:none;">
     <div class="card">
       <div style="font-weight:900; margin-bottom:10px;">Dashboard</div>
@@ -146,11 +230,11 @@
         <div style="align-self:end;"><button class="btn primary" id="btnDashLoad">Load</button></div>
         <div></div>
       </div>
-      <div class="kpi" style="margin-top:12px;">
-        <div class="box"><div class="muted">Inventory IN (USD)</div><div class="v" id="k_inv">-</div></div>
-        <div class="box"><div class="muted">Sales Total</div><div class="v" id="k_sales">-</div></div>
-        <div class="box"><div class="muted">Sales Paid</div><div class="v" id="k_paid">-</div></div>
-        <div class="box"><div class="muted">Expenses</div><div class="v" id="k_exp">-</div></div>
+      <div class="row" style="gap:12px; flex-wrap:wrap; margin-top:12px;">
+        <div class="pill">Inventory IN (USD): <b id="k_inv">-</b></div>
+        <div class="pill">Sales Total: <b id="k_sales">-</b></div>
+        <div class="pill">Sales Paid: <b id="k_paid">-</b></div>
+        <div class="pill">Expenses: <b id="k_exp">-</b></div>
       </div>
       <div class="muted mono" id="dash_result" style="margin-top:10px;"></div>
     </div>
@@ -182,11 +266,13 @@
     let json;
     try { json = JSON.parse(text); }
     catch (e) { json = { ok:false, error:"BAD_JSON", raw:text }; }
+
     if (!json.ok) throw json;
     return json;
   }
 
   let LISTS = {};
+  let LAST_SAVED_ORDER_ID = "";
 
   function bindSelect(id, arr){
     const el = $(id);
@@ -195,6 +281,7 @@
     opt0.value = "";
     opt0.textContent = "";
     el.appendChild(opt0);
+
     (arr || []).forEach(v => {
       const o = document.createElement("option");
       o.value = v;
@@ -215,19 +302,20 @@
       bindSelect("ex_location", LISTS.LOCATION || []);
 
       bindSelect("inv_prodcat", LISTS.PROD_CAT || []);
-      bindSelect("si_prodcat", LISTS.PROD_CAT || []);
-
-      bindSelect("inv_color", LISTS.PROD_COLOR || LISTS.COLOR || []);
-      bindSelect("si_color", LISTS.PROD_COLOR || LISTS.COLOR || []);
-
-      bindSelect("inv_size", LISTS.PROD_SIZE || LISTS.SIZE || []);
-      bindSelect("si_size", LISTS.PROD_SIZE || LISTS.SIZE || []);
+      bindSelect("inv_color", LISTS.PROD_COLOR || []);
+      bindSelect("inv_size", LISTS.PROD_SIZE || []);
 
       bindSelect("ex_cat", LISTS.EXP_CAT || []);
-      bindSelect("so_delivery", LISTS.DELIVERY_COMPANY || LISTS.DELIVERY || []);
+
+      // delivery company list_name = DELIVERY_COMPANY
+      bindSelect("so_delivery", LISTS.DELIVERY_COMPANY || []);
 
       $("apiStatus").textContent = "API: OK";
       $("apiStatus").className = "muted mono ok";
+
+      // ensure at least 1 item row
+      if (!document.querySelector("#itemsBox .itemsRow")) addItemRow();
+      await refreshOrders();
     } catch (e) {
       console.error(e);
       $("apiStatus").textContent = "API: ERROR";
@@ -236,6 +324,7 @@
     }
   }
 
+  // Tabs
   document.querySelectorAll(".tab").forEach(btn => {
     btn.addEventListener("click", () => {
       document.querySelectorAll(".tab").forEach(b => b.classList.remove("active"));
@@ -248,23 +337,19 @@
     });
   });
 
+  // Inventory calc
   function calcInv(){
     const qty = Number($("inv_qty").value || 0);
     const unitRmb = Number($("inv_unit_rmb").value || 0);
     const fx = Number($("inv_fx").value || 0);
     const unitUsd = fx > 0 ? (unitRmb / fx) : 0;
+    const amtUsd = qty * unitUsd;
     $("inv_unit_usd").value = fmt2(unitUsd);
-    $("inv_amt_usd").value = fmt2(qty * unitUsd);
+    $("inv_amt_usd").value = fmt2(amtUsd);
   }
   ["inv_qty","inv_unit_rmb","inv_fx"].forEach(id => $(id).addEventListener("input", calcInv));
 
-  function calcSale(){
-    const qty = Number($("si_qty").value || 0);
-    const unit = Number($("si_unit").value || 0);
-    $("si_total").value = fmt2(qty * unit);
-  }
-  ["si_qty","si_unit"].forEach(id => $(id).addEventListener("input", calcSale));
-
+  // Save Inventory
   $("btnInvSave").addEventListener("click", async () => {
     $("inv_result").textContent = "Saving...";
     try {
@@ -288,17 +373,129 @@
     }
   });
 
+  // ===== Sales Items (multi) =====
+  function makeSelect(options){
+    const s = document.createElement("select");
+    const o0 = document.createElement("option"); o0.value=""; o0.textContent=""; s.appendChild(o0);
+    (options || []).forEach(v => {
+      const o = document.createElement("option");
+      o.value = v; o.textContent = v;
+      s.appendChild(o);
+    });
+    return s;
+  }
+
+  function addItemRow(prefill = {}) {
+    const box = $("itemsBox");
+    const row = document.createElement("div");
+    row.className = "itemsRow";
+
+    const selCat = makeSelect(LISTS.PROD_CAT || []);
+    selCat.value = prefill.prod_cat || "";
+
+    const inpProduct = document.createElement("input");
+    inpProduct.placeholder = "Product";
+    inpProduct.value = prefill.product || "";
+
+    const selColor = makeSelect(LISTS.PROD_COLOR || []);
+    selColor.value = prefill.color || "";
+
+    const selSize = makeSelect(LISTS.PROD_SIZE || []);
+    selSize.value = prefill.size || "";
+
+    const inpQty = document.createElement("input");
+    inpQty.inputMode = "decimal";
+    inpQty.placeholder = "0";
+    inpQty.value = prefill.qty || "";
+
+    const inpUnit = document.createElement("input");
+    inpUnit.inputMode = "decimal";
+    inpUnit.placeholder = "0.00";
+    inpUnit.value = prefill.unit_price || "";
+
+    const inpTotal = document.createElement("input");
+    inpTotal.disabled = true;
+
+    const btnDel = document.createElement("button");
+    btnDel.className = "btn";
+    btnDel.textContent = "X";
+
+    function calc(){
+      const q = Number(inpQty.value || 0);
+      const u = Number(inpUnit.value || 0);
+      inpTotal.value = fmt2(q * u);
+      calcSalesTotal();
+    }
+    inpQty.addEventListener("input", calc);
+    inpUnit.addEventListener("input", calc);
+
+    btnDel.addEventListener("click", () => {
+      row.remove();
+      if (!document.querySelector("#itemsBox .itemsRow")) addItemRow();
+      calcSalesTotal();
+    });
+
+    row.appendChild(selCat);
+    row.appendChild(inpProduct);
+    row.appendChild(selColor);
+    row.appendChild(selSize);
+    row.appendChild(inpQty);
+    row.appendChild(inpUnit);
+    row.appendChild(inpTotal);
+    row.appendChild(btnDel);
+
+    box.appendChild(row);
+    calc();
+  }
+
+  $("btnAddItem").addEventListener("click", () => addItemRow());
+
+  function calcSalesTotal() {
+    if ($("so_quick").checked) {
+      const manual = Number($("so_total_manual").value || 0);
+      $("so_total_show").textContent = fmt2(manual);
+      return;
+    }
+    const rows = Array.from(document.querySelectorAll("#itemsBox .itemsRow"));
+    let sum = 0;
+    rows.forEach(r => {
+      const totalInput = r.querySelector("input[disabled]");
+      sum += Number(totalInput.value || 0);
+    });
+    $("so_total_show").textContent = fmt2(sum);
+  }
+
+  $("so_total_manual").addEventListener("input", calcSalesTotal);
+  $("so_quick").addEventListener("change", () => {
+    const quick = $("so_quick").checked;
+    $("quickBox").style.display = quick ? "" : "none";
+    $("itemsBox").style.display = quick ? "none" : "";
+    $("btnAddItem").disabled = quick;
+    calcSalesTotal();
+  });
+
+  // Save Sale
   $("btnSalesSave").addEventListener("click", async () => {
     $("sales_result").textContent = "Saving...";
     try {
-      const items = [{
-        prod_cat: $("si_prodcat").value.trim(),
-        product: $("si_product").value.trim(),
-        color: $("si_color").value.trim(),
-        size: $("si_size").value.trim(),
-        qty: $("si_qty").value.trim(),
-        unit_price: $("si_unit").value.trim(),
-      }];
+      let items = [];
+      if (!$("so_quick").checked) {
+        const rows = Array.from(document.querySelectorAll("#itemsBox .itemsRow"));
+        items = rows.map(r => {
+          const [catSel, prodInp, colorSel, sizeSel, qtyInp, unitInp] = r.children;
+          return {
+            prod_cat: catSel.value.trim(),
+            product: prodInp.value.trim(),
+            color: colorSel.value.trim(),
+            size: sizeSel.value.trim(),
+            qty: qtyInp.value.trim(),
+            unit_price: unitInp.value.trim(),
+          };
+        }).filter(it => (Number(it.qty||0) > 0));
+      }
+
+      const total = $("so_quick").checked ? $("so_total_manual").value.trim() : $("so_total_show").textContent.trim();
+      const itemCount = $("so_quick").checked ? $("so_item_count").value.trim() : String(items.length);
 
       const payload = {
         order_date: $("so_date").value.trim(),
@@ -308,18 +505,163 @@
         currency: $("so_currency").value.trim(),
         cash_timing: $("so_cash_timing").value.trim(),
         paid_amount: $("so_paid").value.trim(),
+        status: $("so_status").value.trim(),
         note: $("so_note").value.trim(),
-        items: JSON.stringify(items),
+        total: total,
+        item_count: itemCount,
+        items: items.length ? JSON.stringify(items) : ""
       };
 
       const r = await apiCall("sales", payload, "POST");
+      LAST_SAVED_ORDER_ID = r.data.order_id || "";
+      $("btnSalesPrintLast").disabled = !LAST_SAVED_ORDER_ID;
+
       $("sales_result").textContent = "OK: " + JSON.stringify(r.data);
+      await refreshOrders();
     } catch(e) {
       console.error(e);
       $("sales_result").textContent = "ERROR: " + JSON.stringify(e);
     }
   });
 
+  $("btnSalesPrintLast").addEventListener("click", async () => {
+    if (!LAST_SAVED_ORDER_ID) return;
+    await printOrder(LAST_SAVED_ORDER_ID);
+  });
+
+  // Orders list
+  async function refreshOrders() {
+    try {
+      const r = await apiCall("get_sales_orders", { limit: 50 }, "GET");
+      const orders = r.data || [];
+      const tb = $("orders_tbody");
+      tb.innerHTML = "";
+
+      orders.forEach(o => {
+        const tr = document.createElement("tr");
+
+        const tdId = document.createElement("td");
+        tdId.textContent = o.order_id || "";
+
+        const tdDate = document.createElement("td");
+        tdDate.textContent = o.order_date || "";
+
+        const tdCust = document.createElement("td");
+        tdCust.textContent = o.customer || "";
+
+        const tdTot = document.createElement("td");
+        tdTot.textContent = fmt2(o.total);
+
+        const tdPaid = document.createElement("td");
+        tdPaid.textContent = fmt2(o.paid_amount);
+
+        const tdPay = document.createElement("td");
+        tdPay.textContent = o.payment_status || "";
+
+        const tdStatus = document.createElement("td");
+        const sel = document.createElement("select");
+        ["NEW","PREPARED","DELIVERING","COMPLETED"].forEach(s=>{
+          const op=document.createElement("option"); op.value=s; op.textContent=s; sel.appendChild(op);
+        });
+        sel.value = (o.status || "NEW").toUpperCase() || "NEW";
+        sel.addEventListener("change", async () => {
+          try {
+            await apiCall("update_sale_status", { order_id:o.order_id, status:sel.value }, "POST");
+          } catch (e) {
+            alert("Status update failed: " + JSON.stringify(e).slice(0,200));
+          }
+        });
+        tdStatus.appendChild(sel);
+
+        const tdPrint = document.createElement("td");
+        const btn = document.createElement("button");
+        btn.className = "btn";
+        btn.textContent = "Print";
+        btn.addEventListener("click", () => printOrder(o.order_id));
+        tdPrint.appendChild(btn);
+
+        tr.appendChild(tdId);
+        tr.appendChild(tdDate);
+        tr.appendChild(tdCust);
+        tr.appendChild(tdTot);
+        tr.appendChild(tdPaid);
+        tr.appendChild(tdPay);
+        tr.appendChild(tdStatus);
+        tr.appendChild(tdPrint);
+
+        tb.appendChild(tr);
+      });
+    } catch (e) {
+      console.error(e);
+    }
+  }
+
+  $("btnRefreshOrders").addEventListener("click", refreshOrders);
+
+  async function printOrder(orderId) {
+    const r = await apiCall("get_sale", { order_id: orderId }, "GET");
+    const order = r.data.order;
+    const items = r.data.items || [];
+
+    const html = `
+<!doctype html>
+<html>
+<head>
+<meta charset="utf-8">
+<title>Packing Slip ${order.order_id}</title>
+<style>
+  body{font-family:Arial,sans-serif;margin:18px;}
+  h2{margin:0 0 8px 0;}
+  .box{border:1px solid #ddd;padding:12px;border-radius:10px;margin-bottom:12px;}
+  table{width:100%;border-collapse:collapse;}
+  th,td{border-bottom:1px solid #eee;padding:8px;text-align:left;font-size:13px;}
+  th{background:#f7f7f7;}
+  .right{text-align:right;}
+</style>
+</head>
+<body onload="window.print()">
+  <h2>Packing Slip / Delivery Label</h2>
+  <div class="box">
+    <div><b>Order ID:</b> ${order.order_id}</div>
+    <div><b>Date:</b> ${order.order_date || ""}</div>
+    <div><b>Customer:</b> ${order.customer || ""}</div>
+    <div><b>Location:</b> ${order.location || ""}</div>
+    <div><b>Delivery Company:</b> ${order.delivery_company || ""}</div>
+    <div><b>Status:</b> ${(order.status || "NEW")}</div>
+    <div><b>Total:</b> ${order.currency} ${Number(order.total||0).toFixed(2)}</div>
+  </div>
+
+  <div class="box">
+    <b>Items</b>
+    <table>
+      <thead><tr><th>Product</th><th>Color</th><th>Size</th><th class="right">Qty</th></tr></thead>
+      <tbody>
+        ${
+          items.length
+            ? items.map(it => `<tr>
+                <td>${it.product || it.prod_cat || ""}</td>
+                <td>${it.color || ""}</td>
+                <td>${it.size || ""}</td>
+                <td class="right">${it.qty || 0}</td>
+              </tr>`).join("")
+            : `<tr><td colspan="4">MIXED items</td></tr>`
+        }
+      </tbody>
+    </table>
+  </div>
+
+  <div class="box">
+    <b>Note:</b> ${order.note || ""}
+  </div>
+</body>
+</html>`;
+    const w = window.open("", "_blank");
+    w.document.open();
+    w.document.write(html);
+    w.document.close();
+  }
+
+  // Save Expense
   $("btnExpSave").addEventListener("click", async () => {
     $("exp_result").textContent = "Saving...";
     try {
@@ -339,6 +681,7 @@
     }
   });
 
+  // Dashboard
   $("btnDashLoad").addEventListener("click", async () => {
     $("dash_result").textContent = "Loading...";
     try {
@@ -358,6 +701,7 @@
 
   $("btnReload").addEventListener("click", loadLists);
 
+  // init
   loadLists();
 </script>
 </body>

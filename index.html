@@ -5,760 +5,832 @@
   <meta name="viewport" content="width=device-width,initial-scale=1" />
   <title>Internal ERP</title>
   <style>
-    :root { --b:#e5e7eb; --t:#111827; --m:#6b7280; --bg:#ffffff; --card:#f9fafb; }
-    body { margin:0; font-family: system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif; color:var(--t); background:var(--bg); }
-    header { padding:14px 16px; border-bottom:1px solid var(--b); position:sticky; top:0; background:#fff; z-index:10; }
-    .row { display:flex; gap:10px; flex-wrap:wrap; align-items:center; }
-    .tabs { display:flex; gap:8px; flex-wrap:wrap; }
-    .tab { border:1px solid var(--b); background:#fff; padding:8px 10px; border-radius:10px; cursor:pointer; font-weight:600; }
-    .tab.active { background:var(--card); }
-    main { padding:16px; max-width:1150px; margin:0 auto; }
-    .card { border:1px solid var(--b); background:var(--card); border-radius:14px; padding:14px; margin:12px 0; }
-    label { font-size:12px; color:var(--m); display:block; margin-bottom:4px; }
-    input, select, textarea {
-      width:100%; box-sizing:border-box; padding:10px; border:1px solid var(--b);
-      border-radius:10px; background:#fff; font-size:14px;
+    :root{
+      --bg:#ffffff; --fg:#111827; --muted:#6b7280; --line:#e5e7eb;
+      --card:#ffffff; --shadow:0 8px 24px rgba(0,0,0,.06);
+      --btn:#111827; --btnfg:#ffffff; --danger:#b91c1c;
+      --radius:16px;
     }
-    textarea { min-height:70px; resize:vertical; }
-    .grid { display:grid; grid-template-columns: repeat(4, 1fr); gap:10px; }
-    @media (max-width: 900px){ .grid{ grid-template-columns: repeat(2, 1fr);} }
-    @media (max-width: 520px){ .grid{ grid-template-columns: 1fr;} }
-    .btn { padding:10px 12px; border:1px solid var(--b); background:#fff; border-radius:10px; cursor:pointer; font-weight:700; }
-    .btn.primary { background:#111827; color:#fff; border-color:#111827; }
-    .muted { color:var(--m); font-size:12px; }
-    .ok { color:#065f46; font-weight:700; }
-    .bad { color:#991b1b; font-weight:700; }
-    .mono { font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", monospace; font-size:12px; }
-    table { width:100%; border-collapse:collapse; background:#fff; border:1px solid var(--b); border-radius:12px; overflow:hidden; }
-    th, td { padding:10px; border-bottom:1px solid var(--b); font-size:13px; text-align:left; vertical-align:top; }
-    th { background:#f3f4f6; }
-    tr:last-child td { border-bottom:none; }
-    .pill { display:inline-block; padding:4px 8px; border:1px solid var(--b); border-radius:999px; font-size:12px; background:#fff; }
-    .itemsWrap { border:1px solid var(--b); border-radius:12px; background:#fff; padding:10px; }
-    .itemsHead { display:flex; justify-content:space-between; align-items:center; gap:10px; flex-wrap:wrap; margin-bottom:8px; }
-    .itemsRow { display:grid; grid-template-columns: 1.2fr 1.6fr 1fr 1fr .7fr .9fr .9fr .6fr; gap:8px; margin-bottom:8px; }
-    @media (max-width: 900px){ .itemsRow{ grid-template-columns: 1fr 1fr; } }
+    *{box-sizing:border-box}
+    body{margin:0;font-family:system-ui,-apple-system,Segoe UI,Roboto,Arial,sans-serif;background:var(--bg);color:var(--fg)}
+    .wrap{max-width:1100px;margin:24px auto;padding:0 16px}
+    header{display:flex;align-items:flex-end;justify-content:space-between;gap:16px;margin-bottom:16px}
+    h1{margin:0;font-size:20px;letter-spacing:.2px}
+    .sub{margin:2px 0 0;color:var(--muted);font-size:13px}
+    .tabs{display:flex;gap:8px;flex-wrap:wrap;margin:12px 0 18px}
+    .tab{border:1px solid var(--line);background:#fff;padding:10px 12px;border-radius:12px;cursor:pointer;font-weight:600}
+    .tab.active{outline:2px solid #111827}
+    .card{background:var(--card);border:1px solid var(--line);border-radius:var(--radius);box-shadow:var(--shadow);padding:18px;margin:14px 0}
+    .card h2{margin:0 0 12px;font-size:18px}
+    .grid{display:grid;grid-template-columns:repeat(12,1fr);gap:12px}
+    .field{grid-column:span 3}
+    .field.span4{grid-column:span 4}
+    .field.span6{grid-column:span 6}
+    .field.span12{grid-column:span 12}
+    label{display:block;font-size:12px;color:var(--muted);margin:0 0 6px}
+    input,select,textarea{
+      width:100%;border:1px solid var(--line);border-radius:12px;padding:10px 12px;
+      font-size:14px;outline:none;background:#fff;color:var(--fg)
+    }
+    textarea{min-height:40px;resize:vertical}
+    .row{display:flex;gap:12px;align-items:center;justify-content:space-between;flex-wrap:wrap}
+    .btn{
+      border:0;background:var(--btn);color:var(--btnfg);padding:10px 14px;border-radius:12px;
+      font-weight:700;cursor:pointer
+    }
+    .btn:disabled{opacity:.6;cursor:not-allowed}
+    .btn.secondary{background:#fff;color:var(--fg);border:1px solid var(--line)}
+    .btn.danger{background:var(--danger)}
+    .note{color:var(--muted);font-size:12px;margin-top:8px}
+    .status{font-size:12px;color:var(--muted)}
+    .ok{color:#047857;font-weight:700}
+    .bad{color:#b91c1c;font-weight:700}
+    table{width:100%;border-collapse:separate;border-spacing:0;border:1px solid var(--line);border-radius:14px;overflow:hidden}
+    th,td{padding:10px 10px;border-bottom:1px solid var(--line);font-size:13px;text-align:left;vertical-align:middle}
+    th{background:#f9fafb;font-weight:800}
+    tr:last-child td{border-bottom:0}
+    .small{font-size:12px;color:var(--muted)}
+    .right{text-align:right}
+    .pill{display:inline-block;padding:4px 8px;border-radius:999px;border:1px solid var(--line);font-size:12px}
+    @media (max-width:900px){
+      .field,.field.span4,.field.span6{grid-column:span 12}
+      header{align-items:flex-start;flex-direction:column}
+    }
   </style>
 </head>
 <body>
-<header>
-  <div class="row" style="justify-content:space-between;">
-    <div>
-      <div style="font-weight:900;">Internal ERP</div>
-      <div class="muted">Stable | Lists are read-only (edit in Google Sheet → Lists tab)</div>
-    </div>
-    <div class="row">
-      <button class="btn" id="btnReload">Reload Lists</button>
-      <span class="muted mono" id="apiStatus">API: -</span>
-    </div>
-  </div>
-  <div class="tabs" style="margin-top:10px;">
-    <button class="tab active" data-tab="inv">Inventory IN</button>
-    <button class="tab" data-tab="sales">Sales</button>
-    <button class="tab" data-tab="exp">Expenses</button>
-    <button class="tab" data-tab="dash">Dashboard</button>
-  </div>
-</header>
-
-<main>
-  <div class="card">
-    <label>Apps Script Web App URL (fixed)</label>
-    <input id="apiUrl" value="PASTE_YOUR_WEB_APP_URL_HERE" />
-    <div class="muted" style="margin-top:6px;">Tip: paste your Apps Script /exec URL once and keep it.</div>
-  </div>
-
-  <!-- Inventory IN -->
-  <section id="tab-inv">
-    <div class="card">
-      <div style="font-weight:900; margin-bottom:10px;">Inventory IN</div>
-      <div class="grid">
-        <div><label>Date (yyyy-mm-dd)</label><input id="inv_date" placeholder="2026-02-07"></div>
-        <div><label>Warehouse / Location</label><select id="inv_location"></select></div>
-        <div><label>Product Category</label><select id="inv_prodcat"></select></div>
-        <div><label>Product Name</label><input id="inv_product" placeholder="Name"></div>
-
-        <div><label>Color</label><select id="inv_color"></select></div>
-        <div><label>Size</label><select id="inv_size"></select></div>
-        <div><label>Qty</label><input id="inv_qty" type="number" step="1" inputmode="numeric" placeholder="0"></div>
-        <div><label>Unit Price (RMB)</label><input id="inv_unit_rmb" type="number" step="0.01" inputmode="decimal" placeholder="0.00"></div>
-
-        <div><label>FX (RMB / USD)</label><input id="inv_fx" type="number" step="0.01" inputmode="decimal" placeholder="7.20"></div>
-        <div><label>Unit Price (USD) auto</label><input id="inv_unit_usd" disabled></div>
-        <div><label>Amount (USD) auto</label><input id="inv_amt_usd" disabled></div>
-        <div><label>Note</label><input id="inv_note" placeholder=""></div>
+  <div class="wrap">
+    <header>
+      <div>
+        <h1>Internal ERP</h1>
+        <div class="sub">Stable | Lists are read-only (edit in Google Sheet → Lists tab)</div>
       </div>
+      <div class="status" id="apiStatus">API: <span class="bad">CHECKING…</span></div>
+    </header>
 
-      <div class="row" style="margin-top:12px; justify-content:space-between;">
-        <div class="muted">USD calc uses 2 decimals: unit_usd = unit_rmb / fx</div>
-        <button class="btn primary" id="btnInvSave">Save Inventory IN</button>
-      </div>
-
-      <div class="muted mono" id="inv_result" style="margin-top:10px;"></div>
+    <div class="tabs">
+      <button class="tab active" data-tab="inv">Inventory IN</button>
+      <button class="tab" data-tab="sales">Sales</button>
+      <button class="tab" data-tab="exp">Expenses</button>
+      <button class="tab" data-tab="dash">Dashboard</button>
     </div>
-  </section>
 
-  <!-- Sales -->
-  <section id="tab-sales" style="display:none;">
-    <div class="card">
-      <div style="font-weight:900; margin-bottom:10px;">Sales</div>
+    <!-- Inventory IN -->
+    <section id="tab-inv">
+      <div class="card">
+        <h2>Inventory IN</h2>
+        <div class="grid">
+          <div class="field span3">
+            <label>Date (yyyy-mm-dd)</label>
+            <input id="inv_date" type="date" />
+          </div>
+          <div class="field span3">
+            <label>Warehouse / Location</label>
+            <select id="inv_location"></select>
+          </div>
+          <div class="field span3">
+            <label>Product Category</label>
+            <select id="inv_prod_cat"></select>
+          </div>
+          <div class="field span3">
+            <label>Product Name</label>
+            <input id="inv_product" type="text" placeholder="Name" />
+          </div>
 
-      <div class="grid">
-        <div><label>Order Date (yyyy-mm-dd)</label><input id="so_date" placeholder="2026-02-07"></div>
-        <div><label>Warehouse / Location</label><select id="so_location"></select></div>
-        <div><label>Customer Name</label><input id="so_customer" placeholder=""></div>
-        <div><label>Telephone</label><input id="so_telephone" placeholder=""></div>
+          <div class="field span3">
+            <label>Color</label>
+            <select id="inv_color"></select>
+          </div>
+          <div class="field span3">
+            <label>Size</label>
+            <select id="inv_size"></select>
+          </div>
+          <div class="field span3">
+            <label>Qty</label>
+            <input id="inv_qty" type="number" step="1" min="0" value="0" />
+          </div>
+          <div class="field span3">
+            <label>Unit Price (RMB)</label>
+            <input id="inv_unit_rmb" type="number" step="0.01" min="0" value="0.00" />
+          </div>
 
-        <div style="grid-column: span 2;"><label>Customer Address</label><input id="so_address" placeholder=""></div>
-        <div><label>Delivery Company</label><select id="so_delivery"></select></div>
-        <div><label>Currency</label>
-          <select id="so_currency">
-            <option value="USD">USD</option>
-            <option value="KHR">KHR</option>
-          </select>
-        </div>
-
-        <div><label>Cash Timing</label>
-          <select id="so_cash_timing">
-            <option value="AFTER">AFTER delivery</option>
-            <option value="BEFORE">BEFORE delivery</option>
-          </select>
-        </div>
-        <div><label>Paid Amount (now)</label><input id="so_paid" type="number" step="0.01" inputmode="decimal" placeholder="0.00"></div>
-        <div><label>Order Status (initial)</label>
-          <select id="so_status">
-            <option value="NEW">NEW</option>
-            <option value="PREPARED">PREPARED</option>
-            <option value="DELIVERING">DELIVERING</option>
-            <option value="COMPLETED">COMPLETED</option>
-          </select>
-        </div>
-        <div><label>Note</label><input id="so_note" placeholder=""></div>
-      </div>
-
-      <div class="itemsWrap" style="margin-top:12px;">
-        <div class="itemsHead">
-          <div style="font-weight:800;">Items</div>
-          <div class="row">
-            <label style="display:flex;align-items:center;gap:8px;margin:0;">
-              <input type="checkbox" id="so_quick" style="width:auto;"> Quick order (only item count + total)
-            </label>
-            <button class="btn" id="btnAddItem">Add Item</button>
+          <div class="field span3">
+            <label>FX (RMB / USD)</label>
+            <input id="inv_fx" type="number" step="0.01" min="0.01" value="7.20" />
+          </div>
+          <div class="field span3">
+            <label>Unit Price (USD) auto</label>
+            <input id="inv_unit_usd" type="text" readonly />
+          </div>
+          <div class="field span3">
+            <label>Amount (USD) auto</label>
+            <input id="inv_amount_usd" type="text" readonly />
+          </div>
+          <div class="field span3">
+            <label>Note</label>
+            <input id="inv_note" type="text" />
           </div>
         </div>
 
-        <div class="grid" id="quickBox" style="display:none;">
-          <div><label>Item Count</label><input id="so_item_count" type="number" step="1" inputmode="numeric" placeholder="0"></div>
-          <div><label>Total Amount (manual)</label><input id="so_total_manual" type="number" step="0.01" inputmode="decimal" placeholder="0.00"></div>
-          <div></div><div></div>
-          <div class="muted" style="grid-column: span 4;">Print will show: “MIXED items x N”</div>
+        <div class="row" style="margin-top:14px">
+          <div class="note">USD calc uses 2 decimals: unit_usd = unit_rmb / fx</div>
+          <button class="btn" id="btnSaveInv">Save Inventory IN</button>
         </div>
 
-        <div id="itemsBox"></div>
+        <div class="small" id="invMsg" style="margin-top:10px"></div>
+      </div>
+    </section>
 
-        <div class="row" style="justify-content:flex-end; margin-top:8px;">
-          <div class="pill">Total: <span id="so_total_show">0.00</span></div>
+    <!-- Sales -->
+    <section id="tab-sales" style="display:none">
+      <div class="card">
+        <h2>Sales</h2>
+
+        <div class="grid">
+          <div class="field span3">
+            <label>Order Date (yyyy-mm-dd)</label>
+            <input id="so_date" type="date" />
+          </div>
+          <div class="field span3">
+            <label>Warehouse / Location</label>
+            <select id="so_location"></select>
+          </div>
+          <div class="field span3">
+            <label>Customer</label>
+            <input id="so_customer" type="text" placeholder="Customer name" />
+          </div>
+          <div class="field span3">
+            <label>Delivery Company</label>
+            <select id="so_delivery_company"></select>
+          </div>
+
+          <div class="field span3">
+            <label>Currency</label>
+            <select id="so_currency">
+              <option value="USD">USD</option>
+              <option value="KHR">KHR</option>
+            </select>
+          </div>
+          <div class="field span3">
+            <label>Cash Timing</label>
+            <select id="so_cash_timing">
+              <option value="BEFORE">BEFORE delivery</option>
+              <option value="AFTER">AFTER delivery</option>
+            </select>
+          </div>
+          <div class="field span3">
+            <label>Paid Amount</label>
+            <input id="so_paid" type="number" step="0.01" min="0" value="0.00" />
+          </div>
+          <div class="field span3">
+            <label>Note</label>
+            <input id="so_note" type="text" />
+          </div>
+        </div>
+
+        <div class="card" style="box-shadow:none;margin-top:14px">
+          <div class="row" style="margin-bottom:10px">
+            <div>
+              <strong>Items</strong>
+              <div class="small">Add multiple items. Total auto = sum(line totals).</div>
+            </div>
+            <button class="btn secondary" id="btnAddItem">+ Add Item</button>
+          </div>
+
+          <div style="overflow:auto">
+            <table>
+              <thead>
+                <tr>
+                  <th style="min-width:150px">Product Category</th>
+                  <th style="min-width:160px">Product</th>
+                  <th style="min-width:140px">Color</th>
+                  <th style="min-width:120px">Size</th>
+                  <th class="right" style="min-width:90px">Qty</th>
+                  <th class="right" style="min-width:110px">Unit Price</th>
+                  <th class="right" style="min-width:120px">Line Total</th>
+                  <th style="min-width:70px"></th>
+                </tr>
+              </thead>
+              <tbody id="itemsBody"></tbody>
+            </table>
+          </div>
+
+          <div class="row" style="margin-top:12px">
+            <div class="pill">Total: <span id="so_total">0.00</span></div>
+            <div style="display:flex;gap:10px;align-items:center">
+              <button class="btn secondary" id="btnPrintLast" disabled>Print Last Saved</button>
+              <button class="btn" id="btnSaveSale">Save Sale</button>
+            </div>
+          </div>
+
+          <div class="small" id="soMsg" style="margin-top:10px"></div>
         </div>
       </div>
 
-      <div class="row" style="margin-top:12px; justify-content:space-between;">
-        <div class="muted">Payment status auto from paid vs total.</div>
+      <div class="card">
         <div class="row">
-          <button class="btn" id="btnSalesPrintLast" disabled>Print Last Saved</button>
-          <button class="btn primary" id="btnSalesSave">Save Sale</button>
+          <div>
+            <h2 style="margin:0">Recent Orders</h2>
+            <div class="small">Update Status and Paid Amount after saving. Print includes customer details.</div>
+          </div>
+          <button class="btn secondary" id="btnRefreshOrders">Refresh Orders</button>
+        </div>
+
+        <div style="overflow:auto;margin-top:12px">
+          <table>
+            <thead>
+              <tr>
+                <th style="min-width:160px">Customer</th>
+                <th style="min-width:140px">Order ID</th>
+                <th style="min-width:120px">Date</th>
+                <th class="right" style="min-width:110px">Total</th>
+                <th class="right" style="min-width:110px">Paid</th>
+                <th style="min-width:110px">Payment</th>
+                <th style="min-width:150px">Status</th>
+                <th style="min-width:160px">Update Paid</th>
+                <th style="min-width:80px">Print</th>
+              </tr>
+            </thead>
+            <tbody id="ordersBody"></tbody>
+          </table>
+        </div>
+        <div class="small" id="ordersMsg" style="margin-top:10px"></div>
+      </div>
+    </section>
+
+    <!-- Expenses -->
+    <section id="tab-exp" style="display:none">
+      <div class="card">
+        <h2>Expenses</h2>
+        <div class="grid">
+          <div class="field span3">
+            <label>Date (yyyy-mm-dd)</label>
+            <input id="exp_date" type="date" />
+          </div>
+          <div class="field span3">
+            <label>Warehouse / Location</label>
+            <select id="exp_location"></select>
+          </div>
+          <div class="field span3">
+            <label>Expense Category</label>
+            <select id="exp_cat"></select>
+          </div>
+          <div class="field span3">
+            <label>Currency</label>
+            <select id="exp_currency">
+              <option value="USD">USD</option>
+              <option value="KHR">KHR</option>
+            </select>
+          </div>
+
+          <div class="field span3">
+            <label>Amount</label>
+            <input id="exp_amount" type="number" step="0.01" min="0" value="0.00" />
+          </div>
+          <div class="field span9">
+            <label>Note</label>
+            <input id="exp_note" type="text" />
+          </div>
+        </div>
+
+        <div class="row" style="margin-top:14px">
+          <div class="note"></div>
+          <button class="btn" id="btnSaveExp">Save Expense</button>
+        </div>
+
+        <div class="small" id="expMsg" style="margin-top:10px"></div>
+      </div>
+    </section>
+
+    <!-- Dashboard -->
+    <section id="tab-dash" style="display:none">
+      <div class="card">
+        <h2>Dashboard</h2>
+        <div class="grid">
+          <div class="field span3">
+            <label>From</label>
+            <input id="dash_from" type="date" />
+          </div>
+          <div class="field span3">
+            <label>To</label>
+            <input id="dash_to" type="date" />
+          </div>
+          <div class="field span6" style="display:flex;align-items:end;gap:10px">
+            <button class="btn" id="btnLoadDash">Load</button>
+            <div class="small" id="dashMsg"></div>
+          </div>
+        </div>
+
+        <div class="grid" style="margin-top:14px">
+          <div class="field span4"><div class="pill">Sales Total: <span id="dash_sales">0.00</span></div></div>
+          <div class="field span4"><div class="pill">Expenses Total: <span id="dash_exp">0.00</span></div></div>
+          <div class="field span4"><div class="pill">Net: <span id="dash_net">0.00</span></div></div>
         </div>
       </div>
+    </section>
 
-      <div class="muted mono" id="sales_result" style="margin-top:10px;"></div>
-    </div>
+  </div>
 
-    <div class="card">
-      <div class="row" style="justify-content:space-between;">
-        <div style="font-weight:900;">Recent Orders</div>
-        <button class="btn" id="btnRefreshOrders">Refresh Orders</button>
-      </div>
-      <div class="muted" style="margin:6px 0 10px;">
-        You can update <b>Status</b> and <b>Paid Amount</b> after saving. Print includes customer details.
-      </div>
-      <div style="overflow:auto;">
-        <table>
-          <thead>
-            <tr>
-              <th>Customer</th>
-              <th>Order ID</th>
-              <th>Date</th>
-              <th>Total</th>
-              <th>Paid</th>
-              <th>Payment</th>
-              <th>Status</th>
-              <th>Update Paid</th>
-              <th>Print</th>
-            </tr>
-          </thead>
-          <tbody id="orders_tbody"></tbody>
-        </table>
-      </div>
-    </div>
-  </section>
+  <script>
+    // ✅ NEW API URL (fixed)
+    const API_URL = "https://script.google.com/macros/s/AKfycbx1qV0ef9mvcrMlV_wibxMJ5k6MjlUvYX6H15J1UB_druLZEDTkcVc4onKp-e0ja9E/exec";
 
-  <!-- Expenses -->
-  <section id="tab-exp" style="display:none;">
-    <div class="card">
-      <div style="font-weight:900; margin-bottom:10px;">Expenses</div>
-      <div class="grid">
-        <div><label>Date (yyyy-mm-dd)</label><input id="ex_date" placeholder="2026-02-07"></div>
-        <div><label>Warehouse / Location</label><select id="ex_location"></select></div>
-        <div><label>Expense Category</label><select id="ex_cat"></select></div>
-        <div><label>Currency</label>
-          <select id="ex_currency">
-            <option value="USD">USD</option>
-            <option value="KHR">KHR</option>
-          </select>
-        </div>
-        <div><label>Amount</label>
-          <input id="ex_amount" type="number" step="0.01" inputmode="decimal" placeholder="0.00" autocomplete="off">
-        </div>
-        <div><label>Note</label><input id="ex_note" placeholder=""></div>
-      </div>
+    // ---- helpers
+    const $ = (id)=>document.getElementById(id);
+    const fmt2 = (n)=> (isFinite(n)? Number(n).toFixed(2) : "0.00");
+    const todayStr = ()=> new Date().toISOString().slice(0,10);
 
-      <div class="row" style="margin-top:12px; justify-content:flex-end;">
-        <button class="btn primary" id="btnExpSave">Save Expense</button>
-      </div>
-
-      <div class="muted mono" id="exp_result" style="margin-top:10px;"></div>
-    </div>
-  </section>
-
-  <!-- Dashboard -->
-  <section id="tab-dash" style="display:none;">
-    <div class="card">
-      <div style="font-weight:900; margin-bottom:10px;">Dashboard</div>
-      <div class="grid">
-        <div><label>Start Date (yyyy-mm-dd)</label><input id="d_start" placeholder="2026-02-01"></div>
-        <div><label>End Date (yyyy-mm-dd)</label><input id="d_end" placeholder="2026-02-07"></div>
-        <div style="align-self:end;"><button class="btn primary" id="btnDashLoad">Load</button></div>
-        <div></div>
-      </div>
-      <div class="row" style="gap:12px; flex-wrap:wrap; margin-top:12px;">
-        <div class="pill">Inventory IN (USD): <b id="k_inv">-</b></div>
-        <div class="pill">Sales Total: <b id="k_sales">-</b></div>
-        <div class="pill">Sales Paid: <b id="k_paid">-</b></div>
-        <div class="pill">Expenses: <b id="k_exp">-</b></div>
-      </div>
-      <div class="muted mono" id="dash_result" style="margin-top:10px;"></div>
-    </div>
-  </section>
-</main>
-
-<script>
-  const $ = (id) => document.getElementById(id);
-
-  function fmt2(n){
-    const x = Number(n);
-    if (!isFinite(x)) return "0.00";
-    return x.toFixed(2);
-  }
-
-  async function apiCall(action, payload = {}, method = "POST") {
-    const url = $("apiUrl").value.trim();
-    if (!url || url.indexOf("http") !== 0) throw new Error("API URL is missing/invalid");
-
-    const params = new URLSearchParams({ action, ...payload });
-
-    let res, text;
-    if (method === "GET") {
-      res = await fetch(url + "?" + params.toString());
-      text = await res.text();
-    } else {
-      res = await fetch(url, { method: "POST", body: params });
-      text = await res.text();
+    async function apiGet(action, params={}){
+      const u = new URL(API_URL);
+      u.searchParams.set("action", action);
+      Object.entries(params).forEach(([k,v])=>u.searchParams.set(k, v));
+      const res = await fetch(u.toString(), { method:"GET" });
+      const data = await res.json();
+      return data;
+    }
+    async function apiPost(action, payload){
+      const res = await fetch(API_URL, {
+        method:"POST",
+        headers: { "Content-Type":"text/plain;charset=utf-8" },
+        body: JSON.stringify({ action, ...payload })
+      });
+      const data = await res.json();
+      return data;
     }
 
-    let json;
-    try { json = JSON.parse(text); }
-    catch (e) { json = { ok:false, error:"BAD_JSON", raw:text }; }
-
-    if (!json.ok) throw json;
-    return json;
-  }
-
-  let LISTS = {};
-  let LAST_SAVED_ORDER_ID = "";
-
-  function bindSelect(id, arr){
-    const el = $(id);
-    el.innerHTML = "";
-    const opt0 = document.createElement("option");
-    opt0.value = "";
-    opt0.textContent = "";
-    el.appendChild(opt0);
-
-    (arr || []).forEach(v => {
-      const o = document.createElement("option");
-      o.value = v;
-      o.textContent = v;
-      el.appendChild(o);
-    });
-  }
-
-  async function loadLists() {
-    $("apiStatus").textContent = "API: connecting...";
-    $("apiStatus").className = "muted mono";
-    try {
-      const r = await apiCall("get_lists", {}, "GET");
-      LISTS = r.data || {};
-
-      bindSelect("inv_location", LISTS.LOCATION || []);
-      bindSelect("so_location", LISTS.LOCATION || []);
-      bindSelect("ex_location", LISTS.LOCATION || []);
-
-      bindSelect("inv_prodcat", LISTS.PROD_CAT || []);
-      bindSelect("inv_color", LISTS.PROD_COLOR || []);
-      bindSelect("inv_size", LISTS.PROD_SIZE || []);
-
-      bindSelect("ex_cat", LISTS.EXP_CAT || []);
-
-      bindSelect("so_delivery", LISTS.DELIVERY_COMPANY || []);
-
-      $("apiStatus").textContent = "API: OK";
-      $("apiStatus").className = "muted mono ok";
-
-      if (!document.querySelector("#itemsBox .itemsRow")) addItemRow();
-      await refreshOrders();
-
-    } catch (e) {
-      console.error(e);
-      $("apiStatus").textContent = "API: ERROR";
-      $("apiStatus").className = "muted mono bad";
-      alert("API ERROR:\n" + JSON.stringify(e).slice(0, 800));
-    }
-  }
-
-  // Tabs
-  document.querySelectorAll(".tab").forEach(btn => {
-    btn.addEventListener("click", () => {
-      document.querySelectorAll(".tab").forEach(b => b.classList.remove("active"));
-      btn.classList.add("active");
-      const t = btn.dataset.tab;
-      $("tab-inv").style.display = (t === "inv") ? "" : "none";
-      $("tab-sales").style.display = (t === "sales") ? "" : "none";
-      $("tab-exp").style.display = (t === "exp") ? "" : "none";
-      $("tab-dash").style.display = (t === "dash") ? "" : "none";
-    });
-  });
-
-  // Inventory calc
-  function calcInv(){
-    const qty = Number($("inv_qty").value || 0);
-    const unitRmb = Number($("inv_unit_rmb").value || 0);
-    const fx = Number($("inv_fx").value || 0);
-    const unitUsd = fx > 0 ? (unitRmb / fx) : 0;
-    const amtUsd = qty * unitUsd;
-    $("inv_unit_usd").value = fmt2(unitUsd);
-    $("inv_amt_usd").value = fmt2(amtUsd);
-  }
-  ["inv_qty","inv_unit_rmb","inv_fx"].forEach(id => $(id).addEventListener("input", calcInv));
-
-  // Save Inventory
-  $("btnInvSave").addEventListener("click", async () => {
-    $("inv_result").textContent = "Saving...";
-    try {
-      const payload = {
-        date: $("inv_date").value.trim(),
-        location: $("inv_location").value.trim(),
-        prod_cat: $("inv_prodcat").value.trim(),
-        product: $("inv_product").value.trim(),
-        color: $("inv_color").value.trim(),
-        size: $("inv_size").value.trim(),
-        qty: $("inv_qty").value.trim(),
-        unit_rmb: $("inv_unit_rmb").value.trim(),
-        fx: $("inv_fx").value.trim(),
-        note: $("inv_note").value.trim(),
-      };
-      const r = await apiCall("inventory_in", payload, "POST");
-      $("inv_result").textContent = "OK: " + JSON.stringify(r.data);
-    } catch(e) {
-      console.error(e);
-      $("inv_result").textContent = "ERROR: " + JSON.stringify(e);
-    }
-  });
-
-  // ===== Sales Items (multi) =====
-  function makeSelect(options){
-    const s = document.createElement("select");
-    const o0 = document.createElement("option"); o0.value=""; o0.textContent=""; s.appendChild(o0);
-    (options || []).forEach(v => {
-      const o = document.createElement("option");
-      o.value = v; o.textContent = v;
-      s.appendChild(o);
-    });
-    return s;
-  }
-
-  function addItemRow(prefill = {}) {
-    const box = $("itemsBox");
-    const row = document.createElement("div");
-    row.className = "itemsRow";
-
-    const selCat = makeSelect(LISTS.PROD_CAT || []);
-    selCat.value = prefill.prod_cat || "";
-
-    const inpProduct = document.createElement("input");
-    inpProduct.placeholder = "Product";
-    inpProduct.value = prefill.product || "";
-
-    const selColor = makeSelect(LISTS.PROD_COLOR || []);
-    selColor.value = prefill.color || "";
-
-    const selSize = makeSelect(LISTS.PROD_SIZE || []);
-    selSize.value = prefill.size || "";
-
-    const inpQty = document.createElement("input");
-    inpQty.type = "number";
-    inpQty.step = "1";
-    inpQty.inputMode = "numeric";
-    inpQty.placeholder = "0";
-    inpQty.value = prefill.qty || "";
-
-    const inpUnit = document.createElement("input");
-    inpUnit.type = "number";
-    inpUnit.step = "0.01";
-    inpUnit.inputMode = "decimal";
-    inpUnit.placeholder = "0.00";
-    inpUnit.value = prefill.unit_price || "";
-
-    const inpTotal = document.createElement("input");
-    inpTotal.disabled = true;
-
-    const btnDel = document.createElement("button");
-    btnDel.className = "btn";
-    btnDel.textContent = "X";
-
-    function calc(){
-      const q = Number(inpQty.value || 0);
-      const u = Number(inpUnit.value || 0);
-      inpTotal.value = fmt2(q * u);
-      calcSalesTotal();
-    }
-    inpQty.addEventListener("input", calc);
-    inpUnit.addEventListener("input", calc);
-
-    btnDel.addEventListener("click", () => {
-      row.remove();
-      if (!document.querySelector("#itemsBox .itemsRow")) addItemRow();
-      calcSalesTotal();
-    });
-
-    row.appendChild(selCat);
-    row.appendChild(inpProduct);
-    row.appendChild(selColor);
-    row.appendChild(selSize);
-    row.appendChild(inpQty);
-    row.appendChild(inpUnit);
-    row.appendChild(inpTotal);
-    row.appendChild(btnDel);
-
-    box.appendChild(row);
-    calc();
-  }
-
-  $("btnAddItem").addEventListener("click", () => addItemRow());
-
-  function calcSalesTotal() {
-    if ($("so_quick").checked) {
-      const manual = Number($("so_total_manual").value || 0);
-      $("so_total_show").textContent = fmt2(manual);
-      return;
-    }
-    const rows = Array.from(document.querySelectorAll("#itemsBox .itemsRow"));
-    let sum = 0;
-    rows.forEach(r => {
-      const totalInput = r.querySelector("input[disabled]");
-      sum += Number(totalInput.value || 0);
-    });
-    $("so_total_show").textContent = fmt2(sum);
-  }
-
-  $("so_total_manual").addEventListener("input", calcSalesTotal);
-  $("so_quick").addEventListener("change", () => {
-    const quick = $("so_quick").checked;
-    $("quickBox").style.display = quick ? "" : "none";
-    $("itemsBox").style.display = quick ? "none" : "";
-    $("btnAddItem").disabled = quick;
-    calcSalesTotal();
-  });
-
-  // Save Sale
-  $("btnSalesSave").addEventListener("click", async () => {
-    $("sales_result").textContent = "Saving...";
-    try {
-      let items = [];
-      if (!$("so_quick").checked) {
-        const rows = Array.from(document.querySelectorAll("#itemsBox .itemsRow"));
-        items = rows.map(r => {
-          const [catSel, prodInp, colorSel, sizeSel, qtyInp, unitInp] = r.children;
-          return {
-            prod_cat: catSel.value.trim(),
-            product: prodInp.value.trim(),
-            color: colorSel.value.trim(),
-            size: sizeSel.value.trim(),
-            qty: qtyInp.value.trim(),
-            unit_price: unitInp.value.trim(),
-          };
-        }).filter(it => (Number(it.qty||0) > 0));
+    // ---- lists cache
+    let LISTS = {};
+    function setOptions(sel, arr, placeholder=""){
+      sel.innerHTML = "";
+      if(placeholder){
+        const o = document.createElement("option");
+        o.value=""; o.textContent=placeholder;
+        sel.appendChild(o);
       }
-
-      const total = $("so_quick").checked ? $("so_total_manual").value.trim() : $("so_total_show").textContent.trim();
-      const itemCount = $("so_quick").checked ? $("so_item_count").value.trim() : String(items.length);
-
-      const payload = {
-        order_date: $("so_date").value.trim(),
-        location: $("so_location").value.trim(),
-        customer: $("so_customer").value.trim(),
-        telephone: $("so_telephone").value.trim(),
-        customer_address: $("so_address").value.trim(),
-        delivery_company: $("so_delivery").value.trim(),
-        currency: $("so_currency").value.trim(),
-        cash_timing: $("so_cash_timing").value.trim(),
-        paid_amount: $("so_paid").value.trim(),
-        status: $("so_status").value.trim(),
-        note: $("so_note").value.trim(),
-        total: total,
-        item_count: itemCount,
-        items: items.length ? JSON.stringify(items) : ""
-      };
-
-      const r = await apiCall("sales", payload, "POST");
-      LAST_SAVED_ORDER_ID = r.data.order_id || "";
-      $("btnSalesPrintLast").disabled = !LAST_SAVED_ORDER_ID;
-
-      $("sales_result").textContent = "OK: " + JSON.stringify(r.data);
-      await refreshOrders();
-
-    } catch(e) {
-      console.error(e);
-      $("sales_result").textContent = "ERROR: " + JSON.stringify(e);
+      (arr||[]).forEach(v=>{
+        const o = document.createElement("option");
+        o.value=v; o.textContent=v;
+        sel.appendChild(o);
+      });
     }
-  });
 
-  $("btnSalesPrintLast").addEventListener("click", async () => {
-    if (!LAST_SAVED_ORDER_ID) return;
-    await printOrder(LAST_SAVED_ORDER_ID);
-  });
+    async function loadLists(){
+      const r = await apiGet("get_lists");
+      if(!r.ok) throw new Error(r.message || "get_lists failed");
+      LISTS = r.data || {};
+      // Inventory
+      setOptions($("inv_location"), LISTS.LOCATION || [], "");
+      setOptions($("inv_prod_cat"), LISTS.PROD_CAT || [], "");
+      setOptions($("inv_color"), LISTS.PROD_COLOR || [], "");
+      setOptions($("inv_size"), LISTS.PROD_SIZE || [], "");
+      // Sales
+      setOptions($("so_location"), LISTS.LOCATION || [], "");
+      setOptions($("so_delivery_company"), LISTS.DELIVERY_COMPANY || [], "");
+      // Expenses
+      setOptions($("exp_location"), LISTS.LOCATION || [], "");
+      setOptions($("exp_cat"), LISTS.EXP_CAT || [], "");
+    }
 
-  // Orders list
-  async function refreshOrders() {
-    try {
-      const r = await apiCall("get_sales_orders", { limit: 50 }, "GET");
-      const orders = r.data || [];
-      const tb = $("orders_tbody");
+    async function ping(){
+      try{
+        const r = await apiGet("ping");
+        $("apiStatus").innerHTML = `API: <span class="${r.ok?'ok':'bad'}">${r.ok?'OK':'ERROR'}</span>`;
+      }catch(e){
+        $("apiStatus").innerHTML = `API: <span class="bad">ERROR</span>`;
+      }
+    }
+
+    // ---- tabs
+    document.querySelectorAll(".tab").forEach(btn=>{
+      btn.addEventListener("click", ()=>{
+        document.querySelectorAll(".tab").forEach(b=>b.classList.remove("active"));
+        btn.classList.add("active");
+        const t = btn.dataset.tab;
+        $("tab-inv").style.display = (t==="inv") ? "" : "none";
+        $("tab-sales").style.display = (t==="sales") ? "" : "none";
+        $("tab-exp").style.display = (t==="exp") ? "" : "none";
+        $("tab-dash").style.display = (t==="dash") ? "" : "none";
+      });
+    });
+
+    // ---- Inventory calc
+    function recalcInv(){
+      const qty = Number($("inv_qty").value||0);
+      const rmb = Number($("inv_unit_rmb").value||0);
+      const fx  = Number($("inv_fx").value||0);
+      const unitUsd = fx>0 ? (rmb/fx) : 0;
+      const amtUsd  = unitUsd * qty;
+      $("inv_unit_usd").value = fmt2(unitUsd);
+      $("inv_amount_usd").value = fmt2(amtUsd);
+    }
+
+    // ---- Inventory save
+    async function saveInventory(){
+      $("btnSaveInv").disabled = true;
+      $("invMsg").textContent = "";
+      try{
+        const payload = {
+          date: $("inv_date").value || "",
+          location: $("inv_location").value || "",
+          prod_cat: $("inv_prod_cat").value || "",
+          product: $("inv_product").value || "",
+          color: $("inv_color").value || "",
+          size: $("inv_size").value || "",
+          qty: Number($("inv_qty").value||0),
+          unit_rmb: Number($("inv_unit_rmb").value||0),
+          fx: Number($("inv_fx").value||0),
+          unit_usd: Number($("inv_unit_usd").value||0),
+          amount_usd: Number($("inv_amount_usd").value||0),
+          note: $("inv_note").value || ""
+        };
+        const r = await apiPost("add_inventory_in", payload);
+        if(!r.ok) throw new Error(r.message || "save failed");
+        $("invMsg").textContent = "OK";
+      }catch(e){
+        $("invMsg").textContent = "ERROR: " + e.message;
+      }finally{
+        $("btnSaveInv").disabled = false;
+      }
+    }
+
+    // ---- Sales items
+    let salesItems = [];
+    let lastSavedOrder = null;
+
+    function blankItem(){
+      return { prod_cat:"", product:"", color:"", size:"", qty:1, unit_price:0, line_total:0 };
+    }
+    function calcLine(it){
+      const q = Number(it.qty||0);
+      const p = Number(it.unit_price||0);
+      it.line_total = q*p;
+      return it;
+    }
+    function calcTotal(){
+      const total = salesItems.reduce((s,it)=> s + Number(it.line_total||0), 0);
+      $("so_total").textContent = fmt2(total);
+      return total;
+    }
+
+    function renderItems(){
+      const tb = $("itemsBody");
       tb.innerHTML = "";
-
-      orders.forEach(o => {
+      salesItems.forEach((it, idx)=>{
         const tr = document.createElement("tr");
 
-        // Customer cell
-        const tdCust = document.createElement("td");
-        tdCust.innerHTML = `<b>${(o.customer||"")}</b><div class="muted">${(o.telephone||"")}</div>`;
+        const tdCat = document.createElement("td");
+        const selCat = document.createElement("select");
+        setOptions(selCat, LISTS.PROD_CAT||[], "");
+        selCat.value = it.prod_cat || "";
+        selCat.onchange = ()=>{ it.prod_cat = selCat.value; };
+        tdCat.appendChild(selCat);
 
-        // Order ID
-        const tdId = document.createElement("td");
-        tdId.textContent = o.order_id || "";
+        const tdProd = document.createElement("td");
+        const inpProd = document.createElement("input");
+        inpProd.value = it.product || "";
+        inpProd.placeholder = "Product name";
+        inpProd.oninput = ()=>{ it.product = inpProd.value; };
+        tdProd.appendChild(inpProd);
 
-        const tdDate = document.createElement("td");
-        tdDate.textContent = o.order_date || "";
+        const tdColor = document.createElement("td");
+        const selColor = document.createElement("select");
+        setOptions(selColor, LISTS.PROD_COLOR||[], "");
+        selColor.value = it.color || "";
+        selColor.onchange = ()=>{ it.color = selColor.value; };
+        tdColor.appendChild(selColor);
 
-        const tdTot = document.createElement("td");
-        tdTot.textContent = `${o.currency} ${fmt2(o.total)}`;
+        const tdSize = document.createElement("td");
+        const selSize = document.createElement("select");
+        setOptions(selSize, LISTS.PROD_SIZE||[], "");
+        selSize.value = it.size || "";
+        selSize.onchange = ()=>{ it.size = selSize.value; };
+        tdSize.appendChild(selSize);
 
-        const tdPaid = document.createElement("td");
-        tdPaid.textContent = fmt2(o.paid_amount);
+        const tdQty = document.createElement("td");
+        tdQty.className="right";
+        const inpQty = document.createElement("input");
+        inpQty.type="number"; inpQty.step="1"; inpQty.min="0";
+        inpQty.value = it.qty ?? 0;
+        inpQty.oninput = ()=>{
+          it.qty = Number(inpQty.value||0);
+          calcLine(it);
+          tdLine.textContent = fmt2(it.line_total);
+          calcTotal();
+        };
+        tdQty.appendChild(inpQty);
 
-        const tdPay = document.createElement("td");
-        tdPay.textContent = o.payment_status || "";
+        const tdPrice = document.createElement("td");
+        tdPrice.className="right";
+        const inpPrice = document.createElement("input");
+        inpPrice.type="number"; inpPrice.step="0.01"; inpPrice.min="0";
+        inpPrice.value = it.unit_price ?? 0;
+        inpPrice.oninput = ()=>{
+          it.unit_price = Number(inpPrice.value||0);
+          calcLine(it);
+          tdLine.textContent = fmt2(it.line_total);
+          calcTotal();
+        };
+        tdPrice.appendChild(inpPrice);
 
-        // Status dropdown
-        const tdStatus = document.createElement("td");
-        const sel = document.createElement("select");
-        ["NEW","PREPARED","DELIVERING","COMPLETED"].forEach(s=>{
-          const op=document.createElement("option"); op.value=s; op.textContent=s; sel.appendChild(op);
-        });
-        sel.value = (o.status || "NEW").toUpperCase();
-        sel.addEventListener("change", async () => {
-          try {
-            await apiCall("update_sale_status", { order_id:o.order_id, status:sel.value }, "POST");
-          } catch (e) {
-            alert("Status update failed: " + JSON.stringify(e).slice(0,300));
-          }
-        });
-        tdStatus.appendChild(sel);
+        const tdLine = document.createElement("td");
+        tdLine.className="right";
+        tdLine.textContent = fmt2(it.line_total||0);
 
-        // Update paid
-        const tdUpdPaid = document.createElement("td");
-        const wrap = document.createElement("div");
-        wrap.style.display = "flex";
-        wrap.style.gap = "8px";
-        wrap.style.alignItems = "center";
+        const tdDel = document.createElement("td");
+        const btnX = document.createElement("button");
+        btnX.className="btn danger";
+        btnX.textContent="X";
+        btnX.style.padding="6px 10px";
+        btnX.onclick = ()=>{
+          salesItems.splice(idx,1);
+          if(salesItems.length===0) salesItems.push(calcLine(blankItem()));
+          renderItems();
+          calcTotal();
+        };
+        tdDel.appendChild(btnX);
 
-        const inpPaid = document.createElement("input");
-        inpPaid.type = "number";
-        inpPaid.step = "0.01";
-        inpPaid.inputMode = "decimal";
-        inpPaid.style.width = "120px";
-        inpPaid.value = (o.paid_amount || 0);
-
-        const btnUpd = document.createElement("button");
-        btnUpd.className = "btn";
-        btnUpd.textContent = "Update";
-        btnUpd.addEventListener("click", async () => {
-          try {
-            await apiCall("update_sale_payment", { order_id:o.order_id, paid_amount: inpPaid.value }, "POST");
-            await refreshOrders();
-          } catch (e) {
-            alert("Payment update failed: " + JSON.stringify(e).slice(0,300));
-          }
-        });
-
-        wrap.appendChild(inpPaid);
-        wrap.appendChild(btnUpd);
-        tdUpdPaid.appendChild(wrap);
-
-        // Print
-        const tdPrint = document.createElement("td");
-        const btn = document.createElement("button");
-        btn.className = "btn";
-        btn.textContent = "Print";
-        btn.addEventListener("click", () => printOrder(o.order_id));
-        tdPrint.appendChild(btn);
-
-        tr.appendChild(tdCust);
-        tr.appendChild(tdId);
-        tr.appendChild(tdDate);
-        tr.appendChild(tdTot);
-        tr.appendChild(tdPaid);
-        tr.appendChild(tdPay);
-        tr.appendChild(tdStatus);
-        tr.appendChild(tdUpdPaid);
-        tr.appendChild(tdPrint);
+        tr.appendChild(tdCat);
+        tr.appendChild(tdProd);
+        tr.appendChild(tdColor);
+        tr.appendChild(tdSize);
+        tr.appendChild(tdQty);
+        tr.appendChild(tdPrice);
+        tr.appendChild(tdLine);
+        tr.appendChild(tdDel);
 
         tb.appendChild(tr);
       });
-
-    } catch (e) {
-      console.error(e);
     }
-  }
 
-  $("btnRefreshOrders").addEventListener("click", refreshOrders);
-
-  async function printOrder(orderId) {
-    const r = await apiCall("get_sale", { order_id: orderId }, "GET");
-    const order = r.data.order;
-    const items = r.data.items || [];
-
-    const html = `
-<!doctype html>
-<html>
-<head>
-<meta charset="utf-8">
-<title>Packing Slip ${order.order_id}</title>
-<style>
-  body{font-family:Arial,sans-serif;margin:18px;}
-  h2{margin:0 0 8px 0;}
-  .box{border:1px solid #ddd;padding:12px;border-radius:10px;margin-bottom:12px;}
-  table{width:100%;border-collapse:collapse;}
-  th,td{border-bottom:1px solid #eee;padding:8px;text-align:left;font-size:13px;}
-  th{background:#f7f7f7;}
-  .right{text-align:right;}
-</style>
-</head>
-<body onload="window.print()">
-  <h2>Packing Slip / Delivery Label</h2>
-  <div class="box">
-    <div><b>Customer:</b> ${order.customer || ""}</div>
-    <div><b>Telephone:</b> ${order.telephone || ""}</div>
-    <div><b>Address:</b> ${order.customer_address || ""}</div>
-    <hr style="border:none;border-top:1px solid #eee;margin:10px 0;">
-    <div><b>Order ID:</b> ${order.order_id}</div>
-    <div><b>Date:</b> ${order.order_date || ""}</div>
-    <div><b>Location:</b> ${order.location || ""}</div>
-    <div><b>Delivery Company:</b> ${order.delivery_company || ""}</div>
-    <div><b>Status:</b> ${order.status || "NEW"}</div>
-    <div><b>Total:</b> ${order.currency} ${Number(order.total||0).toFixed(2)}</div>
-    <div><b>Paid:</b> ${order.currency} ${Number(order.paid_amount||0).toFixed(2)} (${order.payment_status || ""})</div>
-  </div>
-
-  <div class="box">
-    <b>Items</b>
-    <table>
-      <thead><tr><th>Product</th><th>Color</th><th>Size</th><th class="right">Qty</th></tr></thead>
-      <tbody>
-        ${
-          items.length
-            ? items.map(it => `<tr>
-                <td>${it.product || it.prod_cat || ""}</td>
-                <td>${it.color || ""}</td>
-                <td>${it.size || ""}</td>
-                <td class="right">${it.qty || 0}</td>
-              </tr>`).join("")
-            : `<tr><td colspan="4">MIXED items</td></tr>`
-        }
-      </tbody>
-    </table>
-  </div>
-
-  <div class="box">
-    <b>Note:</b> ${order.note || ""}
-  </div>
-</body>
-</html>`;
-    const w = window.open("", "_blank");
-    w.document.open();
-    w.document.write(html);
-    w.document.close();
-  }
-
-  // Save Expense
-  $("btnExpSave").addEventListener("click", async () => {
-    $("exp_result").textContent = "Saving...";
-    try {
-      const payload = {
-        date: $("ex_date").value.trim(),
-        location: $("ex_location").value.trim(),
-        exp_cat: $("ex_cat").value.trim(),
-        currency: $("ex_currency").value.trim(),
-        amount: $("ex_amount").value.trim(),
-        note: $("ex_note").value.trim(),
-      };
-      const r = await apiCall("expenses", payload, "POST");
-      $("exp_result").textContent = "OK: " + JSON.stringify(r.data);
-    } catch(e) {
-      console.error(e);
-      $("exp_result").textContent = "ERROR: " + JSON.stringify(e);
+    function addItemRow(){
+      salesItems.push(calcLine(blankItem()));
+      renderItems();
+      calcTotal();
     }
-  });
 
-  // Dashboard
-  $("btnDashLoad").addEventListener("click", async () => {
-    $("dash_result").textContent = "Loading...";
-    try {
-      const payload = { start_date: $("d_start").value.trim(), end_date: $("d_end").value.trim() };
-      const r = await apiCall("dashboard", payload, "GET");
-      const d = r.data || {};
-      $("k_inv").textContent = fmt2(d.inventory_in_usd);
-      $("k_sales").textContent = fmt2(d.sales_total);
-      $("k_paid").textContent = fmt2(d.sales_paid);
-      $("k_exp").textContent = fmt2(d.expenses_total);
-      $("dash_result").textContent = "OK: " + JSON.stringify(d);
-    } catch(e) {
-      console.error(e);
-      $("dash_result").textContent = "ERROR: " + JSON.stringify(e);
+    async function saveSale(){
+      $("btnSaveSale").disabled = true;
+      $("soMsg").textContent = "";
+      try{
+        const total = calcTotal();
+        const payload = {
+          order_date: $("so_date").value || "",
+          location: $("so_location").value || "",
+          customer: $("so_customer").value || "",
+          delivery_company: $("so_delivery_company").value || "",
+          currency: $("so_currency").value || "USD",
+          cash_timing: $("so_cash_timing").value || "BEFORE",
+          paid_amount: Number($("so_paid").value||0),
+          note: $("so_note").value || "",
+          items: salesItems.map(it=>({
+            prod_cat: it.prod_cat || "",
+            product: it.product || "",
+            color: it.color || "",
+            size: it.size || "",
+            qty: Number(it.qty||0),
+            unit_price: Number(it.unit_price||0),
+            line_total: Number(it.line_total||0)
+          })),
+          total: Number(total||0)
+        };
+        const r = await apiPost("add_sale", payload);
+        if(!r.ok) throw new Error(r.message || "save failed");
+        lastSavedOrder = r.data || null;
+        $("btnPrintLast").disabled = !lastSavedOrder;
+        $("soMsg").textContent = "OK";
+        await refreshOrders();
+      }catch(e){
+        $("soMsg").textContent = "ERROR: " + e.message;
+      }finally{
+        $("btnSaveSale").disabled = false;
+      }
     }
-  });
 
-  $("btnReload").addEventListener("click", loadLists);
+    // ---- Orders list + updates
+    async function refreshOrders(){
+      $("ordersMsg").textContent = "";
+      try{
+        const r = await apiGet("get_recent_orders");
+        if(!r.ok) throw new Error(r.message || "get_recent_orders failed");
+        const rows = r.data || [];
+        const tb = $("ordersBody");
+        tb.innerHTML = "";
+        rows.forEach(o=>{
+          const tr = document.createElement("tr");
 
-  // init
-  loadLists();
-</script>
+          const tdCust = document.createElement("td"); tdCust.textContent = o.customer || "";
+          const tdId = document.createElement("td"); tdId.textContent = o.order_id || "";
+          const tdDate = document.createElement("td"); tdDate.textContent = (o.order_date||"").slice(0,10);
+          const tdTot = document.createElement("td"); tdTot.className="right"; tdTot.textContent = fmt2(Number(o.total||0));
+          const tdPaid = document.createElement("td"); tdPaid.className="right"; tdPaid.textContent = fmt2(Number(o.paid_amount||0));
+          const tdPay = document.createElement("td"); tdPay.textContent = o.payment_status || "";
+
+          const tdStatus = document.createElement("td");
+          const sel = document.createElement("select");
+          ["NEW","PREPARING","DELIVERING","COMPLETED","CANCELLED"].forEach(s=>{
+            const op=document.createElement("option"); op.value=s; op.textContent=s;
+            sel.appendChild(op);
+          });
+          sel.value = o.status || "NEW";
+          sel.onchange = async ()=>{
+            try{
+              const rr = await apiPost("update_order_status", { order_id:o.order_id, status: sel.value });
+              if(!rr.ok) throw new Error(rr.message || "update failed");
+            }catch(e){
+              alert("Status update failed:\n" + e.message);
+            }
+          };
+          tdStatus.appendChild(sel);
+
+          const tdUpdPaid = document.createElement("td");
+          const inp = document.createElement("input");
+          inp.type="number"; inp.step="0.01"; inp.min="0";
+          inp.value = Number(o.paid_amount||0);
+          inp.style.maxWidth="120px";
+          const btn = document.createElement("button");
+          btn.className="btn secondary";
+          btn.textContent="Update";
+          btn.style.marginLeft="8px";
+          btn.onclick = async ()=>{
+            try{
+              const rr = await apiPost("update_sale_payment", { order_id:o.order_id, paid_amount: Number(inp.value||0) });
+              if(!rr.ok) throw new Error(rr.message || "update failed");
+              await refreshOrders();
+            }catch(e){
+              alert("Payment update failed:\n" + (e.message||e));
+            }
+          };
+          tdUpdPaid.appendChild(inp);
+          tdUpdPaid.appendChild(btn);
+
+          const tdPrint = document.createElement("td");
+          const bp = document.createElement("button");
+          bp.className="btn secondary";
+          bp.textContent="Print";
+          bp.onclick = ()=> printOrder(o.order_id);
+          tdPrint.appendChild(bp);
+
+          tr.appendChild(tdCust);
+          tr.appendChild(tdId);
+          tr.appendChild(tdDate);
+          tr.appendChild(tdTot);
+          tr.appendChild(tdPaid);
+          tr.appendChild(tdPay);
+          tr.appendChild(tdStatus);
+          tr.appendChild(tdUpdPaid);
+          tr.appendChild(tdPrint);
+
+          tb.appendChild(tr);
+        });
+      }catch(e){
+        $("ordersMsg").textContent = "ERROR: " + e.message;
+      }
+    }
+
+    async function printLast(){
+      if(!lastSavedOrder?.order_id) return;
+      printOrder(lastSavedOrder.order_id);
+    }
+
+    async function printOrder(orderId){
+      try{
+        const r = await apiGet("get_order_print", { order_id: orderId });
+        if(!r.ok) throw new Error(r.message || "print data failed");
+        const d = r.data;
+
+        const w = window.open("", "_blank");
+        const html = `
+          <html><head><title>Packing Slip</title>
+          <style>
+            body{font-family:Arial,sans-serif;margin:16px}
+            h2{margin:0 0 10px}
+            .box{border:1px solid #ddd;border-radius:10px;padding:12px;margin-bottom:12px}
+            table{width:100%;border-collapse:collapse}
+            th,td{border-bottom:1px solid #eee;padding:8px;font-size:12px;text-align:left}
+            th{background:#fafafa}
+            .right{text-align:right}
+            @media print { button{display:none} }
+          </style></head><body>
+            <div class="small">${new Date().toLocaleString()}</div>
+            <h2>Packing Slip / Delivery Label</h2>
+            <div class="box">
+              <div><b>Order ID:</b> ${d.order.order_id}</div>
+              <div><b>Date:</b> ${(d.order.order_date||"").slice(0,10)}</div>
+              <div><b>Customer:</b> ${d.order.customer||""}</div>
+              <div><b>Location:</b> ${d.order.location||""}</div>
+              <div><b>Delivery Company:</b> ${d.order.delivery_company||""}</div>
+              <div><b>Status:</b> ${d.order.status||""}</div>
+              <div><b>Total:</b> ${d.order.currency||""} ${fmt2(Number(d.order.total||0))}</div>
+              <div><b>Paid:</b> ${d.order.currency||""} ${fmt2(Number(d.order.paid_amount||0))} (${d.order.payment_status||""})</div>
+            </div>
+
+            <div class="box">
+              <b>Items</b>
+              <table>
+                <thead>
+                  <tr>
+                    <th>Category</th><th>Product</th><th>Color</th><th>Size</th>
+                    <th class="right">Qty</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  ${(d.items||[]).map(it=>`
+                    <tr>
+                      <td>${it.prod_cat||""}</td>
+                      <td>${it.product||""}</td>
+                      <td>${it.color||""}</td>
+                      <td>${it.size||""}</td>
+                      <td class="right">${Number(it.qty||0)}</td>
+                    </tr>
+                  `).join("")}
+                </tbody>
+              </table>
+            </div>
+
+            <div class="box">
+              <b>Note:</b> ${d.order.note||""}
+            </div>
+
+            <button onclick="window.print()">Print</button>
+          </body></html>
+        `;
+        w.document.open();
+        w.document.write(html);
+        w.document.close();
+      }catch(e){
+        alert("Print failed:\n" + e.message);
+      }
+    }
+
+    // ---- Expenses
+    async function saveExpense(){
+      $("btnSaveExp").disabled = true;
+      $("expMsg").textContent = "";
+      try{
+        const payload = {
+          date: $("exp_date").value || "",
+          location: $("exp_location").value || "",
+          exp_cat: $("exp_cat").value || "",
+          currency: $("exp_currency").value || "USD",
+          amount: Number($("exp_amount").value||0),
+          note: $("exp_note").value || ""
+        };
+        const r = await apiPost("add_expense", payload);
+        if(!r.ok) throw new Error(r.message || "save failed");
+        $("expMsg").textContent = "OK";
+      }catch(e){
+        $("expMsg").textContent = "ERROR: " + e.message;
+      }finally{
+        $("btnSaveExp").disabled = false;
+      }
+    }
+
+    // ---- Dashboard
+    async function loadDashboard(){
+      $("dashMsg").textContent = "";
+      try{
+        const from = $("dash_from").value || "";
+        const to = $("dash_to").value || "";
+        const r = await apiGet("dashboard", { from, to });
+        if(!r.ok) throw new Error(r.message || "dashboard failed");
+        const d = r.data || {};
+        $("dash_sales").textContent = fmt2(Number(d.sales_total||0));
+        $("dash_exp").textContent = fmt2(Number(d.expenses_total||0));
+        $("dash_net").textContent = fmt2(Number(d.net||0));
+        $("dashMsg").textContent = "OK";
+      }catch(e){
+        $("dashMsg").textContent = "ERROR: " + e.message;
+      }
+    }
+
+    // ---- init
+    (async function init(){
+      $("inv_date").value = todayStr();
+      $("so_date").value = todayStr();
+      $("exp_date").value = todayStr();
+      $("dash_from").value = todayStr();
+      $("dash_to").value = todayStr();
+
+      $("inv_qty").addEventListener("input", recalcInv);
+      $("inv_unit_rmb").addEventListener("input", recalcInv);
+      $("inv_fx").addEventListener("input", recalcInv);
+
+      $("btnSaveInv").addEventListener("click", saveInventory);
+      $("btnAddItem").addEventListener("click", addItemRow);
+      $("btnSaveSale").addEventListener("click", saveSale);
+      $("btnRefreshOrders").addEventListener("click", refreshOrders);
+      $("btnPrintLast").addEventListener("click", printLast);
+      $("btnSaveExp").addEventListener("click", saveExpense);
+      $("btnLoadDash").addEventListener("click", loadDashboard);
+
+      await ping();
+      await loadLists();
+      salesItems = [calcLine(blankItem())];
+      renderItems();
+      calcTotal();
+      recalcInv();
+      await refreshOrders();
+    })();
+  </script>
 </body>
 </html>

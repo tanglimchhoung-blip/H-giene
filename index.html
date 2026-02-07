@@ -1,65 +1,66 @@
 <!doctype html>
 <html lang="en">
 <head>
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Internal ERP</title>
-  <style>
-    :root{
-      --bg:#f6f7fb; --card:#fff; --text:#0f172a; --muted:#64748b;
-      --line:#e5e7eb; --pri:#2563eb; --pri2:#1d4ed8; --ok:#16a34a; --err:#dc2626;
-      --shadow:0 10px 30px rgba(0,0,0,.06);
-      --r:14px;
-    }
-    *{box-sizing:border-box}
-    body{margin:0;font-family:system-ui,-apple-system,Segoe UI,Roboto,Arial,sans-serif;background:var(--bg);color:var(--text)}
-    .wrap{max-width:1200px;margin:0 auto;padding:16px}
-    header{display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap}
-    h1{margin:0;font-size:22px}
-    .sub{color:var(--muted);font-size:13px;margin-top:2px}
-    .tabs{display:flex;gap:8px;flex-wrap:wrap}
-    .tabbtn{
-      border:1px solid var(--line); background:#fff; padding:8px 12px; border-radius:999px;
-      cursor:pointer; font-weight:700; color:#111827;
-    }
-    .tabbtn.active{background:var(--pri);color:#fff;border-color:var(--pri)}
-    .card{background:var(--card);border:1px solid var(--line);border-radius:var(--r);box-shadow:var(--shadow);padding:14px;margin-top:14px}
-    .row{display:flex;gap:10px;align-items:center;flex-wrap:wrap}
-    .grid{display:grid;grid-template-columns:repeat(12,1fr);gap:10px}
-    .field{grid-column:span 3}
-    .span4{grid-column:span 4}
-    .span6{grid-column:span 6}
-    .span12{grid-column:span 12}
-    label{display:block;font-size:12px;color:var(--muted);margin:0 0 6px}
-    input,select,textarea{
-      width:100%; padding:10px; border:1px solid var(--line); border-radius:12px; background:#fff;
-      font-size:14px; outline:none;
-    }
-    input:focus,select:focus,textarea:focus{border-color:#7aa2ff; box-shadow:0 0 0 3px rgba(37,99,235,.12)}
-    textarea{min-height:72px;resize:vertical}
-    .btn{
-      border:0;border-radius:12px;padding:10px 12px;font-weight:800;cursor:pointer;
-      background:var(--pri);color:#fff;
-    }
-    .btn:disabled{opacity:.5;cursor:not-allowed}
-    .btn.secondary{background:#eef2ff;color:#1e3a8a}
-    .btn.gray{background:#f3f4f6;color:#111827;border:1px solid var(--line)}
-    .pill{display:inline-flex;align-items:center;gap:8px;padding:6px 10px;border-radius:999px;background:#f8fafc;border:1px solid var(--line);font-size:12px;color:var(--muted)}
-    .dot{width:8px;height:8px;border-radius:50%}
-    .dot.ok{background:var(--ok)}
-    .dot.err{background:var(--err)}
-    .errorBox{margin-top:10px;padding:10px;border:1px solid #fecaca;background:#fff1f2;color:#7f1d1d;border-radius:12px;display:none}
-    .muted{color:var(--muted);font-size:12px}
-    .table{width:100%;border-collapse:collapse;margin-top:10px}
-    .table th,.table td{border-bottom:1px solid var(--line);padding:8px;text-align:left;font-size:13px}
-    .table th{color:var(--muted);font-weight:800;font-size:12px}
-    .miniAdd{display:flex;gap:8px}
-    .miniAdd .btn{padding:10px 10px}
-    .sectionTitle{display:flex;align-items:center;justify-content:space-between;gap:10px;flex-wrap:wrap}
-    .sectionTitle h2{margin:0;font-size:16px}
-    canvas{width:100%;max-height:240px;border:1px solid var(--line);border-radius:12px;background:#fff}
-    .hide{display:none}
-  </style>
+<meta charset="utf-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1"/>
+<title>Internal ERP</title>
+<style>
+  :root{
+    --bg:#f6f7fb; --card:#fff; --text:#0f172a; --muted:#64748b; --line:#e5e7eb;
+    --pri:#2563eb; --pri2:#1d4ed8; --ok:#16a34a; --err:#dc2626;
+    --shadow:0 10px 30px rgba(0,0,0,.06); --r:14px;
+  }
+  *{box-sizing:border-box}
+  body{margin:0;font-family:system-ui,-apple-system,Segoe UI,Roboto,Arial,sans-serif;background:var(--bg);color:var(--text)}
+  .wrap{max-width:1200px;margin:0 auto;padding:16px}
+  header{display:flex;gap:12px;align-items:center;justify-content:space-between;flex-wrap:wrap}
+  h1{font-size:22px;margin:0}
+  .sub{color:var(--muted);font-size:13px;margin-top:2px}
+  .tabs{display:flex;gap:8px;flex-wrap:wrap}
+  .tabbtn{
+    border:1px solid var(--line); background:#fff; padding:8px 12px; border-radius:999px;
+    cursor:pointer; font-weight:700; color:#111827;
+  }
+  .tabbtn.active{background:var(--pri);border-color:var(--pri);color:#fff}
+  .card{background:var(--card);border-radius:var(--r);box-shadow:var(--shadow);padding:14px;margin-top:14px; overflow:visible;}
+  .topbar{display:grid;grid-template-columns: 1.6fr .8fr .6fr; gap:10px; align-items:center}
+  @media(max-width:980px){ .topbar{grid-template-columns:1fr} }
+  label{display:block;font-size:12px;color:var(--muted);margin:0 0 6px}
+  input,select,textarea{
+    width:100%;padding:10px;border:1px solid var(--line);border-radius:12px;background:#fff;font-size:14px;outline:none;
+  }
+  input:focus,select:focus,textarea:focus{border-color:#7cafff; box-shadow:0 0 0 3px rgba(37,99,235,.12)}
+  textarea{resize:vertical;min-height:42px}
+  .row{display:flex;gap:8px;align-items:center}
+  .btn{
+    border:0;border-radius:12px;padding:10px 12px;font-weight:800;cursor:pointer;
+    background:#eef2ff;color:#1e3a8a;
+  }
+  .btn.primary{background:var(--pri);color:#fff}
+  .btn.danger{background:#fee2e2;color:#7f1d1d}
+  .pill{display:inline-flex;align-items:center;gap:6px;border:1px solid var(--line);border-radius:999px;padding:6px 10px;color:var(--muted);font-size:12px;background:#fff}
+  .dot{width:8px;height:8px;border-radius:999px;background:#94a3b8}
+  .dot.ok{background:var(--ok)}
+  .dot.err{background:var(--err)}
+  .grid{display:grid;grid-template-columns:repeat(12,1fr);gap:10px}
+  .span3{grid-column:span 3}
+  .span4{grid-column:span 4}
+  .span6{grid-column:span 6}
+  .span12{grid-column:span 12}
+  @media(max-width:980px){ .span3,.span4,.span6{grid-column:span 12} }
+  .alert{border:1px solid #fecaca;background:#fff1f2;color:#7f1d1d;border-radius:12px;padding:10px;margin-top:10px;display:none}
+  table{width:100%;border-collapse:separate;border-spacing:0;border:1px solid var(--line);border-radius:12px;overflow:hidden}
+  th,td{padding:10px;border-bottom:1px solid var(--line);font-size:13px;text-align:left}
+  th{background:#f8fafc;color:#334155}
+  tr:last-child td{border-bottom:0}
+  .right{text-align:right}
+  .small{font-size:12px;color:var(--muted)}
+  .mini{font-size:12px}
+  .ghost{opacity:.55; pointer-events:none}
+  .addbtn{min-width:64px}
+  .hline{height:1px;background:var(--line);margin:10px 0}
+  canvas{width:100%;height:130px;border:1px solid var(--line);border-radius:12px;background:#fff}
+</style>
 </head>
 <body>
 <div class="wrap">
@@ -68,365 +69,414 @@
       <h1>Internal ERP</h1>
       <div class="sub">Simple • Inventory + Sales + Expenses + Cash • + Add buttons write to Lists automatically</div>
     </div>
-    <div class="tabs" id="tabs"></div>
+    <div class="tabs">
+      <button class="tabbtn active" data-tab="dash">Dashboard</button>
+      <button class="tabbtn" data-tab="inv">Inventory IN</button>
+      <button class="tabbtn" data-tab="sales">Sales</button>
+      <button class="tabbtn" data-tab="exp">Expenses</button>
+      <button class="tabbtn" data-tab="rep">Reports</button>
+    </div>
   </header>
 
   <div class="card">
-    <div class="grid">
-      <div class="span6">
-        <label>Apps Script Web App URL (paste the redirected googleusercontent echo URL if CORS blocks)</label>
-        <input id="apiUrl" placeholder="https://script.googleusercontent.com/macros/echo?user_content_key=..." />
-        <div class="muted" style="margin-top:6px;">
-          Tip: open <b>?action=ping</b> in browser → it redirects to script.googleusercontent.com → copy that URL here.
-        </div>
+    <div class="topbar">
+      <div>
+        <label>Apps Script Web App URL (paste redirected <b>googleusercontent</b> echo URL if CORS blocks)</label>
+        <input id="apiUrl" placeholder="https://script.google.com/macros/s/....../exec"/>
+        <div class="small">Tip: open <code>?action=ping</code> in browser → it redirects to script.googleusercontent.com → copy that URL here (best for GitHub Pages).</div>
       </div>
-      <div class="span3">
-        <label>Connection</label>
-        <div class="pill" id="connPill"><span class="dot err" id="connDot"></span><span id="connText">Not checked</span></div>
+      <div class="row" style="justify-content:space-between">
+        <div class="pill" id="connPill"><span class="dot" id="connDot"></span><span id="connText">Not checked</span></div>
+        <button class="btn primary" id="btnPing">Check API</button>
+        <button class="btn" id="btnLists">Reload Lists</button>
       </div>
-      <div class="span3">
-        <label>Quick actions</label>
-        <div class="row">
-          <button class="btn secondary" id="btnPing">Check API</button>
-          <button class="btn gray" id="btnLists">Reload Lists</button>
-        </div>
+      <div>
+        <div class="small"><b>Quick actions</b></div>
+        <div class="small">Use “Reload Lists” after adding categories/colors/sizes.</div>
       </div>
     </div>
-    <div class="errorBox" id="errBox"></div>
+    <div class="alert" id="errBox"></div>
   </div>
 
   <!-- Dashboard -->
-  <div class="card hide" id="panel-dashboard">
-    <div class="sectionTitle">
-      <h2>Dashboard</h2>
+  <div class="card tab" id="tab-dash">
+    <div class="row" style="justify-content:space-between;flex-wrap:wrap">
+      <div>
+        <h3 style="margin:0 0 6px">Dashboard</h3>
+        <div class="small">Select date range and refresh. Totals are normalized to USD.</div>
+      </div>
       <div class="row">
         <div>
-          <label>From</label><input type="date" id="dashFrom">
+          <label>From</label>
+          <input id="dashFrom" type="date"/>
         </div>
         <div>
-          <label>To</label><input type="date" id="dashTo">
+          <label>To</label>
+          <input id="dashTo" type="date"/>
         </div>
-        <button class="btn" id="btnDash">Refresh</button>
+        <button class="btn primary" id="dashRefresh" style="margin-top:18px">Refresh</button>
       </div>
     </div>
+
     <div class="grid" style="margin-top:10px">
-      <div class="span4"><div class="pill"><b>Total Cash IN</b>&nbsp; <span id="mCashIn">0</span></div></div>
-      <div class="span4"><div class="pill"><b>Total Cash OUT</b>&nbsp; <span id="mCashOut">0</span></div></div>
-      <div class="span4"><div class="pill"><b>Total Expenses</b>&nbsp; <span id="mExp">0</span></div></div>
+      <div class="span3 card" style="margin-top:0">
+        <div class="small">Total Cash IN (USD)</div>
+        <div style="font-size:22px;font-weight:900" id="dCashIn">0.00</div>
+      </div>
+      <div class="span3 card" style="margin-top:0">
+        <div class="small">Total Cash OUT (USD)</div>
+        <div style="font-size:22px;font-weight:900" id="dCashOut">0.00</div>
+      </div>
+      <div class="span3 card" style="margin-top:0">
+        <div class="small">Total Expenses (USD)</div>
+        <div style="font-size:22px;font-weight:900" id="dExp">0.00</div>
+      </div>
+      <div class="span3 card" style="margin-top:0">
+        <div class="small">Net Cash (USD)</div>
+        <div style="font-size:22px;font-weight:900" id="dNet">0.00</div>
+      </div>
       <div class="span12">
-        <label>Illustration</label>
-        <canvas id="dashChart" height="220"></canvas>
-        <div class="muted">This chart is lightweight (no library) so it stays fast.</div>
+        <div class="small" style="margin:6px 0">Illustration (lightweight canvas chart)</div>
+        <canvas id="dashCanvas" width="900" height="160"></canvas>
       </div>
     </div>
   </div>
 
   <!-- Inventory IN -->
-  <div class="card" id="panel-inv">
-    <div class="sectionTitle">
-      <h2>Inventory IN</h2>
-      <div class="muted">Unit USD = RMB / FX (2 decimals). Total USD = Unit USD × Qty.</div>
+  <div class="card tab" id="tab-inv" style="display:none">
+    <div class="row" style="justify-content:space-between;flex-wrap:wrap">
+      <div>
+        <h3 style="margin:0 0 6px">Inventory IN (multi-items + FOB)</h3>
+        <div class="small">Unit USD = RMB / FX (2 decimals). FOB total USD is distributed by total qty and added to unit cost.</div>
+      </div>
     </div>
 
     <div class="grid" style="margin-top:10px">
-      <div class="field">
+      <div class="span3">
         <label>Date</label>
-        <input type="date" id="inDate">
+        <input id="inDate" type="date"/>
       </div>
-      <div class="field">
+      <div class="span3">
         <label>FX RMB → USD (2 decimals)</label>
-        <input id="inFx" inputmode="decimal" placeholder="7.00">
+        <input id="inFx" type="number" step="0.01" value="7.00"/>
       </div>
-      <div class="field">
-        <label>SKU</label>
-        <input id="inSku" placeholder="MM-001">
-      </div>
-      <div class="field">
+      <div class="span3">
         <label>Warehouse</label>
-        <div class="miniAdd">
+        <div class="row">
           <select id="inWh"></select>
-          <button class="btn secondary" id="addWh">+ Add</button>
+          <button class="btn addbtn" id="addWh">+ Add</button>
         </div>
+      </div>
+      <div class="span3">
+        <label>FOB total (USD)</label>
+        <input id="inFob" type="number" step="0.01" value="0"/>
       </div>
 
-      <div class="field">
-        <label>Product category</label>
-        <div class="miniAdd">
-          <select id="inCat"></select>
-          <button class="btn secondary" id="addCat">+ Add</button>
-        </div>
-      </div>
-      <div class="field">
-        <label>Size</label>
-        <div class="miniAdd">
-          <select id="inSize"></select>
-          <button class="btn secondary" id="addSize">+ Add</button>
-        </div>
-      </div>
-      <div class="field">
-        <label>Color</label>
-        <div class="miniAdd">
-          <select id="inColor"></select>
-          <button class="btn secondary" id="addColor">+ Add</button>
-        </div>
-      </div>
-      <div class="field">
-        <label>Qty</label>
-        <input id="inQty" inputmode="decimal" placeholder="0">
-      </div>
-
-      <div class="field">
-        <label>Unit RMB</label>
-        <input id="inUnitRmb" inputmode="decimal" placeholder="0.00">
-      </div>
-      <div class="field">
-        <label>Unit USD (auto)</label>
-        <input id="inUnitUsd" readonly>
-      </div>
-      <div class="field">
-        <label>Total USD (auto)</label>
-        <input id="inTotalUsd" readonly>
-      </div>
-      <div class="field">
+      <div class="span12">
         <label>Note</label>
-        <input id="inNote" placeholder="">
+        <input id="inNote" placeholder="Optional note"/>
       </div>
+    </div>
 
-      <div class="span12 row" style="margin-top:8px">
-        <button class="btn" id="btnSaveInv">Save Inventory IN</button>
-        <button class="btn gray" id="btnClearInv">Clear</button>
-        <span class="pill" id="invStatus"><span class="dot err"></span><span>Not ready</span></span>
+    <div class="hline"></div>
+
+    <div class="row" style="justify-content:space-between;align-items:flex-end">
+      <div>
+        <div style="font-weight:900">Items</div>
+        <div class="small">Add 1–20 lines. Category/Size/Color have +Add to save to Lists automatically.</div>
       </div>
+      <button class="btn" id="inAddRow">+ Add item row</button>
+    </div>
+
+    <div style="margin-top:10px; overflow:auto">
+      <table id="inTable">
+        <thead>
+          <tr>
+            <th style="min-width:120px">SKU</th>
+            <th style="min-width:170px">Category</th>
+            <th style="min-width:150px">Size</th>
+            <th style="min-width:150px">Color</th>
+            <th class="right" style="min-width:90px">Qty</th>
+            <th class="right" style="min-width:110px">Unit RMB</th>
+            <th class="right" style="min-width:120px">Final Unit USD</th>
+            <th class="right" style="min-width:120px">Total USD</th>
+            <th style="min-width:80px"></th>
+          </tr>
+        </thead>
+        <tbody></tbody>
+      </table>
+    </div>
+
+    <div class="row" style="margin-top:12px;flex-wrap:wrap;justify-content:space-between">
+      <div class="row">
+        <button class="btn primary" id="inSave">Save Inventory IN</button>
+        <button class="btn" id="inClear">Clear</button>
+        <span class="pill"><span class="dot" id="inReadyDot"></span><span id="inReadyText">Not ready</span></span>
+      </div>
+      <div class="small" id="inTotals"></div>
+    </div>
+
+    <div class="hline"></div>
+    <div class="row" style="justify-content:space-between">
+      <div style="font-weight:900">Last Inventory IN (latest 20)</div>
+      <button class="btn" id="inLoadRecent">Load</button>
+    </div>
+    <div style="margin-top:10px; overflow:auto">
+      <table id="inRecentTbl">
+        <thead>
+          <tr>
+            <th>Date</th><th>SKU</th><th>Category</th><th>Size</th><th>Color</th><th>WH</th>
+            <th class="right">Qty</th><th class="right">Final Unit USD</th><th class="right">Total USD</th>
+          </tr>
+        </thead>
+        <tbody></tbody>
+      </table>
     </div>
   </div>
 
   <!-- Sales -->
-  <div class="card hide" id="panel-sales">
-    <div class="sectionTitle">
-      <h2>Sales (Order + multiple items)</h2>
-      <div class="muted">Cash can be recorded anytime (before/after shipping). Delivery company dropdown + Add.</div>
+  <div class="card tab" id="tab-sales" style="display:none">
+    <div class="row" style="justify-content:space-between;flex-wrap:wrap">
+      <div>
+        <h3 style="margin:0 0 6px">Sales (order + multiple items)</h3>
+        <div class="small">Cash can be recorded anytime (before/after preparation & shipping). You can receive in KHR or USD.</div>
+      </div>
+      <div class="small">Delivery company dropdown + “+ Add”.</div>
     </div>
 
     <div class="grid" style="margin-top:10px">
-      <div class="field"><label>Date</label><input type="date" id="soDate"></div>
-      <div class="field"><label>Customer name</label><input id="soCust"></div>
-      <div class="field"><label>Telephone</label><input id="soTel"></div>
-      <div class="field"><label>Customer address</label><input id="soAddr"></div>
+      <div class="span3"><label>Date</label><input id="soDate" type="date"/></div>
+      <div class="span3"><label>Customer name</label><input id="soName"/></div>
+      <div class="span3"><label>Telephone</label><input id="soTel"/></div>
+      <div class="span3"><label>Customer address</label><input id="soAddr"/></div>
 
-      <div class="field">
+      <div class="span3">
         <label>Delivery company</label>
-        <div class="miniAdd">
-          <select id="soDelivery"></select>
-          <button class="btn secondary" id="addDelivery">+ Add</button>
+        <div class="row">
+          <select id="soDeliv"></select>
+          <button class="btn addbtn" id="addDeliv">+ Add</button>
         </div>
       </div>
-      <div class="field">
+      <div class="span3">
         <label>Currency for item prices</label>
         <select id="soCur">
-          <option>USD</option>
-          <option>KHR</option>
+          <option value="USD">USD</option>
+          <option value="KHR">KHR</option>
         </select>
       </div>
-      <div class="field"><label>Status</label>
+      <div class="span3">
+        <label>Status</label>
         <select id="soStatus">
           <option>Ordered</option>
           <option>Preparation</option>
-          <option>Delivered</option>
-          <option>Completed</option>
+          <option>Delivered/Completed</option>
+          <option>Cancelled</option>
         </select>
       </div>
-      <div class="field"><label>Paid status</label>
+      <div class="span3">
+        <label>Paid status</label>
         <select id="soPaid">
           <option>Not received</option>
-          <option>Received</option>
+          <option>Partially received</option>
+          <option>Fully received</option>
         </select>
       </div>
 
-      <div class="span12"><label>Note</label><input id="soNote"></div>
+      <div class="span12"><label>Note</label><input id="soNote"/></div>
+    </div>
 
-      <div class="span12">
-        <div class="sectionTitle" style="margin-top:6px">
-          <h2 style="font-size:14px;margin:0">Items</h2>
-          <button class="btn secondary" id="addItemRow">+ Add item row</button>
-        </div>
-        <table class="table" id="itemsTable">
-          <thead>
-            <tr>
-              <th>SKU</th><th>Product</th><th>Qty</th><th>Unit price</th><th Reminder: line total auto</th><th></th>
-            </tr>
-          </thead>
-          <tbody></tbody>
-        </table>
+    <div class="hline"></div>
+
+    <div class="row" style="justify-content:space-between;align-items:flex-end">
+      <div style="font-weight:900">Items</div>
+      <button class="btn" id="soAddRow">+ Add item row</button>
+    </div>
+
+    <div style="margin-top:10px; overflow:auto">
+      <table id="soTable">
+        <thead>
+          <tr>
+            <th style="min-width:120px">SKU</th>
+            <th style="min-width:220px">Product name</th>
+            <th class="right" style="min-width:90px">Qty</th>
+            <th class="right" style="min-width:120px">Unit price</th>
+            <th class="right" style="min-width:120px">Line total</th>
+            <th style="min-width:80px"></th>
+          </tr>
+        </thead>
+        <tbody></tbody>
+      </table>
+    </div>
+
+    <div class="row" style="margin-top:12px;flex-wrap:wrap;justify-content:space-between">
+      <div class="row">
+        <button class="btn primary" id="soSave">Save Sales Order</button>
+        <button class="btn" id="soClear">Clear</button>
       </div>
+      <div class="small" id="soTotals"></div>
+    </div>
 
-      <div class="span12 row" style="margin-top:8px">
-        <button class="btn" id="btnCreateOrder">Save Order + Items</button>
-        <button class="btn gray" id="btnClearSales">Clear</button>
-        <span class="pill"><b>Order total:</b>&nbsp;<span id="soTotal">0</span></span>
+    <div class="hline"></div>
+
+    <div style="font-weight:900">Cash received (record anytime)</div>
+    <div class="grid" style="margin-top:10px">
+      <div class="span3"><label>Order ID (after save)</label><input id="cashRefId" placeholder="SO-...."/></div>
+      <div class="span3"><label>Date</label><input id="cashDate" type="date"/></div>
+      <div class="span2">
+        <label>Direction</label>
+        <select id="cashDir"><option value="IN">IN</option><option value="OUT">OUT</option></select>
       </div>
-
-      <div class="span12" style="margin-top:10px; border-top:1px solid var(--line); padding-top:10px">
-        <div class="sectionTitle">
-          <h2 style="font-size:14px;margin:0">Record Cash Received / Refund</h2>
-          <div class="muted">This is the balance sheet movement. Use IN for payment, OUT for refunds.</div>
-        </div>
-        <div class="grid" style="margin-top:8px">
-          <div class="field"><label>Date</label><input type="date" id="cashDate"></div>
-          <div class="field"><label>Direction</label>
-            <select id="cashDir"><option value="IN">IN</option><option value="OUT">OUT</option></select>
-          </div>
-          <div class="field"><label>Amount</label><input id="cashAmt" inputmode="decimal"></div>
-          <div class="field"><label>Currency</label>
-            <select id="cashCur"><option>USD</option><option>KHR</option></select>
-          </div>
-          <div class="field"><label>FX KHR → USD (if KHR)</label><input id="cashFx" inputmode="decimal" placeholder="0"></div>
-          <div class="span6"><label>Note</label><input id="cashNote"></div>
-          <div class="span12 row">
-            <button class="btn secondary" id="btnCash">Record Cash</button>
-            <span class="muted" id="cashHint">Tip: Save Order first, then record cash referencing that order_id shown after save.</span>
-          </div>
-          <div class="span12"><div class="pill" id="lastOrderPill">Last order_id: <b id="lastOrderId">-</b></div></div>
-        </div>
+      <div class="span2"><label>Amount</label><input id="cashAmt" type="number" step="0.01"/></div>
+      <div class="span2">
+        <label>Currency</label>
+        <select id="cashCur"><option>USD</option><option>KHR</option></select>
+      </div>
+      <div class="span3"><label>FX KHR → USD (if KHR)</label><input id="cashFx" type="number" step="0.01" value="0"/></div>
+      <div class="span9"><label>Note</label><input id="cashNote"/></div>
+      <div class="span3" style="display:flex;align-items:flex-end">
+        <button class="btn primary" id="cashSave" style="width:100%">Save Cash</button>
       </div>
     </div>
+
+    <div class="hline"></div>
+
+    <div style="font-weight:900">Returns (inventory back + cash refund)</div>
+    <div class="grid" style="margin-top:10px">
+      <div class="span3"><label>Date</label><input id="retDate" type="date"/></div>
+      <div class="span3"><label>Order ID</label><input id="retOrder"/></div>
+      <div class="span3"><label>SKU</label><input id="retSku"/></div>
+      <div class="span3"><label>Qty return</label><input id="retQty" type="number" step="1"/></div>
+      <div class="span3"><label>Refund amount</label><input id="retAmt" type="number" step="0.01"/></div>
+      <div class="span2"><label>Currency</label><select id="retCur"><option>USD</option><option>KHR</option></select></div>
+      <div class="span2"><label>FX KHR → USD</label><input id="retFx" type="number" step="0.01" value="0"/></div>
+      <div class="span12"><label>Note</label><input id="retNote"/></div>
+      <div class="span3" style="display:flex;align-items:flex-end">
+        <button class="btn danger" id="retSave" style="width:100%">Save Return</button>
+      </div>
+    </div>
+
+    <div class="hline"></div>
+    <div class="row" style="justify-content:space-between">
+      <div style="font-weight:900">Recent Sales (latest 20)</div>
+      <button class="btn" id="soLoadRecent">Load</button>
+    </div>
+    <div id="soRecent" style="margin-top:10px"></div>
   </div>
 
   <!-- Expenses -->
-  <div class="card hide" id="panel-exp">
-    <div class="sectionTitle">
-      <h2>Expenses</h2>
-      <div class="muted">Expense categories come from Lists (EXP_CAT) + you can + Add.</div>
+  <div class="card tab" id="tab-exp" style="display:none">
+    <div class="row" style="justify-content:space-between;flex-wrap:wrap">
+      <div>
+        <h3 style="margin:0 0 6px">Expenses</h3>
+        <div class="small">Categories come from Lists (EXP_CAT) + you can “+ Add”. Amounts normalized to USD.</div>
+      </div>
     </div>
+
     <div class="grid" style="margin-top:10px">
-      <div class="field"><label>Date</label><input type="date" id="exDate"></div>
-      <div class="field">
+      <div class="span3"><label>Date</label><input id="exDate" type="date"/></div>
+      <div class="span4">
         <label>Category</label>
-        <div class="miniAdd">
+        <div class="row">
           <select id="exCat"></select>
-          <button class="btn secondary" id="addExpCat">+ Add</button>
+          <button class="btn addbtn" id="addExCat">+ Add</button>
         </div>
       </div>
-      <div class="field"><label>Amount</label><input id="exAmt" inputmode="decimal"></div>
-      <div class="field"><label>Currency</label>
+      <div class="span3"><label>Amount</label><input id="exAmt" type="number" step="0.01"/></div>
+      <div class="span2">
+        <label>Currency</label>
         <select id="exCur"><option>USD</option><option>KHR</option></select>
       </div>
-      <div class="field"><label>FX KHR → USD (if KHR)</label><input id="exFx" inputmode="decimal" placeholder="0"></div>
-      <div class="span6"><label>Note</label><input id="exNote"></div>
-
-      <div class="span12 row">
-        <button class="btn" id="btnExp">Save Expense</button>
-        <button class="btn gray" id="btnClearExp">Clear</button>
+      <div class="span3"><label>FX KHR → USD (if KHR)</label><input id="exFx" type="number" step="0.01" value="0"/></div>
+      <div class="span9"><label>Note</label><input id="exNote"/></div>
+      <div class="span3" style="display:flex;align-items:flex-end">
+        <button class="btn primary" id="exSave" style="width:100%">Save Expense</button>
       </div>
+    </div>
+
+    <div class="hline"></div>
+    <div class="row" style="justify-content:space-between">
+      <div style="font-weight:900">Recent Expenses (latest 20)</div>
+      <button class="btn" id="exLoadRecent">Load</button>
+    </div>
+    <div style="margin-top:10px; overflow:auto">
+      <table id="exRecentTbl">
+        <thead>
+          <tr><th>Date</th><th>Category</th><th class="right">Amount</th><th>Cur</th><th class="right">USD</th><th>Note</th></tr>
+        </thead>
+        <tbody></tbody>
+      </table>
     </div>
   </div>
 
   <!-- Reports -->
-  <div class="card hide" id="panel-rep">
-    <div class="sectionTitle">
-      <h2>Reports (date range)</h2>
-      <div class="muted">This UI is ready. If you want full computed PnL/BS, we can add formulas in Sheets later.</div>
+  <div class="card tab" id="tab-rep" style="display:none">
+    <div class="row" style="justify-content:space-between;flex-wrap:wrap">
+      <div>
+        <h3 style="margin:0 0 6px">Reports (date range)</h3>
+        <div class="small">Currently pulls the same summary as Dashboard (fast). We can add deeper P&L later.</div>
+      </div>
+      <div class="row">
+        <div><label>From</label><input id="repFrom" type="date"/></div>
+        <div><label>To</label><input id="repTo" type="date"/></div>
+        <button class="btn primary" id="repRefresh" style="margin-top:18px">Refresh</button>
+      </div>
     </div>
-    <div class="row" style="margin-top:10px">
-      <div><label>From</label><input type="date" id="repFrom"></div>
-      <div><label>To</label><input type="date" id="repTo"></div>
-      <button class="btn" id="btnRep">Refresh</button>
-    </div>
-    <div class="muted" style="margin-top:10px">Next step can load rows from sheets and summarize. (UI already has date range selectors.)</div>
+    <div class="hline"></div>
+    <pre id="repBox" style="margin:0;white-space:pre-wrap;background:#0b1220;color:#e2e8f0;padding:12px;border-radius:12px;border:1px solid #111827"></pre>
   </div>
 </div>
 
 <script>
-  // ===== Tabs =====
-  const TAB_DEFS = [
-    {id:"dashboard", label:"Dashboard", panel:"panel-dashboard"},
-    {id:"inv",       label:"Inventory IN", panel:"panel-inv"},
-    {id:"sales",     label:"Sales", panel:"panel-sales"},
-    {id:"exp",       label:"Expenses", panel:"panel-exp"},
-    {id:"rep",       label:"Reports", panel:"panel-rep"},
-  ];
+  // ========= State =========
+  const LS_KEY = "ERP_API_URL_V1";
+  const $ = (id)=>document.getElementById(id);
 
-  const tabsEl = document.getElementById("tabs");
-  let activeTab = "inv";
-
-  function setTab(id){
-    activeTab = id;
-    TAB_DEFS.forEach(t=>{
-      const btn = document.getElementById("tab-"+t.id);
-      const panel = document.getElementById(t.panel);
-      if (btn) btn.classList.toggle("active", t.id===id);
-      if (panel) panel.classList.toggle("hide", t.id!==id);
-    });
-  }
-
-  function buildTabs(){
-    tabsEl.innerHTML = "";
-    TAB_DEFS.forEach(t=>{
-      const b = document.createElement("button");
-      b.className = "tabbtn";
-      b.id = "tab-"+t.id;
-      b.textContent = t.label;
-      b.onclick = ()=>setTab(t.id);
-      tabsEl.appendChild(b);
-    });
-    setTab(activeTab);
-  }
-
-  // ===== API =====
-  const apiUrlEl = document.getElementById("apiUrl");
-  const connDot = document.getElementById("connDot");
-  const connText = document.getElementById("connText");
-  const errBox = document.getElementById("errBox");
-
-  function showErr(msg){
-    errBox.style.display = msg ? "block" : "none";
-    errBox.textContent = msg || "";
-  }
-
-  function setConn(ok, text){
-    connDot.className = "dot " + (ok ? "ok":"err");
-    connText.textContent = text;
-  }
-
-  function getApiUrl(){
-    return (apiUrlEl.value || "").trim();
-  }
-
-  function saveApiUrl(){
-    localStorage.setItem("ERP_API_URL", getApiUrl());
-  }
-
-  async function apiGet(action){
-    const base = getApiUrl();
-    if (!base) throw new Error("API URL is empty");
-    const url = base + (base.includes("?") ? "&" : "?") + "action=" + encodeURIComponent(action);
-    const res = await fetch(url, {method:"GET"});
-    return await res.json();
-  }
-
-  async function apiPost(payload){
-    const base = getApiUrl();
-    if (!base) throw new Error("API URL is empty");
-    const res = await fetch(base, {
-      method:"POST",
-      headers: {"Content-Type":"text/plain;charset=utf-8"},
-      body: JSON.stringify(payload)
-    });
-    return await res.json();
-  }
-
-  // ===== Lists =====
-  const lists = {
-    locations:[], expCats:[], prodCats:[], prodSizes:[], prodColors:[], deliveryCos:[]
+  let lists = {
+    locations:[], expCats:[], prodCats:[], prodSizes:[], prodColors:[],
+    deliveryCompanies:[]
   };
+
+  // ========= Helpers =========
+  function showErr(msg){
+    const box = $("errBox");
+    box.style.display = msg ? "block" : "none";
+    box.textContent = msg || "";
+  }
+  function setConn(ok, text){
+    $("connDot").className = "dot " + (ok ? "ok" : "err");
+    $("connText").textContent = text;
+  }
+  function round2(n){ n = Number(n||0); return Math.round(n*100)/100; }
+  function round4(n){ n = Number(n||0); return Math.round(n*10000)/10000; }
+
+  async function api(action, params={}, body=null){
+    const base = $("apiUrl").value.trim();
+    if(!base) throw new Error("API URL is empty");
+    const url = new URL(base);
+    url.searchParams.set("action", action);
+    Object.entries(params).forEach(([k,v])=> url.searchParams.set(k, v));
+
+    const opt = body ? {
+      method:"POST",
+      headers:{ "Content-Type":"application/json" },
+      body: JSON.stringify(body)
+    } : { method:"GET" };
+
+    const res = await fetch(url.toString(), opt);
+    const txt = await res.text();
+    let json;
+    try{ json = JSON.parse(txt); }catch(e){ throw new Error("Non-JSON response: " + txt.slice(0,200)); }
+    if(!json.ok) throw new Error(json.error || "API error");
+    return json;
+  }
 
   function fillSelect(sel, arr, placeholder){
     sel.innerHTML = "";
-    const opt0 = document.createElement("option");
-    opt0.value = "";
-    opt0.textContent = placeholder || "Select...";
-    sel.appendChild(opt0);
-
-    (arr || []).forEach(v=>{
+    const ph = document.createElement("option");
+    ph.value = "";
+    ph.textContent = placeholder || "Select...";
+    sel.appendChild(ph);
+    arr.forEach(v=>{
       const o = document.createElement("option");
       o.value = v;
       o.textContent = v;
@@ -434,360 +484,554 @@
     });
   }
 
-  async function reloadLists(){
+  async function loadLists(){
     showErr("");
-    setConn(false, "Loading lists...");
-    const r = await apiGet("lists");
-    if (!r.ok) throw new Error(r.error || "Failed to load lists");
-    Object.assign(lists, r.data || {});
-    // Inventory dropdowns
-    fillSelect(document.getElementById("inWh"),   lists.locations,  "Select warehouse...");
-    fillSelect(document.getElementById("inCat"),  lists.prodCats,   "Select category...");
-    fillSelect(document.getElementById("inSize"), lists.prodSizes,  "Select size...");
-    fillSelect(document.getElementById("inColor"),lists.prodColors, "Select color...");
-    // Sales delivery
-    fillSelect(document.getElementById("soDelivery"), lists.deliveryCos, "Select delivery...");
-    // Expenses
-    fillSelect(document.getElementById("exCat"), lists.expCats, "Select category...");
+    const j = await api("lists_get");
+    lists = j.data || lists;
+
+    fillSelect($("inWh"), lists.locations || [], "Select warehouse...");
+    fillSelect($("exCat"), lists.expCats || [], "Select category...");
+    fillSelect($("soDeliv"), (lists.deliveryCompanies||[]), "Select delivery...");
+
+    // Inventory table row selects use builders
+    refreshInvRowSelects_();
+
     setConn(true, "Lists loaded");
   }
 
-  async function quickAdd(listName){
-    const value = prompt("Add new value to " + listName + " (this writes into Lists sheet)");
-    if (!value) return;
-    const r = await apiPost({action:"add_list_item", list_name:listName, value:value});
-    if (!r.ok) throw new Error(r.error || "Add failed");
-    await reloadLists();
-    alert("Added: " + value);
+  async function addListPrompt(listName, title){
+    const val = prompt("Add new " + title + ":", "");
+    if(!val) return null;
+    const j = await api("list_add", {}, {list_name:listName, value:val});
+    lists = j.data || lists;
+    await loadLists(); // ensures all dropdowns refresh
+    return val;
   }
 
-  // ===== Inventory calc + save =====
-  const inFx = document.getElementById("inFx");
-  const inQty = document.getElementById("inQty");
-  const inUnitRmb = document.getElementById("inUnitRmb");
-  const inUnitUsd = document.getElementById("inUnitUsd");
-  const inTotalUsd = document.getElementById("inTotalUsd");
-  const invStatus = document.getElementById("invStatus");
-  const btnSaveInv = document.getElementById("btnSaveInv");
-
-  function to2(n){
-    const x = Number(n);
-    return isFinite(x) ? x.toFixed(2) : "0.00";
-  }
-
-  function calcInv(){
-    const fx = Number(inFx.value);
-    const qty = Number(inQty.value);
-    const ur = Number(inUnitRmb.value);
-
-    let uu = 0;
-    if (fx > 0) uu = ur / fx;
-    const total = uu * (isFinite(qty) ? qty : 0);
-
-    inUnitUsd.value = to2(uu);
-    inTotalUsd.value = to2(total);
-
-    const ready = document.getElementById("inDate").value
-      && fx > 0
-      && document.getElementById("inSku").value.trim()
-      && document.getElementById("inWh").value
-      && document.getElementById("inCat").value
-      && qty > 0
-      && ur >= 0;
-
-    invStatus.innerHTML = ready
-      ? '<span class="dot ok"></span><span>Ready</span>'
-      : '<span class="dot err"></span><span>Not ready</span>';
-    btnSaveInv.disabled = !ready;
-  }
-
-  async function saveInv(){
-    showErr("");
-    const payload = {
-      action:"inventory_in_create",
-      date: document.getElementById("inDate").value,
-      fx_rmb_usd: Number(inFx.value),
-      sku: document.getElementById("inSku").value.trim(),
-      warehouse: document.getElementById("inWh").value,
-      prod_cat: document.getElementById("inCat").value,
-      prod_size: document.getElementById("inSize").value,
-      prod_color: document.getElementById("inColor").value,
-      qty: Number(inQty.value),
-      unit_rmb: Number(inUnitRmb.value),
-      unit_usd: Number(inUnitUsd.value),
-      total_usd: Number(inTotalUsd.value),
-      note: document.getElementById("inNote").value.trim()
-    };
-    const r = await apiPost(payload);
-    if (!r.ok) throw new Error(r.error || "Save failed");
-    alert("Saved Inventory IN: " + r.inv_in_id);
-  }
-
-  function clearInv(){
-    ["inDate","inSku","inNote"].forEach(id=>document.getElementById(id).value="");
-    ["inFx","inQty","inUnitRmb"].forEach(id=>document.getElementById(id).value="");
-    ["inWh","inCat","inSize","inColor"].forEach(id=>document.getElementById(id).value="");
-    calcInv();
-  }
-
-  // ===== Sales items dynamic rows =====
-  const itemsBody = document.querySelector("#itemsTable tbody");
-  const soTotalEl = document.getElementById("soTotal");
-  const lastOrderIdEl = document.getElementById("lastOrderId");
-  let lastOrderId = "";
-
-  function makeItemRow(){
-    const tr = document.createElement("tr");
-    tr.innerHTML = `
-      <td><input class="siSku" placeholder="SKU"></td>
-      <td><input class="siName" placeholder="Product"></td>
-      <td><input class="siQty" inputmode="decimal" placeholder="0"></td>
-      <td><input class="siUnit" inputmode="decimal" placeholder="0.00"></td>
-      <td><input class="siLine" readonly></td>
-      <td><button class="btn gray siDel" type="button">Remove</button></td>
-    `;
-    const qty = tr.querySelector(".siQty");
-    const unit = tr.querySelector(".siUnit");
-    const line = tr.querySelector(".siLine");
-    function calcLine(){
-      const q = Number(qty.value);
-      const u = Number(unit.value);
-      const t = (isFinite(q)?q:0) * (isFinite(u)?u:0);
-      line.value = to2(t);
-      calcOrderTotal();
-    }
-    qty.addEventListener("input", calcLine);
-    unit.addEventListener("input", calcLine);
-    tr.querySelector(".siDel").onclick = ()=>{
-      tr.remove();
-      calcOrderTotal();
-    };
-    itemsBody.appendChild(tr);
-  }
-
-  function calcOrderTotal(){
-    let sum = 0;
-    itemsBody.querySelectorAll(".siLine").forEach(inp=>{
-      sum += Number(inp.value || 0);
+  // ========= Tabs =========
+  document.querySelectorAll(".tabbtn").forEach(btn=>{
+    btn.addEventListener("click", ()=>{
+      document.querySelectorAll(".tabbtn").forEach(b=>b.classList.remove("active"));
+      btn.classList.add("active");
+      const tab = btn.dataset.tab;
+      document.querySelectorAll(".tab").forEach(x=>x.style.display="none");
+      $("tab-"+tab).style.display = "block";
     });
-    soTotalEl.textContent = to2(sum);
-  }
-
-  async function saveOrderAndItems(){
-    showErr("");
-    // Create order
-    const orderPayload = {
-      action:"sales_order_create",
-      date: document.getElementById("soDate").value,
-      customer_name: document.getElementById("soCust").value.trim(),
-      telephone: document.getElementById("soTel").value.trim(),
-      customer_address: document.getElementById("soAddr").value.trim(),
-      delivery_company: document.getElementById("soDelivery").value,
-      currency: document.getElementById("soCur").value,
-      note: document.getElementById("soNote").value.trim(),
-      status: document.getElementById("soStatus").value,
-      paid_status: document.getElementById("soPaid").value,
-      created_by: "", prepared_by: ""
-    };
-
-    const or = await apiPost(orderPayload);
-    if (!or.ok) throw new Error(or.error || "Order save failed");
-    lastOrderId = or.order_id;
-    lastOrderIdEl.textContent = lastOrderId;
-
-    // Items
-    const rows = [...itemsBody.querySelectorAll("tr")];
-    if (rows.length === 0) throw new Error("Add at least 1 item row");
-
-    for (const tr of rows){
-      const sku = tr.querySelector(".siSku").value.trim();
-      const name = tr.querySelector(".siName").value.trim();
-      const qty = Number(tr.querySelector(".siQty").value);
-      const unit = Number(tr.querySelector(".siUnit").value);
-      const line = Number(tr.querySelector(".siLine").value);
-      if (!sku && !name) continue;
-      const ir = await apiPost({
-        action:"sales_item_add",
-        order_id:lastOrderId,
-        sku, product_name:name,
-        qty, unit_price:unit, line_total:line
-      });
-      if (!ir.ok) throw new Error(ir.error || "Item save failed");
-    }
-
-    alert("Saved order " + lastOrderId + " with items.");
-  }
-
-  function clearSales(){
-    ["soDate","soCust","soTel","soAddr","soNote"].forEach(id=>document.getElementById(id).value="");
-    document.getElementById("soCur").value="USD";
-    document.getElementById("soStatus").value="Ordered";
-    document.getElementById("soPaid").value="Not received";
-    document.getElementById("soDelivery").value="";
-    itemsBody.innerHTML = "";
-    makeItemRow();
-    calcOrderTotal();
-  }
-
-  async function recordCash(){
-    showErr("");
-    if (!lastOrderId) {
-      alert("Save the order first so we can link cash to the order_id.");
-      return;
-    }
-    const r = await apiPost({
-      action:"cash_record",
-      date: document.getElementById("cashDate").value,
-      ref_type: "SALES",
-      ref_id: lastOrderId,
-      direction: document.getElementById("cashDir").value,
-      amount: Number(document.getElementById("cashAmt").value),
-      currency: document.getElementById("cashCur").value,
-      fx_khr_usd: Number(document.getElementById("cashFx").value),
-      note: document.getElementById("cashNote").value.trim()
-    });
-    if (!r.ok) throw new Error(r.error || "Cash record failed");
-    alert("Cash recorded: " + r.cash_id);
-  }
-
-  // ===== Expenses =====
-  async function saveExpense(){
-    showErr("");
-    const r = await apiPost({
-      action:"expense_create",
-      date: document.getElementById("exDate").value,
-      exp_cat: document.getElementById("exCat").value,
-      amount: Number(document.getElementById("exAmt").value),
-      currency: document.getElementById("exCur").value,
-      fx_khr_usd: Number(document.getElementById("exFx").value),
-      note: document.getElementById("exNote").value.trim()
-    });
-    if (!r.ok) throw new Error(r.error || "Expense failed");
-    alert("Expense saved: " + r.exp_id);
-  }
-
-  function clearExp(){
-    ["exDate","exAmt","exFx","exNote"].forEach(id=>document.getElementById(id).value="");
-    document.getElementById("exCat").value="";
-    document.getElementById("exCur").value="USD";
-  }
-
-  // ===== Dashboard minimal draw =====
-  function drawBars(canvas, labels, values){
-    const ctx = canvas.getContext("2d");
-    const w = canvas.width = canvas.clientWidth;
-    const h = canvas.height = canvas.clientHeight;
-    ctx.clearRect(0,0,w,h);
-
-    const pad = 30;
-    const max = Math.max(1, ...values);
-    const barW = (w - pad*2) / values.length;
-
-    ctx.font = "12px system-ui";
-    ctx.fillStyle = "#0f172a";
-
-    values.forEach((v, i)=>{
-      const bh = (h - pad*2) * (v/max);
-      const x = pad + i*barW + 10;
-      const y = h - pad - bh;
-
-      // bar
-      ctx.fillStyle = "rgba(37,99,235,.25)";
-      ctx.fillRect(x, y, barW-20, bh);
-
-      // label
-      ctx.fillStyle = "#64748b";
-      ctx.fillText(labels[i], x, h - 10);
-
-      // value
-      ctx.fillStyle = "#0f172a";
-      ctx.fillText(String(v.toFixed(0)), x, y - 6);
-    });
-  }
-
-  function dashRefresh(){
-    // For now, lightweight placeholder (no heavy sheet reads).
-    // Next step: add endpoints to fetch totals between dates.
-    const cashIn = 0, cashOut = 0, exp = 0;
-    document.getElementById("mCashIn").textContent = cashIn;
-    document.getElementById("mCashOut").textContent = cashOut;
-    document.getElementById("mExp").textContent = exp;
-    drawBars(document.getElementById("dashChart"), ["Cash IN","Cash OUT","Expenses"], [cashIn,cashOut,exp]);
-  }
-
-  // ===== Init =====
-  buildTabs();
-
-  // load saved api url
-  const saved = localStorage.getItem("ERP_API_URL") || "";
-  apiUrlEl.value = saved || "";
-
-  document.getElementById("btnPing").onclick = async ()=>{
-    try{
-      showErr("");
-      saveApiUrl();
-      setConn(false, "Checking...");
-      const r = await apiGet("ping");
-      if (!r.ok) throw new Error(r.error || "Ping failed");
-      setConn(true, "Connected (ping ok)");
-    }catch(e){
-      setConn(false, "Ping failed");
-      showErr(String(e));
-    }
-  };
-
-  document.getElementById("btnLists").onclick = async ()=>{
-    try{
-      saveApiUrl();
-      await reloadLists();
-    }catch(e){
-      setConn(false, "Lists failed");
-      showErr(String(e));
-    }
-  };
-
-  // + Add buttons
-  document.getElementById("addWh").onclick = ()=>quickAdd("LOCATION");
-  document.getElementById("addCat").onclick = ()=>quickAdd("PROD_CAT");
-  document.getElementById("addSize").onclick = ()=>quickAdd("PROD_SIZE");
-  document.getElementById("addColor").onclick = ()=>quickAdd("PROD_COLOR");
-  document.getElementById("addDelivery").onclick = ()=>quickAdd("DELIVERY_CO");
-  document.getElementById("addExpCat").onclick = ()=>quickAdd("EXP_CAT");
-
-  // inventory listeners
-  ["inFx","inQty","inUnitRmb","inDate","inSku","inWh","inCat","inSize","inColor"].forEach(id=>{
-    document.getElementById(id).addEventListener("input", calcInv);
-    document.getElementById(id).addEventListener("change", calcInv);
   });
 
-  document.getElementById("btnSaveInv").onclick = async ()=>{
-    try{ await saveInv(); }catch(e){ showErr(String(e)); }
+  // ========= Top actions =========
+  $("btnPing").onclick = async ()=>{
+    try{
+      showErr("");
+      const base = $("apiUrl").value.trim();
+      if(!base) throw new Error("API URL is empty");
+      localStorage.setItem(LS_KEY, base);
+      const j = await api("ping");
+      setConn(true, "Connected (" + j.message + ")");
+    }catch(e){
+      setConn(false, "Ping failed");
+      showErr(String(e.message||e));
+    }
   };
-  document.getElementById("btnClearInv").onclick = clearInv;
 
-  // sales
-  document.getElementById("addItemRow").onclick = makeItemRow;
-  document.getElementById("btnCreateOrder").onclick = async ()=>{
-    try{ await saveOrderAndItems(); }catch(e){ showErr(String(e)); }
+  $("btnLists").onclick = async ()=>{
+    try{
+      showErr("");
+      localStorage.setItem(LS_KEY, $("apiUrl").value.trim());
+      await loadLists();
+    }catch(e){
+      setConn(false, "Lists failed");
+      showErr(String(e.message||e));
+    }
   };
-  document.getElementById("btnClearSales").onclick = clearSales;
-  document.getElementById("btnCash").onclick = async ()=>{
-    try{ await recordCash(); }catch(e){ showErr(String(e)); }
+
+  // ========= Inventory IN table =========
+  const inTbody = document.querySelector("#inTable tbody");
+
+  function invRowTemplate(){
+    const tr = document.createElement("tr");
+    tr.innerHTML = `
+      <td><input class="inSku" placeholder="SKU"/></td>
+      <td>
+        <div class="row">
+          <select class="inCat"></select>
+          <button class="btn addbtn inAddCat" type="button">+ Add</button>
+        </div>
+      </td>
+      <td>
+        <div class="row">
+          <select class="inSize"></select>
+          <button class="btn addbtn inAddSize" type="button">+ Add</button>
+        </div>
+      </td>
+      <td>
+        <div class="row">
+          <select class="inColor"></select>
+          <button class="btn addbtn inAddColor" type="button">+ Add</button>
+        </div>
+      </td>
+      <td class="right"><input class="inQty" type="number" step="1" value="0"/></td>
+      <td class="right"><input class="inUnitRmb" type="number" step="0.01" value="0"/></td>
+      <td class="right"><input class="inFinalUnitUsd" type="number" step="0.0001" value="0" disabled/></td>
+      <td class="right"><input class="inTotalUsd" type="number" step="0.01" value="0" disabled/></td>
+      <td><button class="btn danger inDelRow" type="button">X</button></td>
+    `;
+    tr.querySelector(".inDelRow").onclick = ()=>{ tr.remove(); calcInvTotals_(); };
+
+    tr.querySelector(".inAddCat").onclick = async ()=>{
+      try{
+        const val = await addListPrompt("PROD_CAT","product category");
+        if(val) tr.querySelector(".inCat").value = val;
+      }catch(e){ showErr(String(e.message||e)); }
+    };
+    tr.querySelector(".inAddSize").onclick = async ()=>{
+      try{
+        const val = await addListPrompt("PROD_SIZE","size");
+        if(val) tr.querySelector(".inSize").value = val;
+      }catch(e){ showErr(String(e.message||e)); }
+    };
+    tr.querySelector(".inAddColor").onclick = async ()=>{
+      try{
+        const val = await addListPrompt("PROD_COLOR","color");
+        if(val) tr.querySelector(".inColor").value = val;
+      }catch(e){ showErr(String(e.message||e)); }
+    };
+
+    ["inQty","inUnitRmb"].forEach(cls=>{
+      tr.querySelector("."+cls).addEventListener("input", ()=>{ calcInvTotals_(); });
+    });
+
+    // fill selects now
+    fillSelect(tr.querySelector(".inCat"), lists.prodCats||[], "Select category...");
+    fillSelect(tr.querySelector(".inSize"), lists.prodSizes||[], "Select size...");
+    fillSelect(tr.querySelector(".inColor"), lists.prodColors||[], "Select color...");
+
+    return tr;
+  }
+
+  function refreshInvRowSelects_(){
+    // update all existing rows selects based on latest lists
+    inTbody.querySelectorAll("tr").forEach(tr=>{
+      const cat = tr.querySelector(".inCat"); const prevC = cat.value;
+      const size = tr.querySelector(".inSize"); const prevS = size.value;
+      const color = tr.querySelector(".inColor"); const prevCo = color.value;
+      fillSelect(cat, lists.prodCats||[], "Select category...");
+      fillSelect(size, lists.prodSizes||[], "Select size...");
+      fillSelect(color, lists.prodColors||[], "Select color...");
+      if(prevC) cat.value = prevC;
+      if(prevS) size.value = prevS;
+      if(prevCo) color.value = prevCo;
+    });
+  }
+
+  function calcInvTotals_(){
+    const fx = Number($("inFx").value||0);
+    const fob = Number($("inFob").value||0);
+
+    let totalQty = 0;
+    const rows = [...inTbody.querySelectorAll("tr")];
+    rows.forEach(tr=>{
+      totalQty += Number(tr.querySelector(".inQty").value||0);
+    });
+    const fobPer = totalQty>0 ? (fob/totalQty) : 0;
+
+    let totalUsdAll = 0;
+    rows.forEach(tr=>{
+      const qty = Number(tr.querySelector(".inQty").value||0);
+      const unitRmb = Number(tr.querySelector(".inUnitRmb").value||0);
+      const baseUnitUsd = (fx>0) ? (unitRmb/fx) : 0;
+      const finalUnitUsd = round4(baseUnitUsd + fobPer);
+      const totalUsd = round2(finalUnitUsd * qty);
+      tr.querySelector(".inFinalUnitUsd").value = finalUnitUsd.toFixed(4);
+      tr.querySelector(".inTotalUsd").value = totalUsd.toFixed(2);
+      totalUsdAll += totalUsd;
+    });
+
+    $("inTotals").textContent = `Total qty: ${totalQty} • FOB/unit: ${round4(fobPer)} • Total USD: ${round2(totalUsdAll)}`;
+
+    const ready =
+      $("inDate").value &&
+      fx>0 &&
+      $("inWh").value &&
+      rows.length>0 &&
+      rows.every(tr=> Number(tr.querySelector(".inQty").value||0)>0);
+
+    $("inReadyDot").className = "dot " + (ready ? "ok" : "err");
+    $("inReadyText").textContent = ready ? "Ready" : "Not ready";
+    $("inSave").className = "btn primary " + (ready ? "" : "ghost");
+  }
+
+  $("inAddRow").onclick = ()=>{
+    inTbody.appendChild(invRowTemplate());
+    calcInvTotals_();
   };
 
-  // expenses
-  document.getElementById("btnExp").onclick = async ()=>{
-    try{ await saveExpense(); }catch(e){ showErr(String(e)); }
+  $("inFx").addEventListener("input", calcInvTotals_);
+  $("inFob").addEventListener("input", calcInvTotals_);
+  $("inWh").addEventListener("change", calcInvTotals_);
+  $("inDate").addEventListener("change", calcInvTotals_);
+
+  $("addWh").onclick = async ()=>{
+    try{
+      const val = await addListPrompt("LOCATION","warehouse");
+      if(val) $("inWh").value = val;
+      calcInvTotals_();
+    }catch(e){ showErr(String(e.message||e)); }
   };
-  document.getElementById("btnClearExp").onclick = clearExp;
 
-  // dashboard
-  document.getElementById("btnDash").onclick = dashRefresh;
+  $("inSave").onclick = async ()=>{
+    try{
+      if($("inSave").classList.contains("ghost")) return;
+      showErr("");
 
-  // Default values
-  makeItemRow();
-  calcInv();
-  dashRefresh();
+      const items = [...inTbody.querySelectorAll("tr")].map(tr=>({
+        sku: tr.querySelector(".inSku").value.trim(),
+        prod_cat: tr.querySelector(".inCat").value,
+        prod_size: tr.querySelector(".inSize").value,
+        prod_color: tr.querySelector(".inColor").value,
+        qty: Number(tr.querySelector(".inQty").value||0),
+        unit_rmb: Number(tr.querySelector(".inUnitRmb").value||0),
+      }));
+
+      const payload = {
+        date: $("inDate").value,
+        fx_rmb_usd: Number($("inFx").value||0),
+        warehouse: $("inWh").value,
+        fob_total_usd: Number($("inFob").value||0),
+        note: $("inNote").value.trim(),
+        items
+      };
+
+      const j = await api("inventoryin_save", {}, payload);
+      alert("Saved Inventory IN: " + j.saved.count + " lines");
+      $("inClear").click();
+      $("inLoadRecent").click();
+    }catch(e){
+      showErr(String(e.message||e));
+    }
+  };
+
+  $("inClear").onclick = ()=>{
+    $("inDate").value = "";
+    $("inFx").value = "7.00";
+    $("inFob").value = "0";
+    $("inWh").value = "";
+    $("inNote").value = "";
+    inTbody.innerHTML = "";
+    inTbody.appendChild(invRowTemplate());
+    calcInvTotals_();
+  };
+
+  $("inLoadRecent").onclick = async ()=>{
+    try{
+      showErr("");
+      const j = await api("inventoryin_recent", {n:20});
+      const tb = $("inRecentTbl").querySelector("tbody");
+      tb.innerHTML = "";
+      (j.rows||[]).forEach(r=>{
+        const tr = document.createElement("tr");
+        tr.innerHTML = `
+          <td>${(r.date||"").toString().slice(0,10)}</td>
+          <td>${r.sku||""}</td>
+          <td>${r.prod_cat||""}</td>
+          <td>${r.prod_size||""}</td>
+          <td>${r.prod_color||""}</td>
+          <td>${r.warehouse||""}</td>
+          <td class="right">${r.qty||0}</td>
+          <td class="right">${Number(r.final_unit_usd||0).toFixed(4)}</td>
+          <td class="right">${Number(r.total_usd||0).toFixed(2)}</td>
+        `;
+        tb.appendChild(tr);
+      });
+    }catch(e){ showErr(String(e.message||e)); }
+  };
+
+  // ========= Sales =========
+  const soTbody = document.querySelector("#soTable tbody");
+
+  function salesRowTemplate(){
+    const tr = document.createElement("tr");
+    tr.innerHTML = `
+      <td><input class="soSku" placeholder="SKU"/></td>
+      <td><input class="soName" placeholder="Product name"/></td>
+      <td class="right"><input class="soQty" type="number" step="1" value="1"/></td>
+      <td class="right"><input class="soUnit" type="number" step="0.01" value="0"/></td>
+      <td class="right"><input class="soTotal" type="number" step="0.01" value="0" disabled/></td>
+      <td><button class="btn danger soDel" type="button">X</button></td>
+    `;
+    tr.querySelector(".soDel").onclick = ()=>{ tr.remove(); calcSalesTotals_(); };
+    tr.querySelector(".soQty").addEventListener("input", calcSalesTotals_);
+    tr.querySelector(".soUnit").addEventListener("input", calcSalesTotals_);
+    return tr;
+  }
+
+  function calcSalesTotals_(){
+    let total = 0;
+    soTbody.querySelectorAll("tr").forEach(tr=>{
+      const qty = Number(tr.querySelector(".soQty").value||0);
+      const unit = Number(tr.querySelector(".soUnit").value||0);
+      const line = round2(qty*unit);
+      tr.querySelector(".soTotal").value = line.toFixed(2);
+      total += line;
+    });
+    $("soTotals").textContent = `Items total (${ $("soCur").value }): ${round2(total).toFixed(2)}`;
+  }
+
+  $("soAddRow").onclick = ()=>{ soTbody.appendChild(salesRowTemplate()); calcSalesTotals_(); };
+
+  $("addDeliv").onclick = async ()=>{
+    try{
+      const val = await addListPrompt("DELIVERY_COMPANY","delivery company");
+      if(val) $("soDeliv").value = val;
+    }catch(e){ showErr(String(e.message||e)); }
+  };
+
+  $("soSave").onclick = async ()=>{
+    try{
+      showErr("");
+      const items = [...soTbody.querySelectorAll("tr")].map(tr=>({
+        sku: tr.querySelector(".soSku").value.trim(),
+        prod_name: tr.querySelector(".soName").value.trim(),
+        qty: Number(tr.querySelector(".soQty").value||0),
+        unit_price: Number(tr.querySelector(".soUnit").value||0),
+      })).filter(x=>x.qty>0);
+
+      const payload = {
+        date: $("soDate").value,
+        customer_name: $("soName").value.trim(),
+        telephone: $("soTel").value.trim(),
+        customer_address: $("soAddr").value.trim(),
+        delivery_company: $("soDeliv").value,
+        status: $("soStatus").value,
+        paid_status: $("soPaid").value,
+        items_currency: $("soCur").value,
+        note: $("soNote").value.trim(),
+        items
+      };
+      const j = await api("sales_save", {}, payload);
+      alert("Saved Sales Order: " + j.saved.order_id);
+      $("cashRefId").value = j.saved.order_id;
+      $("retOrder").value = j.saved.order_id;
+      $("soLoadRecent").click();
+    }catch(e){ showErr(String(e.message||e)); }
+  };
+
+  $("soClear").onclick = ()=>{
+    ["soDate","soName","soTel","soAddr","soNote"].forEach(id=>$(id).value="");
+    $("soDeliv").value="";
+    $("soCur").value="USD";
+    $("soStatus").value="Ordered";
+    $("soPaid").value="Not received";
+    soTbody.innerHTML="";
+    soTbody.appendChild(salesRowTemplate());
+    calcSalesTotals_();
+  };
+
+  $("cashSave").onclick = async ()=>{
+    try{
+      showErr("");
+      const ref = $("cashRefId").value.trim();
+      if(!ref) throw new Error("Order ID is required for cash");
+      const payload = {
+        date: $("cashDate").value,
+        ref_type: "SALES_ORDER",
+        ref_id: ref,
+        direction: $("cashDir").value,
+        amount: Number($("cashAmt").value||0),
+        currency: $("cashCur").value,
+        fx_khr_usd: Number($("cashFx").value||0),
+        note: $("cashNote").value.trim()
+      };
+      const j = await api("cash_add", {}, payload);
+      alert("Saved cash: " + j.saved.cash_id);
+      ["cashAmt","cashNote"].forEach(id=>$(id).value="");
+    }catch(e){ showErr(String(e.message||e)); }
+  };
+
+  $("retSave").onclick = async ()=>{
+    try{
+      showErr("");
+      const payload = {
+        date: $("retDate").value,
+        order_id: $("retOrder").value.trim(),
+        sku: $("retSku").value.trim(),
+        qty_return: Number($("retQty").value||0),
+        refund_amount: Number($("retAmt").value||0),
+        refund_currency: $("retCur").value,
+        fx_khr_usd: Number($("retFx").value||0),
+        note: $("retNote").value.trim()
+      };
+      const j = await api("return_add", {}, payload);
+      alert("Saved return: " + j.saved.return_id + " (cash OUT auto-added)");
+      ["retSku","retQty","retAmt","retNote"].forEach(id=>$(id).value="");
+    }catch(e){ showErr(String(e.message||e)); }
+  };
+
+  $("soLoadRecent").onclick = async ()=>{
+    try{
+      showErr("");
+      const j = await api("sales_recent", {n:20});
+      const box = $("soRecent");
+      box.innerHTML = "";
+      (j.orders||[]).forEach(o=>{
+        const div = document.createElement("div");
+        div.className = "card";
+        div.style.marginTop = "10px";
+        const items = (o.items||[]);
+        const sum = items.reduce((s,it)=>s+Number(it.line_total||0),0);
+        div.innerHTML = `
+          <div style="display:flex;justify-content:space-between;gap:10px;flex-wrap:wrap">
+            <div>
+              <div style="font-weight:900">${o.order_id}</div>
+              <div class="small">${(o.date||"").toString().slice(0,10)} • ${o.customer_name||""} • ${o.telephone||""}</div>
+              <div class="small">Address: ${o.customer_address||""}</div>
+              <div class="small">Delivery: ${o.delivery_company||"-"} • Status: ${o.status||"-"} • Paid: ${o.paid_status||"-"}</div>
+            </div>
+            <div class="right">
+              <div class="small">Items total (${o.items_currency||"USD"})</div>
+              <div style="font-weight:900;font-size:18px">${round2(sum).toFixed(2)}</div>
+            </div>
+          </div>
+          <div class="hline"></div>
+          <div class="small" style="font-weight:800;margin-bottom:6px">Items</div>
+          <div class="small">${items.map(it=>`${it.sku||""} • ${it.prod_name||""} • Qty ${it.qty||0} • ${it.unit_price||0} = ${it.line_total||0}`).join("<br>") || "-"}</div>
+        `;
+        box.appendChild(div);
+      });
+    }catch(e){ showErr(String(e.message||e)); }
+  };
+
+  // ========= Expenses =========
+  $("addExCat").onclick = async ()=>{
+    try{
+      const val = await addListPrompt("EXP_CAT","expense category");
+      if(val) $("exCat").value = val;
+    }catch(e){ showErr(String(e.message||e)); }
+  };
+
+  $("exSave").onclick = async ()=>{
+    try{
+      showErr("");
+      const payload = {
+        date: $("exDate").value,
+        category: $("exCat").value,
+        amount: Number($("exAmt").value||0),
+        currency: $("exCur").value,
+        fx_khr_usd: Number($("exFx").value||0),
+        note: $("exNote").value.trim()
+      };
+      const j = await api("expense_add", {}, payload);
+      alert("Saved expense: " + j.saved.expense_id);
+      ["exAmt","exNote"].forEach(id=>$(id).value="");
+      $("exLoadRecent").click();
+    }catch(e){ showErr(String(e.message||e)); }
+  };
+
+  $("exLoadRecent").onclick = async ()=>{
+    try{
+      showErr("");
+      const j = await api("expense_recent", {n:20});
+      const tb = $("exRecentTbl").querySelector("tbody");
+      tb.innerHTML = "";
+      (j.rows||[]).forEach(r=>{
+        const tr = document.createElement("tr");
+        tr.innerHTML = `
+          <td>${(r.date||"").toString().slice(0,10)}</td>
+          <td>${r.category||""}</td>
+          <td class="right">${Number(r.amount||0).toFixed(2)}</td>
+          <td>${r.currency||""}</td>
+          <td class="right">${Number(r.amount_usd||0).toFixed(2)}</td>
+          <td>${r.note||""}</td>
+        `;
+        tb.appendChild(tr);
+      });
+    }catch(e){ showErr(String(e.message||e)); }
+  };
+
+  // ========= Dashboard / Reports =========
+  function drawBars(canvas, vals, labels){
+    const ctx = canvas.getContext("2d");
+    const w = canvas.width, h = canvas.height;
+    ctx.clearRect(0,0,w,h);
+    ctx.fillStyle = "#ffffff"; ctx.fillRect(0,0,w,h);
+
+    const pad = 22;
+    const max = Math.max(...vals.map(v=>Math.abs(v)), 1);
+    const barW = (w - pad*2) / vals.length;
+
+    // axis
+    ctx.strokeStyle="#e5e7eb";
+    ctx.beginPath(); ctx.moveTo(pad, h-pad); ctx.lineTo(w-pad, h-pad); ctx.stroke();
+
+    vals.forEach((v,i)=>{
+      const x = pad + i*barW + barW*0.2;
+      const bw = barW*0.6;
+      const bh = (Math.abs(v)/max) * (h - pad*2);
+      const y = (h-pad) - bh;
+
+      ctx.fillStyle = v>=0 ? "#2563eb" : "#dc2626";
+      ctx.fillRect(x, y, bw, bh);
+
+      ctx.fillStyle = "#334155";
+      ctx.font = "12px system-ui";
+      ctx.fillText(labels[i], x, h-6);
+      ctx.fillText(Math.round(v).toString(), x, y-6);
+    });
+  }
+
+  async function refreshDash(fromId, toId, outIds, canvasId){
+    const from = $(fromId).value;
+    const to = $(toId).value;
+    const j = await api("dashboard_summary", {from, to});
+    const d = j.data;
+
+    $(outIds.in).textContent = Number(d.total_cash_in_usd||0).toFixed(2);
+    $(outIds.out).textContent = Number(d.total_cash_out_usd||0).toFixed(2);
+    $(outIds.exp).textContent = Number(d.total_expenses_usd||0).toFixed(2);
+    $(outIds.net).textContent = Number(d.net_cash_usd||0).toFixed(2);
+
+    drawBars($(canvasId),
+      [d.total_cash_in_usd, -d.total_cash_out_usd, -d.total_expenses_usd, d.net_cash_usd],
+      ["IN","OUT","EXP","NET"]
+    );
+  }
+
+  $("dashRefresh").onclick = async ()=>{
+    try{
+      showErr("");
+      await refreshDash("dashFrom","dashTo",{in:"dCashIn",out:"dCashOut",exp:"dExp",net:"dNet"},"dashCanvas");
+    }catch(e){ showErr(String(e.message||e)); }
+  };
+
+  $("repRefresh").onclick = async ()=>{
+    try{
+      showErr("");
+      const from = $("repFrom").value;
+      const to = $("repTo").value;
+      const j = await api("dashboard_summary", {from, to});
+      $("repBox").textContent = JSON.stringify(j.data, null, 2);
+    }catch(e){ showErr(String(e.message||e)); }
+  };
+
+  // ========= Init =========
+  (function init(){
+    const saved = localStorage.getItem(LS_KEY) || "";
+    $("apiUrl").value = saved;
+
+    // default one row
+    inTbody.appendChild(invRowTemplate());
+    soTbody.appendChild(salesRowTemplate());
+    calcInvTotals_();
+    calcSalesTotals_();
+
+    // When user changes currency or similar
+    $("soCur").addEventListener("change", calcSalesTotals_);
+
+    // Try auto load lists if url exists
+    if(saved){
+      $("btnPing").click().then(()=> $("btnLists").click()).catch(()=>{});
+    }
+  })();
 </script>
 </body>
 </html>

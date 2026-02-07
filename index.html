@@ -12,7 +12,7 @@
     .tabs { display:flex; gap:8px; flex-wrap:wrap; }
     .tab { border:1px solid var(--b); background:#fff; padding:8px 10px; border-radius:10px; cursor:pointer; font-weight:600; }
     .tab.active { background:var(--card); }
-    main { padding:16px; max-width:1100px; margin:0 auto; }
+    main { padding:16px; max-width:1150px; margin:0 auto; }
     .card { border:1px solid var(--b); background:var(--card); border-radius:14px; padding:14px; margin:12px 0; }
     label { font-size:12px; color:var(--m); display:block; margin-bottom:4px; }
     input, select, textarea {
@@ -63,7 +63,8 @@
 <main>
   <div class="card">
     <label>Apps Script Web App URL (fixed)</label>
-    <input id="apiUrl" value="https://script.google.com/macros/s/AKfycbxyc8ebqei-l767WdTJ5qgz1bqj9ZCVsQaegVobmzuUVzXepdqeUcmUPvbuW3OhazYh/exec" disabled />
+    <input id="apiUrl" value="PASTE_YOUR_WEB_APP_URL_HERE" />
+    <div class="muted" style="margin-top:6px;">Tip: paste your Apps Script /exec URL once and keep it.</div>
   </div>
 
   <!-- Inventory IN -->
@@ -78,10 +79,10 @@
 
         <div><label>Color</label><select id="inv_color"></select></div>
         <div><label>Size</label><select id="inv_size"></select></div>
-        <div><label>Qty</label><input id="inv_qty" inputmode="decimal" placeholder="0"></div>
-        <div><label>Unit Price (RMB)</label><input id="inv_unit_rmb" inputmode="decimal" placeholder="0.00"></div>
+        <div><label>Qty</label><input id="inv_qty" type="number" step="1" inputmode="numeric" placeholder="0"></div>
+        <div><label>Unit Price (RMB)</label><input id="inv_unit_rmb" type="number" step="0.01" inputmode="decimal" placeholder="0.00"></div>
 
-        <div><label>FX (RMB / USD)</label><input id="inv_fx" inputmode="decimal" placeholder="7.20"></div>
+        <div><label>FX (RMB / USD)</label><input id="inv_fx" type="number" step="0.01" inputmode="decimal" placeholder="7.20"></div>
         <div><label>Unit Price (USD) auto</label><input id="inv_unit_usd" disabled></div>
         <div><label>Amount (USD) auto</label><input id="inv_amt_usd" disabled></div>
         <div><label>Note</label><input id="inv_note" placeholder=""></div>
@@ -104,23 +105,26 @@
       <div class="grid">
         <div><label>Order Date (yyyy-mm-dd)</label><input id="so_date" placeholder="2026-02-07"></div>
         <div><label>Warehouse / Location</label><select id="so_location"></select></div>
-        <div><label>Customer</label><input id="so_customer" placeholder=""></div>
-        <div><label>Delivery Company</label><select id="so_delivery"></select></div>
+        <div><label>Customer Name</label><input id="so_customer" placeholder=""></div>
+        <div><label>Telephone</label><input id="so_telephone" placeholder=""></div>
 
+        <div style="grid-column: span 2;"><label>Customer Address</label><input id="so_address" placeholder=""></div>
+        <div><label>Delivery Company</label><select id="so_delivery"></select></div>
         <div><label>Currency</label>
           <select id="so_currency">
             <option value="USD">USD</option>
             <option value="KHR">KHR</option>
           </select>
         </div>
+
         <div><label>Cash Timing</label>
           <select id="so_cash_timing">
             <option value="AFTER">AFTER delivery</option>
             <option value="BEFORE">BEFORE delivery</option>
           </select>
         </div>
-        <div><label>Paid Amount</label><input id="so_paid" inputmode="decimal" placeholder="0.00"></div>
-        <div><label>Order Status</label>
+        <div><label>Paid Amount (now)</label><input id="so_paid" type="number" step="0.01" inputmode="decimal" placeholder="0.00"></div>
+        <div><label>Order Status (initial)</label>
           <select id="so_status">
             <option value="NEW">NEW</option>
             <option value="PREPARED">PREPARED</option>
@@ -128,8 +132,7 @@
             <option value="COMPLETED">COMPLETED</option>
           </select>
         </div>
-
-        <div style="grid-column: span 4;"><label>Note</label><input id="so_note" placeholder=""></div>
+        <div><label>Note</label><input id="so_note" placeholder=""></div>
       </div>
 
       <div class="itemsWrap" style="margin-top:12px;">
@@ -144,8 +147,8 @@
         </div>
 
         <div class="grid" id="quickBox" style="display:none;">
-          <div><label>Item Count</label><input id="so_item_count" inputmode="numeric" placeholder="0"></div>
-          <div><label>Total Amount (manual)</label><input id="so_total_manual" inputmode="decimal" placeholder="0.00"></div>
+          <div><label>Item Count</label><input id="so_item_count" type="number" step="1" inputmode="numeric" placeholder="0"></div>
+          <div><label>Total Amount (manual)</label><input id="so_total_manual" type="number" step="0.01" inputmode="decimal" placeholder="0.00"></div>
           <div></div><div></div>
           <div class="muted" style="grid-column: span 4;">Print will show: “MIXED items x N”</div>
         </div>
@@ -173,18 +176,21 @@
         <div style="font-weight:900;">Recent Orders</div>
         <button class="btn" id="btnRefreshOrders">Refresh Orders</button>
       </div>
-      <div class="muted" style="margin:6px 0 10px;">Change status and print packing slip/label.</div>
+      <div class="muted" style="margin:6px 0 10px;">
+        You can update <b>Status</b> and <b>Paid Amount</b> after saving. Print includes customer details.
+      </div>
       <div style="overflow:auto;">
         <table>
           <thead>
             <tr>
+              <th>Customer</th>
               <th>Order ID</th>
               <th>Date</th>
-              <th>Customer</th>
               <th>Total</th>
               <th>Paid</th>
               <th>Payment</th>
               <th>Status</th>
+              <th>Update Paid</th>
               <th>Print</th>
             </tr>
           </thead>
@@ -208,7 +214,9 @@
             <option value="KHR">KHR</option>
           </select>
         </div>
-        <div><label>Amount</label><input id="ex_amount" inputmode="decimal" placeholder="0.00"></div>
+        <div><label>Amount</label>
+          <input id="ex_amount" type="number" step="0.01" inputmode="decimal" placeholder="0.00" autocomplete="off">
+        </div>
         <div><label>Note</label><input id="ex_note" placeholder=""></div>
       </div>
 
@@ -252,6 +260,8 @@
 
   async function apiCall(action, payload = {}, method = "POST") {
     const url = $("apiUrl").value.trim();
+    if (!url || url.indexOf("http") !== 0) throw new Error("API URL is missing/invalid");
+
     const params = new URLSearchParams({ action, ...payload });
 
     let res, text;
@@ -307,20 +317,19 @@
 
       bindSelect("ex_cat", LISTS.EXP_CAT || []);
 
-      // delivery company list_name = DELIVERY_COMPANY
       bindSelect("so_delivery", LISTS.DELIVERY_COMPANY || []);
 
       $("apiStatus").textContent = "API: OK";
       $("apiStatus").className = "muted mono ok";
 
-      // ensure at least 1 item row
       if (!document.querySelector("#itemsBox .itemsRow")) addItemRow();
       await refreshOrders();
+
     } catch (e) {
       console.error(e);
       $("apiStatus").textContent = "API: ERROR";
       $("apiStatus").className = "muted mono bad";
-      alert("API ERROR:\n" + JSON.stringify(e).slice(0, 600));
+      alert("API ERROR:\n" + JSON.stringify(e).slice(0, 800));
     }
   }
 
@@ -404,11 +413,15 @@
     selSize.value = prefill.size || "";
 
     const inpQty = document.createElement("input");
-    inpQty.inputMode = "decimal";
+    inpQty.type = "number";
+    inpQty.step = "1";
+    inpQty.inputMode = "numeric";
     inpQty.placeholder = "0";
     inpQty.value = prefill.qty || "";
 
     const inpUnit = document.createElement("input");
+    inpUnit.type = "number";
+    inpUnit.step = "0.01";
     inpUnit.inputMode = "decimal";
     inpUnit.placeholder = "0.00";
     inpUnit.value = prefill.unit_price || "";
@@ -501,6 +514,8 @@
         order_date: $("so_date").value.trim(),
         location: $("so_location").value.trim(),
         customer: $("so_customer").value.trim(),
+        telephone: $("so_telephone").value.trim(),
+        customer_address: $("so_address").value.trim(),
         delivery_company: $("so_delivery").value.trim(),
         currency: $("so_currency").value.trim(),
         cash_timing: $("so_cash_timing").value.trim(),
@@ -518,6 +533,7 @@
 
       $("sales_result").textContent = "OK: " + JSON.stringify(r.data);
       await refreshOrders();
+
     } catch(e) {
       console.error(e);
       $("sales_result").textContent = "ERROR: " + JSON.stringify(e);
@@ -540,17 +556,19 @@
       orders.forEach(o => {
         const tr = document.createElement("tr");
 
+        // Customer cell
+        const tdCust = document.createElement("td");
+        tdCust.innerHTML = `<b>${(o.customer||"")}</b><div class="muted">${(o.telephone||"")}</div>`;
+
+        // Order ID
         const tdId = document.createElement("td");
         tdId.textContent = o.order_id || "";
 
         const tdDate = document.createElement("td");
         tdDate.textContent = o.order_date || "";
 
-        const tdCust = document.createElement("td");
-        tdCust.textContent = o.customer || "";
-
         const tdTot = document.createElement("td");
-        tdTot.textContent = fmt2(o.total);
+        tdTot.textContent = `${o.currency} ${fmt2(o.total)}`;
 
         const tdPaid = document.createElement("td");
         tdPaid.textContent = fmt2(o.paid_amount);
@@ -558,21 +576,53 @@
         const tdPay = document.createElement("td");
         tdPay.textContent = o.payment_status || "";
 
+        // Status dropdown
         const tdStatus = document.createElement("td");
         const sel = document.createElement("select");
         ["NEW","PREPARED","DELIVERING","COMPLETED"].forEach(s=>{
           const op=document.createElement("option"); op.value=s; op.textContent=s; sel.appendChild(op);
         });
-        sel.value = (o.status || "NEW").toUpperCase() || "NEW";
+        sel.value = (o.status || "NEW").toUpperCase();
         sel.addEventListener("change", async () => {
           try {
             await apiCall("update_sale_status", { order_id:o.order_id, status:sel.value }, "POST");
           } catch (e) {
-            alert("Status update failed: " + JSON.stringify(e).slice(0,200));
+            alert("Status update failed: " + JSON.stringify(e).slice(0,300));
           }
         });
         tdStatus.appendChild(sel);
 
+        // Update paid
+        const tdUpdPaid = document.createElement("td");
+        const wrap = document.createElement("div");
+        wrap.style.display = "flex";
+        wrap.style.gap = "8px";
+        wrap.style.alignItems = "center";
+
+        const inpPaid = document.createElement("input");
+        inpPaid.type = "number";
+        inpPaid.step = "0.01";
+        inpPaid.inputMode = "decimal";
+        inpPaid.style.width = "120px";
+        inpPaid.value = (o.paid_amount || 0);
+
+        const btnUpd = document.createElement("button");
+        btnUpd.className = "btn";
+        btnUpd.textContent = "Update";
+        btnUpd.addEventListener("click", async () => {
+          try {
+            await apiCall("update_sale_payment", { order_id:o.order_id, paid_amount: inpPaid.value }, "POST");
+            await refreshOrders();
+          } catch (e) {
+            alert("Payment update failed: " + JSON.stringify(e).slice(0,300));
+          }
+        });
+
+        wrap.appendChild(inpPaid);
+        wrap.appendChild(btnUpd);
+        tdUpdPaid.appendChild(wrap);
+
+        // Print
         const tdPrint = document.createElement("td");
         const btn = document.createElement("button");
         btn.className = "btn";
@@ -580,17 +630,19 @@
         btn.addEventListener("click", () => printOrder(o.order_id));
         tdPrint.appendChild(btn);
 
+        tr.appendChild(tdCust);
         tr.appendChild(tdId);
         tr.appendChild(tdDate);
-        tr.appendChild(tdCust);
         tr.appendChild(tdTot);
         tr.appendChild(tdPaid);
         tr.appendChild(tdPay);
         tr.appendChild(tdStatus);
+        tr.appendChild(tdUpdPaid);
         tr.appendChild(tdPrint);
 
         tb.appendChild(tr);
       });
+
     } catch (e) {
       console.error(e);
     }
@@ -622,13 +674,17 @@
 <body onload="window.print()">
   <h2>Packing Slip / Delivery Label</h2>
   <div class="box">
+    <div><b>Customer:</b> ${order.customer || ""}</div>
+    <div><b>Telephone:</b> ${order.telephone || ""}</div>
+    <div><b>Address:</b> ${order.customer_address || ""}</div>
+    <hr style="border:none;border-top:1px solid #eee;margin:10px 0;">
     <div><b>Order ID:</b> ${order.order_id}</div>
     <div><b>Date:</b> ${order.order_date || ""}</div>
-    <div><b>Customer:</b> ${order.customer || ""}</div>
     <div><b>Location:</b> ${order.location || ""}</div>
     <div><b>Delivery Company:</b> ${order.delivery_company || ""}</div>
-    <div><b>Status:</b> ${(order.status || "NEW")}</div>
+    <div><b>Status:</b> ${order.status || "NEW"}</div>
     <div><b>Total:</b> ${order.currency} ${Number(order.total||0).toFixed(2)}</div>
+    <div><b>Paid:</b> ${order.currency} ${Number(order.paid_amount||0).toFixed(2)} (${order.payment_status || ""})</div>
   </div>
 
   <div class="box">

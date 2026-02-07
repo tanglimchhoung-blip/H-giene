@@ -46,7 +46,6 @@
       <span class="muted mono" id="apiStatus">API: -</span>
     </div>
   </div>
-
   <div class="tabs" style="margin-top:10px;">
     <button class="tab active" data-tab="inv">Inventory IN</button>
     <button class="tab" data-tab="sales">Sales</button>
@@ -57,12 +56,10 @@
 
 <main>
   <div class="card">
-    <label>Apps Script Web App URL (locked)</label>
+    <label>Apps Script Web App URL (fixed)</label>
     <input id="apiUrl" value="https://script.google.com/macros/s/AKfycbxyc8ebqei-l767WdTJ5qgz1bqj9ZCVsQaegVobmzuUVzXepdqeUcmUPvbuW3OhazYh/exec" disabled />
-    <div class="muted">If you redeploy, you must replace the URL inside this index.html.</div>
   </div>
 
-  <!-- Inventory IN -->
   <section id="tab-inv">
     <div class="card">
       <div style="font-weight:900; margin-bottom:10px;">Inventory IN</div>
@@ -71,56 +68,33 @@
         <div><label>Warehouse / Location</label><select id="inv_location"></select></div>
         <div><label>Product Category</label><select id="inv_prodcat"></select></div>
         <div><label>Product Name</label><input id="inv_product" placeholder="Name"></div>
-
         <div><label>Color</label><select id="inv_color"></select></div>
         <div><label>Size</label><select id="inv_size"></select></div>
         <div><label>Qty</label><input id="inv_qty" inputmode="decimal" placeholder="0"></div>
         <div><label>Unit Price (RMB)</label><input id="inv_unit_rmb" inputmode="decimal" placeholder="0.00"></div>
-
         <div><label>FX (RMB / USD)</label><input id="inv_fx" inputmode="decimal" placeholder="7.20"></div>
-        <div>
-          <label>Unit Price (USD) auto</label>
-          <input id="inv_unit_usd" disabled>
-        </div>
-        <div>
-          <label>Amount (USD) auto</label>
-          <input id="inv_amt_usd" disabled>
-        </div>
+        <div><label>Unit Price (USD) auto</label><input id="inv_unit_usd" disabled></div>
+        <div><label>Amount (USD) auto</label><input id="inv_amt_usd" disabled></div>
         <div><label>Note</label><input id="inv_note" placeholder=""></div>
       </div>
-
       <div class="row" style="margin-top:12px; justify-content:space-between;">
         <div class="muted">USD calc uses 2 decimals: unit_usd = unit_rmb / fx</div>
         <button class="btn primary" id="btnInvSave">Save Inventory IN</button>
       </div>
-
       <div class="muted mono" id="inv_result" style="margin-top:10px;"></div>
     </div>
   </section>
 
-  <!-- Sales -->
   <section id="tab-sales" style="display:none;">
     <div class="card">
       <div style="font-weight:900; margin-bottom:10px;">Sales</div>
-
       <div class="grid">
         <div><label>Order Date (yyyy-mm-dd)</label><input id="so_date" placeholder="2026-02-07"></div>
         <div><label>Warehouse / Location</label><select id="so_location"></select></div>
         <div><label>Customer</label><input id="so_customer" placeholder=""></div>
         <div><label>Delivery Company</label><select id="so_delivery"></select></div>
-
-        <div><label>Currency</label>
-          <select id="so_currency">
-            <option value="USD">USD</option>
-            <option value="KHR">KHR</option>
-          </select>
-        </div>
-        <div><label>Cash Timing</label>
-          <select id="so_cash_timing">
-            <option value="AFTER">AFTER delivery</option>
-            <option value="BEFORE">BEFORE delivery</option>
-          </select>
-        </div>
+        <div><label>Currency</label><select id="so_currency"><option value="USD">USD</option><option value="KHR">KHR</option></select></div>
+        <div><label>Cash Timing</label><select id="so_cash_timing"><option value="AFTER">AFTER delivery</option><option value="BEFORE">BEFORE delivery</option></select></div>
         <div><label>Paid Amount</label><input id="so_paid" inputmode="decimal" placeholder="0.00"></div>
         <div><label>Note</label><input id="so_note" placeholder=""></div>
       </div>
@@ -141,12 +115,10 @@
         <div class="muted">Total = qty × unit price. Payment status auto from paid vs total.</div>
         <button class="btn primary" id="btnSalesSave">Save Sale</button>
       </div>
-
       <div class="muted mono" id="sales_result" style="margin-top:10px;"></div>
     </div>
   </section>
 
-  <!-- Expenses -->
   <section id="tab-exp" style="display:none;">
     <div class="card">
       <div style="font-weight:900; margin-bottom:10px;">Expenses</div>
@@ -154,43 +126,32 @@
         <div><label>Date (yyyy-mm-dd)</label><input id="ex_date" placeholder="2026-02-07"></div>
         <div><label>Warehouse / Location</label><select id="ex_location"></select></div>
         <div><label>Expense Category</label><select id="ex_cat"></select></div>
-        <div><label>Currency</label>
-          <select id="ex_currency">
-            <option value="USD">USD</option>
-            <option value="KHR">KHR</option>
-          </select>
-        </div>
+        <div><label>Currency</label><select id="ex_currency"><option value="USD">USD</option><option value="KHR">KHR</option></select></div>
         <div><label>Amount</label><input id="ex_amount" inputmode="decimal" placeholder="0.00"></div>
         <div><label>Note</label><input id="ex_note" placeholder=""></div>
       </div>
-
       <div class="row" style="margin-top:12px; justify-content:flex-end;">
         <button class="btn primary" id="btnExpSave">Save Expense</button>
       </div>
-
       <div class="muted mono" id="exp_result" style="margin-top:10px;"></div>
     </div>
   </section>
 
-  <!-- Dashboard -->
   <section id="tab-dash" style="display:none;">
     <div class="card">
       <div style="font-weight:900; margin-bottom:10px;">Dashboard</div>
-
       <div class="grid">
         <div><label>Start Date (yyyy-mm-dd)</label><input id="d_start" placeholder="2026-02-01"></div>
         <div><label>End Date (yyyy-mm-dd)</label><input id="d_end" placeholder="2026-02-07"></div>
         <div style="align-self:end;"><button class="btn primary" id="btnDashLoad">Load</button></div>
         <div></div>
       </div>
-
       <div class="kpi" style="margin-top:12px;">
         <div class="box"><div class="muted">Inventory IN (USD)</div><div class="v" id="k_inv">-</div></div>
         <div class="box"><div class="muted">Sales Total</div><div class="v" id="k_sales">-</div></div>
         <div class="box"><div class="muted">Sales Paid</div><div class="v" id="k_paid">-</div></div>
         <div class="box"><div class="muted">Expenses</div><div class="v" id="k_exp">-</div></div>
       </div>
-
       <div class="muted mono" id="dash_result" style="margin-top:10px;"></div>
     </div>
   </section>
@@ -205,7 +166,6 @@
     return x.toFixed(2);
   }
 
-  // Simple GET/POST (no custom headers) -> avoids CORS preflight
   async function apiCall(action, payload = {}, method = "POST") {
     const url = $("apiUrl").value.trim();
     const params = new URLSearchParams({ action, ...payload });
@@ -222,7 +182,6 @@
     let json;
     try { json = JSON.parse(text); }
     catch (e) { json = { ok:false, error:"BAD_JSON", raw:text }; }
-
     if (!json.ok) throw json;
     return json;
   }
@@ -236,7 +195,6 @@
     opt0.value = "";
     opt0.textContent = "";
     el.appendChild(opt0);
-
     (arr || []).forEach(v => {
       const o = document.createElement("option");
       o.value = v;
@@ -248,7 +206,6 @@
   async function loadLists() {
     $("apiStatus").textContent = "API: connecting...";
     $("apiStatus").className = "muted mono";
-
     try {
       const r = await apiCall("get_lists", {}, "GET");
       LISTS = r.data || {};
@@ -275,11 +232,10 @@
       console.error(e);
       $("apiStatus").textContent = "API: ERROR";
       $("apiStatus").className = "muted mono bad";
-      alert("API ERROR:\n" + JSON.stringify(e).slice(0, 500));
+      alert("API ERROR:\n" + JSON.stringify(e).slice(0, 600));
     }
   }
 
-  // Tabs
   document.querySelectorAll(".tab").forEach(btn => {
     btn.addEventListener("click", () => {
       document.querySelectorAll(".tab").forEach(b => b.classList.remove("active"));
@@ -292,19 +248,16 @@
     });
   });
 
-  // Inventory calc
   function calcInv(){
     const qty = Number($("inv_qty").value || 0);
     const unitRmb = Number($("inv_unit_rmb").value || 0);
     const fx = Number($("inv_fx").value || 0);
     const unitUsd = fx > 0 ? (unitRmb / fx) : 0;
-    const amtUsd = qty * unitUsd;
     $("inv_unit_usd").value = fmt2(unitUsd);
-    $("inv_amt_usd").value = fmt2(amtUsd);
+    $("inv_amt_usd").value = fmt2(qty * unitUsd);
   }
   ["inv_qty","inv_unit_rmb","inv_fx"].forEach(id => $(id).addEventListener("input", calcInv));
 
-  // Sales calc
   function calcSale(){
     const qty = Number($("si_qty").value || 0);
     const unit = Number($("si_unit").value || 0);
@@ -312,7 +265,6 @@
   }
   ["si_qty","si_unit"].forEach(id => $(id).addEventListener("input", calcSale));
 
-  // Save Inventory
   $("btnInvSave").addEventListener("click", async () => {
     $("inv_result").textContent = "Saving...";
     try {
@@ -336,7 +288,6 @@
     }
   });
 
-  // Save Sales
   $("btnSalesSave").addEventListener("click", async () => {
     $("sales_result").textContent = "Saving...";
     try {
@@ -369,7 +320,6 @@
     }
   });
 
-  // Save Expense
   $("btnExpSave").addEventListener("click", async () => {
     $("exp_result").textContent = "Saving...";
     try {
@@ -389,7 +339,6 @@
     }
   });
 
-  // Dashboard
   $("btnDashLoad").addEventListener("click", async () => {
     $("dash_result").textContent = "Loading...";
     try {
@@ -409,7 +358,6 @@
 
   $("btnReload").addEventListener("click", loadLists);
 
-  // init
   loadLists();
 </script>
 </body>

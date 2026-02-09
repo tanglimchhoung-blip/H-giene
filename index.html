@@ -1,864 +1,201 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="utf-8"/>
-  <meta name="viewport" content="width=device-width, initial-scale=1"/>
-  <title>Internal ERP</title>
-  <style>
-    :root { --bg:#ffffff; --card:#ffffff; --line:#e9e9e9; --text:#111; --muted:#666; --btn:#111; --btnText:#fff; }
-    *{ box-sizing:border-box; }
-    body{ margin:0; font-family:system-ui,-apple-system,Segoe UI,Roboto,Arial; background:var(--bg); color:var(--text); }
-    .wrap{ max-width:1100px; margin:18px auto; padding:0 14px 40px; }
-    h1{ font-size:24px; margin:0 0 4px; }
-    .sub{ color:var(--muted); font-size:13px; margin:0 0 14px; }
-    .tabs{ display:flex; gap:10px; margin:10px 0 18px; flex-wrap:wrap; }
-    .tabbtn{ border:1px solid var(--line); background:#f7f7f7; padding:10px 14px; border-radius:12px; cursor:pointer; font-weight:600; }
-    .tabbtn.active{ background:#fff; border-color:#cfcfcf; }
-    .card{ border:1px solid var(--line); border-radius:16px; padding:16px; background:var(--card); }
-    .grid{ display:grid; grid-template-columns:repeat(4, minmax(0, 1fr)); gap:12px; }
-    .grid2{ display:grid; grid-template-columns:repeat(2, minmax(0, 1fr)); gap:12px; }
-    label{ display:block; font-size:12px; color:var(--muted); margin:0 0 6px; }
-    input, select, textarea{
-      width:100%; padding:12px; border:1px solid var(--line); border-radius:12px; font-size:16px; background:#fff;
-    }
-    input[readonly]{ background:#fafafa; }
-    textarea{ min-height:44px; resize:vertical; }
-    .actions{ display:flex; gap:10px; justify-content:flex-end; align-items:center; margin-top:12px; flex-wrap:wrap; }
-    .btn{
-      background:var(--btn); color:var(--btnText); border:none; padding:12px 16px; border-radius:14px; font-weight:700; cursor:pointer;
-    }
-    .btn.secondary{ background:#f1f1f1; color:#111; border:1px solid var(--line); }
-    .note{ font-size:12px; color:var(--muted); margin-top:10px; }
-    .msg{ margin-top:10px; font-size:13px; white-space:pre-wrap; }
-    .msg.ok{ color:#0a7a2f; }
-    .msg.err{ color:#b00020; }
-    .section{ display:none; }
-    .section.active{ display:block; }
-    .tbl{ width:100%; border-collapse:collapse; }
-    .tbl th,.tbl td{ border:1px solid var(--line); padding:8px; font-size:14px; vertical-align:top; }
-    .tbl th{ background:#fafafa; text-align:left; }
-    .small{ font-size:12px; color:var(--muted); }
-    .rowline{ display:flex; gap:10px; align-items:center; flex-wrap:wrap; }
-    .right{ text-align:right; }
-    @media (max-width: 900px){
-      .grid{ grid-template-columns:repeat(2, minmax(0,1fr)); }
-    }
-    @media (max-width: 520px){
-      .grid,.grid2{ grid-template-columns:1fr; }
-    }
-  </style>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Internal ERP</title>
+
+<style>
+body{font-family:system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto; margin:0; background:#f7f8fa;}
+header{background:#fff;padding:16px 20px;border-bottom:1px solid #e5e7eb;}
+h1{margin:0;font-size:20px;}
+nav{display:flex;gap:10px;margin-top:10px;}
+nav button{border:1px solid #e5e7eb;background:#fff;padding:8px 14px;border-radius:8px;cursor:pointer}
+nav button.active{background:#111;color:#fff}
+main{padding:20px;max-width:1100px;margin:auto}
+.card{background:#fff;border-radius:12px;padding:16px;margin-bottom:20px}
+.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:12px}
+input,select,button{padding:10px;border-radius:8px;border:1px solid #d1d5db;width:100%}
+button.primary{background:#111;color:#fff;border:none}
+.hidden{display:none}
+small{color:#6b7280}
+</style>
 </head>
+
 <body>
-<div class="wrap">
+
+<header>
   <h1>Internal ERP</h1>
-  <p class="sub">Stable | Lists are read-only (edit in Google Sheet → Lists tab)</p>
+  <small>Stable · Lists are read-only (Google Sheet → Lists)</small>
+  <nav>
+    <button onclick="showTab('inv')" class="active">Inventory IN</button>
+    <button onclick="showTab('sales')">Sales</button>
+    <button onclick="showTab('exp')">Expenses</button>
+  </nav>
+</header>
 
-  <div class="tabs">
-    <button class="tabbtn active" data-tab="inv">Inventory IN</button>
-    <button class="tabbtn" data-tab="sales">Sales</button>
-    <button class="tabbtn" data-tab="exp">Expenses</button>
-    <button class="tabbtn" data-tab="dash">Dashboard</button>
-  </div>
+<main>
 
-  <!-- Inventory IN -->
-  <div class="section active" id="sec-inv">
-    <div class="card">
-      <h3 style="margin:0 0 12px;">Inventory IN</h3>
-      <div class="grid">
-        <div>
-          <label>Date (yyyy-mm-dd)</label>
-          <input id="inv_date" type="date"/>
-        </div>
-        <div>
-          <label>Warehouse / Location</label>
-          <select id="inv_loc"></select>
-        </div>
-        <div>
-          <label>Product Category</label>
-          <select id="inv_cat"></select>
-        </div>
-        <div>
-          <label>Product Name</label>
-          <input id="inv_product" placeholder="Name"/>
-        </div>
-
-        <div>
-          <label>Color</label>
-          <select id="inv_color"></select>
-        </div>
-        <div>
-          <label>Size</label>
-          <select id="inv_size"></select>
-        </div>
-        <div>
-          <label>Qty</label>
-          <input id="inv_qty" type="number" step="1" value="0"/>
-        </div>
-        <div>
-          <label>Unit Price (RMB)</label>
-          <input id="inv_unit_rmb" type="number" step="0.01" value="0"/>
-        </div>
-
-        <div>
-          <label>FX (RMB / USD)</label>
-          <input id="inv_fx" type="number" step="0.01" value="7.20"/>
-        </div>
-        <div>
-          <label>Unit Price (USD) auto</label>
-          <input id="inv_unit_usd" readonly/>
-        </div>
-        <div>
-          <label>Amount (USD) auto</label>
-          <input id="inv_amt_usd" readonly/>
-        </div>
-        <div>
-          <label>Note</label>
-          <input id="inv_note" placeholder=""/>
-        </div>
-      </div>
-
-      <div class="note">USD calc uses 2 decimals: unit_usd = unit_rmb / fx</div>
-
-      <div class="actions">
-        <button class="btn" id="btn_inv_save">Save Inventory IN</button>
-      </div>
-
-      <div class="msg" id="inv_msg"></div>
-    </div>
-  </div>
-
-  <!-- Sales -->
-  <div class="section" id="sec-sales">
-    <div class="card">
-      <h3 style="margin:0 0 12px;">Sales</h3>
-
-      <div class="grid">
-        <div>
-          <label>Order Date</label>
-          <input id="so_date" type="date"/>
-        </div>
-        <div>
-          <label>Warehouse / Location</label>
-          <select id="so_loc"></select>
-        </div>
-        <div>
-          <label>Customer</label>
-          <input id="so_customer" placeholder="Customer name"/>
-        </div>
-        <div>
-          <label>Delivery Company</label>
-          <select id="so_delivery"></select>
-        </div>
-
-        <div>
-          <label>Telephone</label>
-          <input id="so_tel" placeholder=""/>
-        </div>
-        <div>
-          <label>Customer Address</label>
-          <input id="so_addr" placeholder=""/>
-        </div>
-        <div>
-          <label>Currency</label>
-          <select id="so_currency">
-            <option value="USD">USD</option>
-            <option value="KHR">KHR</option>
-          </select>
-        </div>
-        <div>
-          <label>Cash Timing</label>
-          <select id="so_cash_timing">
-            <option value="BEFORE">BEFORE delivery</option>
-            <option value="AFTER">AFTER delivery</option>
-          </select>
-        </div>
-
-        <div>
-          <label>Paid Amount</label>
-          <input id="so_paid" type="number" step="0.01" value="0"/>
-        </div>
-        <div style="grid-column: span 3;">
-          <label>Note</label>
-          <input id="so_note" placeholder=""/>
-        </div>
-      </div>
-
-      <div style="margin-top:14px;">
-        <div class="rowline" style="justify-content:space-between;">
-          <div style="font-weight:800;">Items</div>
-          <button class="btn secondary" id="btn_add_item" type="button">+ Add Item</button>
-        </div>
-        <div class="small" style="margin:6px 0 10px;">Remaining inventory on Dashboard is calculated from these item quantities.</div>
-
-        <div id="items_wrap"></div>
-
-        <div class="rowline" style="justify-content:flex-end; margin-top:10px;">
-          <div class="card" style="padding:10px 12px; border-radius:12px;">
-            <div style="font-weight:800;">Total: <span id="so_total">0.00</span></div>
-          </div>
-        </div>
-
-        <div class="actions">
-          <button class="btn" id="btn_sale_save">Save Sale</button>
-        </div>
-
-        <div class="msg" id="sale_msg"></div>
-      </div>
-    </div>
-
-    <div style="height:12px;"></div>
-
-    <div class="card">
-      <div class="rowline" style="justify-content:space-between;">
-        <h3 style="margin:0;">Recent Orders</h3>
-        <button class="btn secondary" id="btn_refresh_orders" type="button">Refresh</button>
-      </div>
-      <div class="small" style="margin-top:6px;">You can update Status and Paid Amount after saving. Print includes customer details.</div>
-      <div style="margin-top:10px;" id="orders_tbl"></div>
-      <div class="msg" id="orders_msg"></div>
-    </div>
-  </div>
-
-  <!-- Expenses -->
-  <div class="section" id="sec-exp">
-    <div class="card">
-      <h3 style="margin:0 0 12px;">Expenses</h3>
-      <div class="grid">
-        <div>
-          <label>Date (yyyy-mm-dd)</label>
-          <input id="ex_date" type="date"/>
-        </div>
-        <div>
-          <label>Warehouse / Location</label>
-          <select id="ex_loc"></select>
-        </div>
-        <div>
-          <label>Expense Category</label>
-          <select id="ex_cat"></select>
-        </div>
-        <div>
-          <label>Currency</label>
-          <select id="ex_cur">
-            <option value="USD">USD</option>
-            <option value="KHR">KHR</option>
-          </select>
-        </div>
-        <div>
-          <label>Amount</label>
-          <input id="ex_amt" type="number" step="0.01" value="0"/>
-        </div>
-        <div style="grid-column: span 3;">
-          <label>Note</label>
-          <input id="ex_note" placeholder=""/>
-        </div>
-      </div>
-
-      <div class="actions">
-        <button class="btn" id="btn_exp_save">Save Expense</button>
-      </div>
-
-      <div class="msg" id="exp_msg"></div>
-    </div>
-  </div>
-
-  <!-- Dashboard -->
-  <div class="section" id="sec-dash">
-    <div class="card">
-      <h3 style="margin:0 0 12px;">Dashboard</h3>
-
-      <div class="grid2">
-        <div>
-          <label>From</label>
-          <input id="d_from" type="date"/>
-        </div>
-        <div>
-          <label>To</label>
-          <input id="d_to" type="date"/>
-        </div>
-      </div>
-
-      <div class="actions">
-        <button class="btn secondary" id="btn_dash">Refresh</button>
-      </div>
-
-      <div class="grid2" style="margin-top:12px;">
-        <div class="card" style="border-radius:14px;">
-          <div class="small">Sales Total</div>
-          <div style="font-size:22px; font-weight:900;" id="d_sales">0.00</div>
-        </div>
-        <div class="card" style="border-radius:14px;">
-          <div class="small">Expenses Total</div>
-          <div style="font-size:22px; font-weight:900;" id="d_exp">0.00</div>
-        </div>
-      </div>
-
-      <div class="card" style="border-radius:14px; margin-top:10px;">
-        <div class="small">Net</div>
-        <div style="font-size:22px; font-weight:900;" id="d_net">0.00</div>
-      </div>
-
-      <div style="height:14px;"></div>
-
-      <div class="card" style="border-radius:14px;">
-        <h4 style="margin:0 0 10px;">Remaining Inventory</h4>
-
-        <div style="font-weight:800; margin:8px 0 6px;">By Category</div>
-        <div id="invByCat"></div>
-
-        <div style="font-weight:800; margin:14px 0 6px;">By Product</div>
-        <div id="invByProd"></div>
-      </div>
-
-      <div class="msg" id="dash_msg"></div>
-    </div>
-  </div>
-
+<!-- INVENTORY -->
+<div id="inv" class="card">
+<h3>Inventory IN</h3>
+<div class="grid">
+<input id="inv_date" type="date">
+<select id="inv_loc"></select>
+<select id="inv_cat"></select>
+<input id="inv_product" placeholder="Product name">
+<select id="inv_color"></select>
+<select id="inv_size"></select>
+<input id="inv_qty" type="number" placeholder="Qty">
+<input id="inv_rmb" type="number" placeholder="Unit RMB">
+<input id="inv_fx" type="number" value="7.2">
+<input id="inv_usd" placeholder="Unit USD" disabled>
+<input id="inv_amt" placeholder="Amount USD" disabled>
+<input id="inv_note" placeholder="Note">
+</div>
+<br>
+<button class="primary" onclick="saveInventory()">Save Inventory IN</button>
 </div>
 
+<!-- SALES -->
+<div id="sales" class="card hidden">
+<h3>Sales</h3>
+<div class="grid">
+<input id="so_date" type="date">
+<select id="so_loc"></select>
+<input id="so_customer" placeholder="Customer">
+<select id="so_delivery"></select>
+<select id="so_cat"></select>
+<input id="so_product" placeholder="Product">
+<select id="so_color"></select>
+<select id="so_size"></select>
+<input id="so_qty" type="number" placeholder="Qty">
+<input id="so_price" type="number" placeholder="Unit Price">
+<input id="so_paid" type="number" placeholder="Paid Amount">
+</div>
+<br>
+<button class="primary" onclick="saveSale()">Save Sale</button>
+</div>
+
+<!-- EXPENSE -->
+<div id="exp" class="card hidden">
+<h3>Expenses</h3>
+<div class="grid">
+<input id="ex_date" type="date">
+<select id="ex_loc"></select>
+<select id="ex_cat"></select>
+<input id="ex_amt" type="number" placeholder="Amount">
+<input id="ex_note" placeholder="Note">
+</div>
+<br>
+<button class="primary" onclick="saveExpense()">Save Expense</button>
+</div>
+
+</main>
+
 <script>
-  // ✅ Hard-coded Apps Script Web App URL (your latest)
-  const API_URL = "https://script.google.com/macros/s/AKfycbxyUciIkMbsDGNMHTj3ScMwkqzajMHnEnFLdURq9DCudRQ_RBPNErogZcqQUDZwlZyP/exec";
+/* 🔒 API LOCKED HERE */
+const API = "https://script.google.com/macros/s/AKfycbxyUciIkMbsDGNMHTj3ScMwkqzajMHnEnFLdURq9DCudRQ_RBPNErogZcqQUDZwlZyP/exec";
 
-  let LISTS = {};
-  let lastSavedOrderId = null;
+/* ---------- helpers ---------- */
+function qs(id){return document.getElementById(id)}
+function fill(sel,arr){
+  sel.innerHTML="<option value=''>—</option>";
+  arr.forEach(v=>{
+    const o=document.createElement("option");
+    o.textContent=v;o.value=v;sel.appendChild(o)
+  })
+}
+async function api(action,data){
+  const r=await fetch(API,{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({action,...data})});
+  return r.json()
+}
 
-  function today_(){
-    const d = new Date();
-    const yyyy = d.getFullYear();
-    const mm = String(d.getMonth()+1).padStart(2,'0');
-    const dd = String(d.getDate()).padStart(2,'0');
-    return `${yyyy}-${mm}-${dd}`;
-  }
+/* ---------- init ---------- */
+(async ()=>{
+  const r=await fetch(API+"?action=get_lists");
+  const j=await r.json();
+  const L=j.data;
 
-  function round2(n){
-    n = Number(n);
-    if (!isFinite(n)) n = 0;
-    return Math.round((n + Number.EPSILON) * 100) / 100;
-  }
+  fill(qs("inv_loc"),L.LOCATION);
+  fill(qs("inv_cat"),L.PROD_CAT);
+  fill(qs("inv_color"),L.PROD_COLOR);
+  fill(qs("inv_size"),L.PROD_SIZE);
 
-  function esc(s){
-    s = String(s ?? "");
-    return s.replace(/[&<>"']/g, m => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m]));
-  }
+  fill(qs("so_loc"),L.LOCATION);
+  fill(qs("so_cat"),L.PROD_CAT);
+  fill(qs("so_color"),L.PROD_COLOR);
+  fill(qs("so_size"),L.PROD_SIZE);
+  fill(qs("so_delivery"),L.DELIVERY_COMPANY);
 
-  function setMsg(id, text, ok){
-    const el = document.getElementById(id);
-    el.className = "msg " + (ok ? "ok" : "err");
-    el.textContent = text || "";
-  }
+  fill(qs("ex_loc"),L.LOCATION);
+  fill(qs("ex_cat"),L.EXP_CAT);
+})();
 
-  async function apiGet(action, params={}){
-    const u = new URL(API_URL);
-    u.searchParams.set("action", action);
-    Object.keys(params).forEach(k => u.searchParams.set(k, params[k]));
-    const res = await fetch(u.toString(), { method:"GET" });
-    return res.json();
-  }
+/* ---------- tabs ---------- */
+function showTab(t){
+  ["inv","sales","exp"].forEach(x=>qs(x).classList.add("hidden"));
+  qs(t).classList.remove("hidden");
+  document.querySelectorAll("nav button").forEach(b=>b.classList.remove("active"));
+  event.target.classList.add("active");
+}
 
-  async function apiPost(action, payload){
-    const res = await fetch(API_URL, {
-      method:"POST",
-      headers: { "Content-Type":"text/plain;charset=utf-8" },
-      body: JSON.stringify({ action, ...payload })
-    });
-    return res.json();
-  }
-
-  function fillSelect(selectEl, arr, placeholder=""){
-    selectEl.innerHTML = "";
-    if (placeholder){
-      const op = document.createElement("option");
-      op.value = "";
-      op.textContent = placeholder;
-      selectEl.appendChild(op);
+/* ---------- calc ---------- */
+["inv_qty","inv_rmb","inv_fx"].forEach(id=>{
+  qs(id).addEventListener("input",()=>{
+    const q=+qs("inv_qty").value;
+    const r=+qs("inv_rmb").value;
+    const fx=+qs("inv_fx").value;
+    if(q&&r&&fx){
+      const u=(r/fx).toFixed(2);
+      qs("inv_usd").value=u;
+      qs("inv_amt").value=(u*q).toFixed(2);
     }
-    (arr || []).forEach(v=>{
-      const op = document.createElement("option");
-      op.value = v;
-      op.textContent = v;
-      selectEl.appendChild(op);
-    });
-  }
+  })
+})
 
-  function renderTable_(rows, cols){
-    if (!rows || !rows.length) return `<div class="small">No data</div>`;
-    const head = `<tr>${cols.map(c=>`<th>${c.label}</th>`).join("")}</tr>`;
-    const body = rows.map(r=>`<tr>${cols.map(c=>`<td>${esc(r[c.key] ?? "")}</td>`).join("")}</tr>`).join("");
-    return `<table class="tbl">${head}${body}</table>`;
-  }
+/* ---------- save ---------- */
+async function saveInventory(){
+  alert(JSON.stringify(await api("inventory_in",{
+    date:qs("inv_date").value,
+    location:qs("inv_loc").value,
+    prod_cat:qs("inv_cat").value,
+    product:qs("inv_product").value,
+    color:qs("inv_color").value,
+    size:qs("inv_size").value,
+    qty:+qs("inv_qty").value,
+    unit_rmb:+qs("inv_rmb").value,
+    fx:+qs("inv_fx").value,
+    note:qs("inv_note").value
+  })))
+}
 
-  // Tabs
-  document.querySelectorAll(".tabbtn").forEach(btn=>{
-    btn.addEventListener("click", ()=>{
-      document.querySelectorAll(".tabbtn").forEach(b=>b.classList.remove("active"));
-      btn.classList.add("active");
+async function saveSale(){
+  alert(JSON.stringify(await api("sale",{
+    date:qs("so_date").value,
+    location:qs("so_loc").value,
+    customer:qs("so_customer").value,
+    delivery_company:qs("so_delivery").value,
+    prod_cat:qs("so_cat").value,
+    product:qs("so_product").value,
+    color:qs("so_color").value,
+    size:qs("so_size").value,
+    qty:+qs("so_qty").value,
+    unit_price:+qs("so_price").value,
+    paid:+qs("so_paid").value
+  })))
+}
 
-      document.querySelectorAll(".section").forEach(s=>s.classList.remove("active"));
-      const tab = btn.dataset.tab;
-      document.getElementById("sec-"+tab).classList.add("active");
-
-      if (tab === "sales") refreshOrders();
-    });
-  });
-
-  async function init(){
-    document.getElementById("inv_date").value = today_();
-    document.getElementById("so_date").value = today_();
-    document.getElementById("ex_date").value = today_();
-    document.getElementById("d_from").value = today_();
-    document.getElementById("d_to").value = today_();
-
-    // ✅ This is part B.3: test + load lists
-    // If this fails, it means Apps Script is not deployed as "Anyone" or URL is wrong.
-    const r = await apiGet("get_lists");
-    if (!r.ok) {
-      setMsg("inv_msg", "ERROR loading lists: " + (r.message || "Unknown"), false);
-      return;
-    }
-    LISTS = r.data || {};
-
-    fillSelect(document.getElementById("inv_loc"), LISTS.LOCATION || [], "");
-    fillSelect(document.getElementById("inv_cat"), LISTS.PROD_CAT || [], "");
-    fillSelect(document.getElementById("inv_color"), LISTS.PROD_COLOR || [], "");
-    fillSelect(document.getElementById("inv_size"), LISTS.PROD_SIZE || [], "");
-
-    fillSelect(document.getElementById("so_loc"), LISTS.LOCATION || [], "");
-    fillSelect(document.getElementById("so_delivery"), LISTS.DELIVERY_COMPANY || [], "");
-
-    fillSelect(document.getElementById("ex_loc"), LISTS.LOCATION || [], "");
-    fillSelect(document.getElementById("ex_cat"), LISTS.EXP_CAT || [], "");
-
-    ["inv_qty","inv_unit_rmb","inv_fx"].forEach(id=>{
-      document.getElementById(id).addEventListener("input", calcInvUSD);
-    });
-    calcInvUSD();
-
-    addItemRow();
-    calcSalesTotal();
-  }
-
-  // Inventory calc
-  function calcInvUSD(){
-    const qty = Number(document.getElementById("inv_qty").value || 0);
-    const unitRmb = Number(document.getElementById("inv_unit_rmb").value || 0);
-    const fx = Number(document.getElementById("inv_fx").value || 0);
-    const unitUsd = fx > 0 ? round2(unitRmb / fx) : 0;
-    const amtUsd = round2(qty * unitUsd);
-    document.getElementById("inv_unit_usd").value = unitUsd.toFixed(2);
-    document.getElementById("inv_amt_usd").value = amtUsd.toFixed(2);
-  }
-
-  // Save Inventory IN
-  document.getElementById("btn_inv_save").addEventListener("click", async ()=>{
-    setMsg("inv_msg","",true);
-
-    const payload = {
-      date: document.getElementById("inv_date").value,
-      location: document.getElementById("inv_loc").value,
-      prod_cat: document.getElementById("inv_cat").value,
-      product: document.getElementById("inv_product").value,
-      color: document.getElementById("inv_color").value,
-      size: document.getElementById("inv_size").value,
-      qty: Number(document.getElementById("inv_qty").value || 0),
-      unit_rmb: Number(document.getElementById("inv_unit_rmb").value || 0),
-      fx: Number(document.getElementById("inv_fx").value || 0),
-      unit_usd: Number(document.getElementById("inv_unit_usd").value || 0),
-      amount_usd: Number(document.getElementById("inv_amt_usd").value || 0),
-      note: document.getElementById("inv_note").value
-    };
-
-    const r = await apiPost("add_inventory_in", payload);
-    if (!r.ok){
-      setMsg("inv_msg", "ERROR: " + (r.message || r.error || "Unknown"), false);
-      return;
-    }
-    setMsg("inv_msg", "Saved.", true);
-  });
-
-  // Sales items
-  function itemRowTemplate(idx){
-    const catOpts = (LISTS.PROD_CAT || []).map(v=>`<option value="${esc(v)}">${esc(v)}</option>`).join("");
-    const colorOpts = (LISTS.PROD_COLOR || []).map(v=>`<option value="${esc(v)}">${esc(v)}</option>`).join("");
-    const sizeOpts = (LISTS.PROD_SIZE || []).map(v=>`<option value="${esc(v)}">${esc(v)}</option>`).join("");
-
-    return `
-      <div class="card" style="border-radius:14px; margin-top:10px;" data-item-row="1">
-        <div class="rowline" style="justify-content:space-between;">
-          <div style="font-weight:800;">Item #${idx+1}</div>
-          <button class="btn secondary" type="button" data-remove="1">Remove</button>
-        </div>
-        <div class="grid" style="margin-top:10px;">
-          <div>
-            <label>Product Category</label>
-            <select data-k="prod_cat"><option value=""></option>${catOpts}</select>
-          </div>
-          <div>
-            <label>Product</label>
-            <input data-k="product" placeholder="Product name"/>
-          </div>
-          <div>
-            <label>Color</label>
-            <select data-k="color"><option value=""></option>${colorOpts}</select>
-          </div>
-          <div>
-            <label>Size</label>
-            <select data-k="size"><option value=""></option>${sizeOpts}</select>
-          </div>
-
-          <div>
-            <label>Qty</label>
-            <input data-k="qty" type="number" step="1" value="1"/>
-          </div>
-          <div>
-            <label>Unit Price</label>
-            <input data-k="unit_price" type="number" step="0.01" value="0"/>
-          </div>
-          <div>
-            <label>Line Total auto</label>
-            <input data-k="line_total" readonly/>
-          </div>
-          <div></div>
-        </div>
-      </div>
-    `;
-  }
-
-  function addItemRow(){
-    const wrap = document.getElementById("items_wrap");
-    const idx = wrap.querySelectorAll("[data-item-row]").length;
-    const div = document.createElement("div");
-    div.innerHTML = itemRowTemplate(idx);
-    const node = div.firstElementChild;
-    wrap.appendChild(node);
-
-    const qtyEl = node.querySelector('[data-k="qty"]');
-    const upEl  = node.querySelector('[data-k="unit_price"]');
-    const ltEl  = node.querySelector('[data-k="line_total"]');
-
-    function recalcLine(){
-      const qty = Number(qtyEl.value||0);
-      const up  = Number(upEl.value||0);
-      ltEl.value = round2(qty*up).toFixed(2);
-      calcSalesTotal();
-    }
-
-    qtyEl.addEventListener("input", recalcLine);
-    upEl.addEventListener("input", recalcLine);
-    recalcLine();
-
-    node.querySelector('[data-remove="1"]').addEventListener("click", ()=>{
-      node.remove();
-      [...wrap.querySelectorAll("[data-item-row]")].forEach((r,i)=>{
-        r.querySelector("div").textContent = "Item #" + (i+1);
-      });
-      calcSalesTotal();
-    });
-  }
-
-  document.getElementById("btn_add_item").addEventListener("click", addItemRow);
-
-  function getItems(){
-    const rows = [...document.querySelectorAll("#items_wrap [data-item-row]")];
-    return rows.map(r=>{
-      const get = k => r.querySelector(`[data-k="${k}"]`).value;
-      const qty = Number(get("qty")||0);
-      const up  = Number(get("unit_price")||0);
-      const lt  = round2(qty*up);
-      r.querySelector('[data-k="line_total"]').value = lt.toFixed(2);
-
-      return {
-        prod_cat: get("prod_cat"),
-        product: get("product"),
-        color: get("color"),
-        size: get("size"),
-        qty,
-        unit_price: up,
-        line_total: lt
-      };
-    }).filter(it => (it.product || it.prod_cat) && it.qty > 0);
-  }
-
-  function calcSalesTotal(){
-    const items = getItems();
-    const total = round2(items.reduce((s,it)=> s + Number(it.line_total||0), 0));
-    document.getElementById("so_total").textContent = total.toFixed(2);
-    return total;
-  }
-
-  // Save Sale
-  document.getElementById("btn_sale_save").addEventListener("click", async ()=>{
-    setMsg("sale_msg","",true);
-
-    const items = getItems();
-    if (!items.length){
-      setMsg("sale_msg","Please add at least 1 item with qty.", false);
-      return;
-    }
-
-    const total = calcSalesTotal();
-
-    const payload = {
-      order_date: document.getElementById("so_date").value,
-      location: document.getElementById("so_loc").value,
-      customer: document.getElementById("so_customer").value,
-      telephone: document.getElementById("so_tel").value,
-      customer_address: document.getElementById("so_addr").value,
-      delivery_company: document.getElementById("so_delivery").value,
-      currency: document.getElementById("so_currency").value,
-      cash_timing: document.getElementById("so_cash_timing").value,
-      paid_amount: Number(document.getElementById("so_paid").value || 0),
-      note: document.getElementById("so_note").value,
-      total,
-      status: "NEW",
-      items
-    };
-
-    const r = await apiPost("add_sale", payload);
-    if (!r.ok){
-      setMsg("sale_msg", "ERROR: " + (r.message || r.error || "Unknown"), false);
-      return;
-    }
-    lastSavedOrderId = r.data.order_id;
-    setMsg("sale_msg", "Saved. Order ID: " + lastSavedOrderId, true);
-    refreshOrders();
-  });
-
-  // Orders
-  async function refreshOrders(){
-    const r = await apiGet("get_recent_orders");
-    if (!r.ok){
-      document.getElementById("orders_tbl").innerHTML = "";
-      setMsg("orders_msg", "ERROR: " + (r.message || r.error || "Unknown"), false);
-      return;
-    }
-    setMsg("orders_msg","",true);
-
-    const rows = r.data || [];
-    if (!rows.length){
-      document.getElementById("orders_tbl").innerHTML = `<div class="small">No orders.</div>`;
-      return;
-    }
-
-    const html = `
-      <table class="tbl">
-        <tr>
-          <th>Customer</th>
-          <th>Order ID</th>
-          <th>Date</th>
-          <th class="right">Total</th>
-          <th class="right">Paid</th>
-          <th>Payment</th>
-          <th>Status</th>
-          <th class="right">Update Paid</th>
-          <th>Action</th>
-        </tr>
-        ${rows.map(o=>`
-          <tr>
-            <td>${esc(o.customer||"")}</td>
-            <td>${esc(o.order_id||"")}</td>
-            <td>${esc(o.order_date||"")}</td>
-            <td class="right">${Number(o.total||0).toFixed(2)}</td>
-            <td class="right">${Number(o.paid_amount||0).toFixed(2)}</td>
-            <td>${esc(o.payment_status||"")}</td>
-            <td>
-              <select data-status="${esc(o.order_id)}">
-                ${["NEW","PREPARED","DELIVERING","COMPLETED","CANCELLED"].map(s=>
-                  `<option value="${s}" ${s===o.status?"selected":""}>${s}</option>`
-                ).join("")}
-              </select>
-              <div style="margin-top:6px;">
-                <button class="btn secondary" data-updstatus="${esc(o.order_id)}" type="button">Update</button>
-              </div>
-            </td>
-            <td class="right">
-              <input data-paid="${esc(o.order_id)}" type="number" step="0.01" value="${Number(o.paid_amount||0)}"/>
-              <div style="margin-top:6px;">
-                <button class="btn secondary" data-updpaid="${esc(o.order_id)}" type="button">Update</button>
-              </div>
-            </td>
-            <td>
-              <button class="btn secondary" data-print="${esc(o.order_id)}" type="button">Print</button>
-            </td>
-          </tr>
-        `).join("")}
-      </table>
-    `;
-    document.getElementById("orders_tbl").innerHTML = html;
-
-    // bind status update
-    document.querySelectorAll("[data-updstatus]").forEach(btn=>{
-      btn.addEventListener("click", async ()=>{
-        const orderId = btn.getAttribute("data-updstatus");
-        const sel = document.querySelector(`[data-status="${CSS.escape(orderId)}"]`);
-        const status = sel.value;
-        const rr = await apiPost("update_order_status", { order_id: orderId, status });
-        if (!rr.ok){
-          alert("Status update failed:\n" + (rr.message || rr.error || "Unknown"));
-          return;
-        }
-        refreshOrders();
-      });
-    });
-
-    // bind paid update
-    document.querySelectorAll("[data-updpaid]").forEach(btn=>{
-      btn.addEventListener("click", async ()=>{
-        const orderId = btn.getAttribute("data-updpaid");
-        const inp = document.querySelector(`[data-paid="${CSS.escape(orderId)}"]`);
-        const paid = Number(inp.value || 0);
-        const rr = await apiPost("update_sale_payment", { order_id: orderId, paid_amount: paid });
-        if (!rr.ok){
-          alert("Payment update failed:\n" + (rr.message || rr.error || "Unknown"));
-          return;
-        }
-        refreshOrders();
-      });
-    });
-
-    // bind print
-    document.querySelectorAll("[data-print]").forEach(btn=>{
-      btn.addEventListener("click", async ()=>{
-        const orderId = btn.getAttribute("data-print");
-        const rr = await apiGet("get_order_print", { order_id: orderId });
-        if (!rr.ok){
-          alert("Print failed:\n" + (rr.message || rr.error || "Unknown"));
-          return;
-        }
-        openPrintWindow(rr.data);
-      });
-    });
-  }
-
-  document.getElementById("btn_refresh_orders").addEventListener("click", refreshOrders);
-
-  function openPrintWindow(data){
-    const o = data.order || {};
-    const items = data.items || [];
-
-    const html = `
-      <html>
-      <head>
-        <meta charset="utf-8"/>
-        <meta name="viewport" content="width=device-width, initial-scale=1"/>
-        <title>Packing Slip</title>
-        <style>
-          body{ font-family:Arial, sans-serif; padding:18px; }
-          h2{ margin:0 0 10px; }
-          .box{ border:1px solid #ddd; border-radius:10px; padding:12px; margin-bottom:12px; }
-          table{ width:100%; border-collapse:collapse; }
-          th,td{ border:1px solid #ddd; padding:8px; font-size:13px; }
-          th{ background:#f7f7f7; text-align:left; }
-          .muted{ color:#666; font-size:12px; }
-        </style>
-      </head>
-      <body>
-        <div class="muted">${new Date().toLocaleString()}</div>
-        <h2>Packing Slip / Delivery Label</h2>
-
-        <div class="box">
-          <div><b>Order ID:</b> ${esc(o.order_id||"")}</div>
-          <div><b>Date:</b> ${esc(o.order_date||"")}</div>
-          <div><b>Customer:</b> ${esc(o.customer||"")}</div>
-          <div><b>Telephone:</b> ${esc(o.telephone||"")}</div>
-          <div><b>Address:</b> ${esc(o.customer_address||"")}</div>
-          <div><b>Location:</b> ${esc(o.location||"")}</div>
-          <div><b>Delivery Company:</b> ${esc(o.delivery_company||"")}</div>
-          <div><b>Status:</b> ${esc(o.status||"")}</div>
-          <div><b>Total:</b> ${esc(o.currency||"USD")} ${Number(o.total||0).toFixed(2)}</div>
-        </div>
-
-        <div class="box">
-          <div style="font-weight:800; margin-bottom:8px;">Items</div>
-          <table>
-            <tr>
-              <th>Category</th><th>Product</th><th>Color</th><th>Size</th><th>Qty</th>
-            </tr>
-            ${items.map(it=>`
-              <tr>
-                <td>${esc(it.prod_cat||"")}</td>
-                <td>${esc(it.product||"")}</td>
-                <td>${esc(it.color||"")}</td>
-                <td>${esc(it.size||"")}</td>
-                <td>${Number(it.qty||0)}</td>
-              </tr>
-            `).join("")}
-          </table>
-        </div>
-
-        <div class="box">
-          <div><b>Note:</b> ${esc(o.note||"")}</div>
-        </div>
-
-        <script>window.onload=()=>{ window.print(); };</script>
-      </body></html>
-    `;
-
-    const w = window.open("", "_blank");
-    w.document.open();
-    w.document.write(html);
-    w.document.close();
-  }
-
-  // Expenses
-  document.getElementById("btn_exp_save").addEventListener("click", async ()=>{
-    setMsg("exp_msg","",true);
-
-    const payload = {
-      date: document.getElementById("ex_date").value,
-      location: document.getElementById("ex_loc").value,
-      exp_cat: document.getElementById("ex_cat").value,
-      currency: document.getElementById("ex_cur").value,
-      amount: Number(document.getElementById("ex_amt").value || 0),
-      note: document.getElementById("ex_note").value
-    };
-
-    const r = await apiPost("add_expense", payload);
-    if (!r.ok){
-      setMsg("exp_msg", "ERROR: " + (r.message || r.error || "Unknown"), false);
-      return;
-    }
-    setMsg("exp_msg", "Saved.", true);
-  });
-
-  // Dashboard
-  document.getElementById("btn_dash").addEventListener("click", async ()=>{
-    setMsg("dash_msg","",true);
-
-    const from = document.getElementById("d_from").value;
-    const to   = document.getElementById("d_to").value;
-
-    const r = await apiGet("dashboard", { from, to });
-    if (!r.ok){
-      setMsg("dash_msg", "ERROR: " + (r.message || r.error || "Unknown"), false);
-      return;
-    }
-
-    const d = r.data || {};
-    document.getElementById("d_sales").textContent = Number(d.sales_total||0).toFixed(2);
-    document.getElementById("d_exp").textContent   = Number(d.expenses_total||0).toFixed(2);
-    document.getElementById("d_net").textContent   = Number(d.net||0).toFixed(2);
-
-    document.getElementById("invByCat").innerHTML =
-      renderTable_(d.remaining_by_category || [], [
-        {key:"location", label:"Location"},
-        {key:"prod_cat", label:"Category"},
-        {key:"qty", label:"Remaining Qty"}
-      ]);
-
-    document.getElementById("invByProd").innerHTML =
-      renderTable_(d.remaining_by_product || [], [
-        {key:"location", label:"Location"},
-        {key:"prod_cat", label:"Category"},
-        {key:"product", label:"Product"},
-        {key:"qty", label:"Remaining Qty"}
-      ]);
-  });
-
-  // Start
-  document.getElementById("btn_add_item").addEventListener("click", addItemRow);
-  init().catch(err=>{
-    setMsg("inv_msg", "INIT ERROR: " + (err && err.message ? err.message : String(err)), false);
-  });
+async function saveExpense(){
+  alert(JSON.stringify(await api("expense",{
+    date:qs("ex_date").value,
+    location:qs("ex_loc").value,
+    category:qs("ex_cat").value,
+    amount:+qs("ex_amt").value,
+    note:qs("ex_note").value
+  })))
+}
 </script>
+
 </body>
 </html>
